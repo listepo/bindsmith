@@ -1,0 +1,10 @@
+.dart_tool/
+pubspec.lock
+build/
+*.iml
+.idea/
+.vscode/
+node_modules/
+.DS_Store
+packages/bindsmith/tool/ts_sidecar/dist/
+.serena/

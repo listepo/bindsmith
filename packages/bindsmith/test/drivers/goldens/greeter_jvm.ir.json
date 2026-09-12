@@ -1,0 +1,286 @@
+[
+  {
+    "decl": "type",
+    "id": "com.example.greeter.Greeter",
+    "name": "Greeter",
+    "platform": "android",
+    "loc": {
+      "file": "fixtures/jvm/greeter"
+    },
+    "docs": "Greets people, with a couple of Java shapes the driver has to map.",
+    "kind": "klass",
+    "members": [
+      {
+        "name": "DEFAULT_PREFIX",
+        "kind": "property",
+        "returns": {
+          "name": "JString",
+          "nullability": "nullable",
+          "native": "java.lang.String"
+        },
+        "isStatic": true,
+        "docs": "Default separator between the prefix and the name."
+      },
+      {
+        "name": "",
+        "kind": "constructor",
+        "native": "<init>"
+      },
+      {
+        "name": "",
+        "kind": "constructor",
+        "binding": "new$1",
+        "native": "<init>",
+        "params": [
+          {
+            "name": "prefix",
+            "type": {
+              "name": "JString",
+              "nullability": "nullable",
+              "native": "java.lang.String"
+            }
+          }
+        ]
+      },
+      {
+        "name": "version",
+        "kind": "method",
+        "returns": {
+          "name": "int",
+          "native": "int"
+        },
+        "isStatic": true,
+        "docs": "The library version."
+      },
+      {
+        "name": "count",
+        "kind": "property",
+        "returns": {
+          "name": "int",
+          "native": "int"
+        },
+        "docs": "Number of greetings this instance has produced."
+      },
+      {
+        "name": "count",
+        "kind": "setter",
+        "params": [
+          {
+            "name": "value",
+            "type": {
+              "name": "int"
+            }
+          }
+        ],
+        "docs": "Number of greetings this instance has produced."
+      },
+      {
+        "name": "greet",
+        "kind": "method",
+        "params": [
+          {
+            "name": "name",
+            "type": {
+              "name": "JString",
+              "nullability": "nullable",
+              "native": "java.lang.String"
+            },
+            "docs": "The person to greet."
+          }
+        ],
+        "returns": {
+          "name": "JString",
+          "nullability": "nullable",
+          "native": "java.lang.String"
+        },
+        "docs": "Greets `name`."
+      },
+      {
+        "name": "greetAll",
+        "kind": "method",
+        "params": [
+          {
+            "name": "names",
+            "type": {
+              "name": "JList",
+              "args": [
+                {
+                  "name": "JString",
+                  "nullability": "nullable"
+                }
+              ],
+              "nullability": "nullable",
+              "native": "java.util.List<java.lang.String>"
+            }
+          }
+        ],
+        "returns": {
+          "name": "JList",
+          "args": [
+            {
+              "name": "JString",
+              "nullability": "nullable"
+            }
+          ],
+          "nullability": "nullable",
+          "native": "java.util.List<java.lang.String>"
+        },
+        "docs": "Greets everyone in the list."
+      },
+      {
+        "name": "greetAsync",
+        "kind": "method",
+        "params": [
+          {
+            "name": "name",
+            "type": {
+              "name": "JString",
+              "nullability": "nullable",
+              "native": "java.lang.String"
+            }
+          },
+          {
+            "name": "listener",
+            "type": {
+              "name": "Greeter$Listener",
+              "nullability": "nullable",
+              "native": "com.example.greeter.Greeter$Listener"
+            }
+          }
+        ],
+        "docs": "Greets `name` and hands the result to `listener`."
+      }
+    ]
+  },
+  {
+    "decl": "type",
+    "id": "com.example.greeter.Greeter$Listener",
+    "name": "Greeter$Listener",
+    "platform": "android",
+    "loc": {
+      "file": "fixtures/jvm/greeter"
+    },
+    "docs": "Receives a greeting.",
+    "markers": [
+      {
+        "kind": "verify",
+        "reason": "Java interface: implement it from Dart with Greeter$Listener.implement($Greeter$Listener(...))"
+      }
+    ],
+    "kind": "interface",
+    "members": [
+      {
+        "name": "onGreeting",
+        "kind": "method",
+        "params": [
+          {
+            "name": "greeting",
+            "type": {
+              "name": "JString",
+              "nullability": "nullable",
+              "native": "java.lang.String"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "decl": "type",
+    "id": "com.example.greeter.Greeter$Volume",
+    "name": "Greeter$Volume",
+    "platform": "android",
+    "loc": {
+      "file": "fixtures/jvm/greeter"
+    },
+    "docs": "How loudly to greet.",
+    "kind": "enumeration",
+    "supertypes": [
+      {
+        "name": "Enum",
+        "native": "java.lang.Enum"
+      }
+    ],
+    "members": [
+      {
+        "name": "QUIET",
+        "kind": "property",
+        "returns": {
+          "name": "Greeter$Volume",
+          "native": "com.example.greeter.Greeter$Volume"
+        },
+        "isStatic": true
+      },
+      {
+        "name": "NORMAL",
+        "kind": "property",
+        "returns": {
+          "name": "Greeter$Volume",
+          "native": "com.example.greeter.Greeter$Volume"
+        },
+        "isStatic": true
+      },
+      {
+        "name": "LOUD",
+        "kind": "property",
+        "returns": {
+          "name": "Greeter$Volume",
+          "native": "com.example.greeter.Greeter$Volume"
+        },
+        "isStatic": true
+      },
+      {
+        "name": "values",
+        "kind": "method",
+        "returns": {
+          "name": "JArray",
+          "args": [
+            {
+              "name": "Greeter$Volume",
+              "nullability": "nullable"
+            }
+          ],
+          "nullability": "nullable",
+          "native": "com.example.greeter.Greeter$Volume[]"
+        },
+        "isStatic": true
+      },
+      {
+        "name": "valueOf",
+        "kind": "method",
+        "params": [
+          {
+            "name": "name",
+            "type": {
+              "name": "JString",
+              "nullability": "nullable",
+              "native": "java.lang.String"
+            }
+          }
+        ],
+        "returns": {
+          "name": "Greeter$Volume",
+          "nullability": "nullable",
+          "native": "com.example.greeter.Greeter$Volume"
+        },
+        "isStatic": true
+      }
+    ]
+  },
+  {
+    "decl": "type",
+    "id": "java.lang.Enum",
+    "name": "Enum",
+    "platform": "android",
+    "loc": {
+      "file": "fixtures/jvm/greeter"
+    },
+    "markers": [
+      {
+        "kind": "dropped",
+        "reason": "not in the pull list; jnigen emitted a stub. Add java.lang.Enum to `classes` to bind it"
+      }
+    ],
+    "kind": "klass"
+  }
+]

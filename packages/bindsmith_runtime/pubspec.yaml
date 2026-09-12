@@ -1,0 +1,14 @@
+name: bindsmith_runtime
+description: >-
+  Runtime annotations and helpers used by code generated with bindsmith:
+  review markers, platform dispatch and unsupported-API errors.
+version: 0.1.0
+repository: https://github.com/listepo/bindsmith
+resolution: workspace
+
+environment:
+  sdk: ^3.13.0
+
+dev_dependencies:
+  lints: ^6.0.0
+  test: ^1.26.0

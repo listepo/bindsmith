@@ -1,0 +1,3 @@
+# Generated code under lib/generated/ is analyzed on purpose: bindsmith output
+# must compile. Lints inside it are silenced by its own `ignore_for_file`.
+include: package:lints/recommended.yaml

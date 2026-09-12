@@ -1,0 +1,11 @@
+name: bindsmith_workspace
+description: Pub workspace root for bindsmith. Not published.
+publish_to: none
+
+environment:
+  sdk: ^3.13.0
+
+workspace:
+  - packages/bindsmith
+  - packages/bindsmith_runtime
+  - fixtures

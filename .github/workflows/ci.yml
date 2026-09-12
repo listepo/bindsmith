@@ -1,0 +1,49 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  dart:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      # macOS and Linux install the toolchain from mise.toml, like a dev machine.
+      - uses: jdx/mise-action@v2
+        if: runner.os != 'Windows'
+        with:
+          install: true
+          cache: true
+      - uses: dart-lang/setup-dart@v1
+        if: runner.os == 'Windows'
+        with:
+          sdk: 3.13.1
+      - uses: actions/setup-node@v4
+        if: runner.os == 'Windows'
+        with:
+          node-version: 24
+      - name: libclang (Linux)
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y libclang-dev
+      - name: libclang (Windows)
+        if: runner.os == 'Windows'
+        run: choco install llvm --no-progress -y
+      - run: dart pub get
+      - run: npm ci
+        working-directory: packages/bindsmith/tool/ts_sidecar
+      - run: dart format --output=none --set-exit-if-changed packages fixtures
+      - run: dart analyze --fatal-infos
+      - run: dart test
+        working-directory: packages/bindsmith_runtime
+      - run: dart test
+        working-directory: packages/bindsmith
+      - run: node --test
+        working-directory: packages/bindsmith/tool/ts_sidecar
+      - name: generated fixtures compile
+        run: dart analyze --fatal-infos fixtures

@@ -1,0 +1,494 @@
+[
+  {
+    "decl": "function",
+    "id": "createGreeter",
+    "name": "createGreeter",
+    "platform": "web",
+    "loc": {
+      "file": "fixtures/dts/greeter.d.ts",
+      "line": 31
+    },
+    "params": [
+      {
+        "name": "name",
+        "type": {
+          "name": "String"
+        }
+      },
+      {
+        "name": "options",
+        "type": {
+          "name": "GreeterOptions",
+          "nullability": "nullable",
+          "native": "GreeterOptions"
+        },
+        "optional": true
+      }
+    ],
+    "returns": {
+      "name": "Greeter",
+      "native": "Greeter"
+    }
+  },
+  {
+    "decl": "type",
+    "id": "GreeterOptions",
+    "name": "GreeterOptions",
+    "platform": "web",
+    "loc": {
+      "file": "fixtures/dts/greeter.d.ts",
+      "line": 2
+    },
+    "docs": "Options accepted by [Greeter].",
+    "markers": [
+      {
+        "kind": "verify",
+        "reason": "index signature [string]: unknown is not bound"
+      }
+    ],
+    "kind": "interface",
+    "members": [
+      {
+        "name": "",
+        "kind": "constructor",
+        "params": [
+          {
+            "name": "prefix",
+            "type": {
+              "name": "String",
+              "nullability": "nullable"
+            },
+            "optional": true,
+            "named": true
+          },
+          {
+            "name": "loud",
+            "type": {
+              "name": "bool"
+            },
+            "named": true
+          },
+          {
+            "name": "tone",
+            "type": {
+              "name": "String",
+              "native": "'formal' | 'casual'"
+            },
+            "named": true
+          },
+          {
+            "name": "onGreet",
+            "type": {
+              "name": "JSFunction",
+              "args": [
+                {
+                  "name": "void"
+                },
+                {
+                  "name": "String"
+                }
+              ],
+              "nullability": "nullable",
+              "native": "(message: string) => void"
+            },
+            "optional": true,
+            "named": true
+          }
+        ],
+        "docs": "Creates a JavaScript object literal with these properties."
+      },
+      {
+        "name": "prefix",
+        "kind": "property",
+        "returns": {
+          "name": "String",
+          "nullability": "nullable"
+        },
+        "docs": "Text placed before the name."
+      },
+      {
+        "name": "prefix",
+        "kind": "setter",
+        "params": [
+          {
+            "name": "value",
+            "type": {
+              "name": "String",
+              "nullability": "nullable"
+            }
+          }
+        ]
+      },
+      {
+        "name": "loud",
+        "kind": "property",
+        "returns": {
+          "name": "bool"
+        }
+      },
+      {
+        "name": "loud",
+        "kind": "setter",
+        "params": [
+          {
+            "name": "value",
+            "type": {
+              "name": "bool"
+            }
+          }
+        ]
+      },
+      {
+        "name": "tone",
+        "kind": "property",
+        "returns": {
+          "name": "String",
+          "native": "'formal' | 'casual'"
+        },
+        "docs": "One of: 'formal', 'casual'."
+      },
+      {
+        "name": "tone",
+        "kind": "setter",
+        "params": [
+          {
+            "name": "value",
+            "type": {
+              "name": "String",
+              "native": "'formal' | 'casual'"
+            }
+          }
+        ]
+      },
+      {
+        "name": "onGreet",
+        "kind": "property",
+        "returns": {
+          "name": "JSFunction",
+          "args": [
+            {
+              "name": "void"
+            },
+            {
+              "name": "String"
+            }
+          ],
+          "nullability": "nullable",
+          "native": "(message: string) => void"
+        }
+      },
+      {
+        "name": "onGreet",
+        "kind": "setter",
+        "params": [
+          {
+            "name": "value",
+            "type": {
+              "name": "JSFunction",
+              "args": [
+                {
+                  "name": "void"
+                },
+                {
+                  "name": "String"
+                }
+              ],
+              "nullability": "nullable",
+              "native": "(message: string) => void"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "decl": "type",
+    "id": "Greeter",
+    "name": "Greeter",
+    "platform": "web",
+    "loc": {
+      "file": "fixtures/dts/greeter.d.ts",
+      "line": 12
+    },
+    "docs": "Greets people.",
+    "kind": "jsObject",
+    "members": [
+      {
+        "name": "version",
+        "kind": "property",
+        "returns": {
+          "name": "String"
+        },
+        "isStatic": true
+      },
+      {
+        "name": "name",
+        "kind": "property",
+        "returns": {
+          "name": "String"
+        }
+      },
+      {
+        "name": "",
+        "kind": "constructor",
+        "params": [
+          {
+            "name": "name",
+            "type": {
+              "name": "String"
+            }
+          },
+          {
+            "name": "options",
+            "type": {
+              "name": "GreeterOptions",
+              "nullability": "nullable",
+              "native": "GreeterOptions"
+            },
+            "optional": true
+          }
+        ]
+      },
+      {
+        "name": "greet",
+        "kind": "method",
+        "returns": {
+          "name": "String"
+        },
+        "docs": "Returns the greeting."
+      },
+      {
+        "name": "greet$2",
+        "kind": "method",
+        "native": "greet",
+        "params": [
+          {
+            "name": "times",
+            "type": {
+              "name": "num"
+            }
+          }
+        ],
+        "returns": {
+          "name": "List",
+          "args": [
+            {
+              "name": "String"
+            }
+          ],
+          "native": "string[]"
+        }
+      },
+      {
+        "name": "greetLater",
+        "kind": "method",
+        "params": [
+          {
+            "name": "delayMs",
+            "type": {
+              "name": "num"
+            },
+            "docs": "How long to wait, in milliseconds."
+          }
+        ],
+        "returns": {
+          "name": "String"
+        },
+        "async": "future",
+        "docs": "Greets after a delay.\n\n`delayMs`: How long to wait, in milliseconds.\n\nReturns the greeting, once the delay has passed."
+      },
+      {
+        "name": "uppercase",
+        "kind": "property",
+        "returns": {
+          "name": "bool"
+        }
+      },
+      {
+        "name": "uppercase",
+        "kind": "setter",
+        "params": [
+          {
+            "name": "value",
+            "type": {
+              "name": "bool"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "decl": "variable",
+    "id": "VERSION",
+    "name": "VERSION",
+    "platform": "web",
+    "loc": {
+      "file": "fixtures/dts/greeter.d.ts",
+      "line": 33
+    },
+    "type": {
+      "name": "String"
+    },
+    "isConst": true
+  },
+  {
+    "decl": "type",
+    "id": "Tone",
+    "name": "Tone",
+    "platform": "web",
+    "loc": {
+      "file": "fixtures/dts/greeter.d.ts",
+      "line": 35
+    },
+    "markers": [
+      {
+        "kind": "dropped",
+        "reason": "TypeScript enum; parameters of this type are bound as String and accept 'formal', 'casual'"
+      }
+    ],
+    "kind": "enumeration",
+    "members": [
+      {
+        "name": "Formal",
+        "kind": "constant",
+        "native": "Formal",
+        "value": "'formal'",
+        "returns": {
+          "name": "String"
+        }
+      },
+      {
+        "name": "Casual",
+        "kind": "constant",
+        "native": "Casual",
+        "value": "'casual'",
+        "returns": {
+          "name": "String"
+        }
+      }
+    ]
+  },
+  {
+    "decl": "type",
+    "id": "GreetCallback",
+    "name": "GreetCallback",
+    "platform": "web",
+    "loc": {
+      "file": "fixtures/dts/greeter.d.ts",
+      "line": 40
+    },
+    "markers": [
+      {
+        "kind": "dropped",
+        "reason": "type alias for (message: string) => void; references are bound as JSFunction<void, String>"
+      }
+    ],
+    "kind": "typedef"
+  },
+  {
+    "decl": "function",
+    "id": "utils.shout",
+    "name": "utilsShout",
+    "platform": "web",
+    "loc": {
+      "file": "fixtures/dts/greeter.d.ts",
+      "line": 43
+    },
+    "params": [
+      {
+        "name": "text",
+        "type": {
+          "name": "String"
+        }
+      }
+    ],
+    "returns": {
+      "name": "String"
+    }
+  },
+  {
+    "decl": "type",
+    "id": "Box",
+    "name": "Box",
+    "platform": "web",
+    "loc": {
+      "file": "fixtures/dts/greeter.d.ts",
+      "line": 46
+    },
+    "markers": [
+      {
+        "kind": "verify",
+        "reason": "generic <T>; type parameters are bound as JSAny?"
+      }
+    ],
+    "kind": "jsObject",
+    "typeParams": [
+      "T"
+    ],
+    "members": [
+      {
+        "name": "value",
+        "kind": "property",
+        "returns": {
+          "name": "JSAny",
+          "nullability": "nullable",
+          "native": "T"
+        }
+      },
+      {
+        "name": "value",
+        "kind": "setter",
+        "params": [
+          {
+            "name": "value",
+            "type": {
+              "name": "JSAny",
+              "nullability": "nullable",
+              "native": "T"
+            }
+          }
+        ]
+      },
+      {
+        "name": "map",
+        "kind": "method",
+        "params": [
+          {
+            "name": "transform",
+            "type": {
+              "name": "JSFunction",
+              "args": [
+                {
+                  "name": "JSAny",
+                  "nullability": "nullable",
+                  "native": "U"
+                },
+                {
+                  "name": "JSAny",
+                  "nullability": "nullable",
+                  "native": "T"
+                }
+              ],
+              "native": "(value: T) => U"
+            }
+          }
+        ],
+        "returns": {
+          "name": "Box",
+          "native": "Box"
+        },
+        "markers": [
+          {
+            "kind": "verify",
+            "reason": "generic method <U>; type parameters are bound as JSAny?"
+          },
+          {
+            "kind": "verify",
+            "reason": "type arguments of Box<U> are dropped; the facade is not generic"
+          }
+        ]
+      }
+    ]
+  }
+]

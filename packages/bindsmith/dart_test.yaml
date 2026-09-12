@@ -1,0 +1,4 @@
+tags:
+  # Reaches a public package registry. The tests carrying it skip themselves
+  # when the host is offline; `dart test -x network` skips them outright.
+  network:

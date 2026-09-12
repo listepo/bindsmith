@@ -1,0 +1,83 @@
+[
+  {
+    "decl": "type",
+    "id": "com.example.Greeter",
+    "name": "ComExampleGreeter",
+    "platform": "linux",
+    "native": "com.example.Greeter",
+    "loc": {
+      "file": "fixtures/dbus/com.example.Greeter.xml"
+    },
+    "kind": "klass",
+    "supertypes": [
+      {
+        "name": "DBusRemoteObject"
+      }
+    ],
+    "members": [
+      {
+        "name": "callGreet",
+        "kind": "method",
+        "native": "Greet",
+        "params": [
+          {
+            "name": "name",
+            "type": {
+              "name": "String",
+              "native": "s"
+            }
+          }
+        ],
+        "returns": {
+          "name": "String",
+          "native": "s"
+        },
+        "async": "future",
+        "docs": "Invokes com.example.Greeter.Greet()."
+      },
+      {
+        "name": "getVersion",
+        "kind": "method",
+        "native": "Version",
+        "returns": {
+          "name": "String",
+          "native": "s"
+        },
+        "async": "future",
+        "docs": "Gets com.example.Greeter.Version."
+      },
+      {
+        "name": "greeted",
+        "kind": "event",
+        "native": "Greeted",
+        "params": [
+          {
+            "name": "name",
+            "type": {
+              "name": "String",
+              "native": "s"
+            }
+          },
+          {
+            "name": "greeting",
+            "type": {
+              "name": "String",
+              "native": "s"
+            }
+          }
+        ],
+        "returns": {
+          "name": "DBusRemoteObjectSignal"
+        },
+        "async": "stream",
+        "docs": "Signal com.example.Greeter.Greeted.",
+        "markers": [
+          {
+            "kind": "verify",
+            "reason": "D-Bus signal com.example.Greeter.Greeted; subscribe through the generated DBusRemoteObjectSignal stream"
+          }
+        ]
+      }
+    ]
+  }
+]

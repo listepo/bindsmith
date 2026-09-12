@@ -1,0 +1,536 @@
+[
+  {
+    "decl": "function",
+    "id": "geometry_distance",
+    "name": "geometry_distance",
+    "platform": "linux",
+    "loc": {
+      "file": "fixtures/c/geometry/geometry.h"
+    },
+    "docs": "Euclidean distance between two points.",
+    "params": [
+      {
+        "name": "a",
+        "type": {
+          "name": "Point",
+          "native": "Point"
+        }
+      },
+      {
+        "name": "b",
+        "type": {
+          "name": "Point",
+          "native": "Point"
+        }
+      }
+    ],
+    "returns": {
+      "name": "double",
+      "native": "ffi.Double"
+    }
+  },
+  {
+    "decl": "function",
+    "id": "geometry_log",
+    "name": "geometry_log",
+    "platform": "linux",
+    "loc": {
+      "file": "fixtures/c/geometry/geometry.h"
+    },
+    "docs": "Formats a message; variadic functions are bound only through explicit\nargument-type lists.",
+    "markers": [
+      {
+        "kind": "verify",
+        "reason": "variadic: bound with its fixed arguments only; other argument lists need an ffigen varArgs entry"
+      }
+    ],
+    "params": [
+      {
+        "name": "format",
+        "type": {
+          "name": "Pointer",
+          "args": [
+            {
+              "name": "Char"
+            }
+          ],
+          "native": "ffi.Pointer<ffi.Char>"
+        }
+      }
+    ],
+    "returns": {
+      "name": "int",
+      "native": "ffi.Int"
+    }
+  },
+  {
+    "decl": "variable",
+    "id": "geometry_max_shapes",
+    "name": "geometry_max_shapes",
+    "platform": "linux",
+    "loc": {
+      "file": "fixtures/c/geometry/geometry.h"
+    },
+    "docs": "Number of shapes a scene can hold.",
+    "type": {
+      "name": "int",
+      "native": "ffi.Int32"
+    }
+  },
+  {
+    "decl": "function",
+    "id": "geometry_rect_area",
+    "name": "geometry_rect_area",
+    "platform": "linux",
+    "loc": {
+      "file": "fixtures/c/geometry/geometry.h"
+    },
+    "docs": "Area of the rectangle.",
+    "params": [
+      {
+        "name": "rect",
+        "type": {
+          "name": "Pointer",
+          "args": [
+            {
+              "name": "Rect"
+            }
+          ],
+          "native": "ffi.Pointer<Rect>"
+        }
+      }
+    ],
+    "returns": {
+      "name": "double",
+      "native": "ffi.Double"
+    }
+  },
+  {
+    "decl": "function",
+    "id": "geometry_scale",
+    "name": "geometry_scale",
+    "platform": "linux",
+    "loc": {
+      "file": "fixtures/c/geometry/geometry.h"
+    },
+    "docs": "Scales the point in place.",
+    "params": [
+      {
+        "name": "point",
+        "type": {
+          "name": "Pointer",
+          "args": [
+            {
+              "name": "Point"
+            }
+          ],
+          "native": "ffi.Pointer<Point>"
+        }
+      },
+      {
+        "name": "factor",
+        "type": {
+          "name": "double",
+          "native": "ffi.Double"
+        }
+      }
+    ]
+  },
+  {
+    "decl": "function",
+    "id": "geometry_scene_add",
+    "name": "geometry_scene_add",
+    "platform": "linux",
+    "loc": {
+      "file": "fixtures/c/geometry/geometry.h"
+    },
+    "docs": "Adds [shape] at [at] in [scene].\nReturns The new shape id.",
+    "params": [
+      {
+        "name": "scene",
+        "type": {
+          "name": "Pointer",
+          "args": [
+            {
+              "name": "GeometryScene"
+            }
+          ],
+          "native": "ffi.Pointer<GeometryScene>"
+        },
+        "docs": "The scene to add to."
+      },
+      {
+        "name": "shape",
+        "type": {
+          "name": "Shape",
+          "native": "ffi.UnsignedInt"
+        },
+        "docs": "The shape to add."
+      },
+      {
+        "name": "at",
+        "type": {
+          "name": "Point",
+          "native": "Point"
+        },
+        "docs": "Where to place it."
+      }
+    ],
+    "returns": {
+      "name": "int",
+      "native": "geometry_id"
+    }
+  },
+  {
+    "decl": "function",
+    "id": "geometry_scene_count",
+    "name": "geometry_scene_count",
+    "platform": "linux",
+    "loc": {
+      "file": "fixtures/c/geometry/geometry.h"
+    },
+    "params": [
+      {
+        "name": "scene",
+        "type": {
+          "name": "Pointer",
+          "args": [
+            {
+              "name": "GeometryScene"
+            }
+          ],
+          "native": "ffi.Pointer<GeometryScene>"
+        }
+      }
+    ],
+    "returns": {
+      "name": "int",
+      "native": "ffi.Int32"
+    }
+  },
+  {
+    "decl": "function",
+    "id": "geometry_scene_each",
+    "name": "geometry_scene_each",
+    "platform": "linux",
+    "loc": {
+      "file": "fixtures/c/geometry/geometry.h"
+    },
+    "params": [
+      {
+        "name": "scene",
+        "type": {
+          "name": "Pointer",
+          "args": [
+            {
+              "name": "GeometryScene"
+            }
+          ],
+          "native": "ffi.Pointer<GeometryScene>"
+        }
+      },
+      {
+        "name": "visitor",
+        "type": {
+          "name": "geometry_visitor",
+          "native": "geometry_visitor"
+        }
+      },
+      {
+        "name": "user_data",
+        "type": {
+          "name": "Pointer",
+          "args": [
+            {
+              "name": "Void"
+            }
+          ],
+          "native": "ffi.Pointer<ffi.Void>"
+        }
+      }
+    ]
+  },
+  {
+    "decl": "function",
+    "id": "geometry_scene_free",
+    "name": "geometry_scene_free",
+    "platform": "linux",
+    "loc": {
+      "file": "fixtures/c/geometry/geometry.h"
+    },
+    "params": [
+      {
+        "name": "scene",
+        "type": {
+          "name": "Pointer",
+          "args": [
+            {
+              "name": "GeometryScene"
+            }
+          ],
+          "native": "ffi.Pointer<GeometryScene>"
+        }
+      }
+    ]
+  },
+  {
+    "decl": "function",
+    "id": "geometry_scene_new",
+    "name": "geometry_scene_new",
+    "platform": "linux",
+    "loc": {
+      "file": "fixtures/c/geometry/geometry.h"
+    },
+    "docs": "An empty scene; free it with geometry_scene_free.",
+    "returns": {
+      "name": "Pointer",
+      "args": [
+        {
+          "name": "GeometryScene"
+        }
+      ],
+      "native": "ffi.Pointer<GeometryScene>"
+    }
+  },
+  {
+    "decl": "function",
+    "id": "geometry_shape_name",
+    "name": "geometry_shape_name",
+    "platform": "linux",
+    "loc": {
+      "file": "fixtures/c/geometry/geometry.h"
+    },
+    "docs": "Human-readable name of the shape; the string is owned by the library.",
+    "params": [
+      {
+        "name": "shape",
+        "type": {
+          "name": "Shape",
+          "native": "ffi.UnsignedInt"
+        }
+      }
+    ],
+    "returns": {
+      "name": "Pointer",
+      "args": [
+        {
+          "name": "Char"
+        }
+      ],
+      "native": "ffi.Pointer<ffi.Char>"
+    }
+  },
+  {
+    "decl": "variable",
+    "id": "GEOMETRY_NAME",
+    "name": "GEOMETRY_NAME",
+    "platform": "linux",
+    "loc": {
+      "file": "fixtures/c/geometry/geometry.h"
+    },
+    "type": {
+      "name": "String"
+    },
+    "value": "'geometry'",
+    "isConst": true
+  },
+  {
+    "decl": "variable",
+    "id": "GEOMETRY_PI",
+    "name": "GEOMETRY_PI",
+    "platform": "linux",
+    "loc": {
+      "file": "fixtures/c/geometry/geometry.h"
+    },
+    "type": {
+      "name": "double"
+    },
+    "value": "3.14159",
+    "isConst": true
+  },
+  {
+    "decl": "variable",
+    "id": "GEOMETRY_VERSION",
+    "name": "GEOMETRY_VERSION",
+    "platform": "linux",
+    "loc": {
+      "file": "fixtures/c/geometry/geometry.h"
+    },
+    "docs": "Library version as MAJOR * 100 + MINOR.",
+    "type": {
+      "name": "int"
+    },
+    "value": "102",
+    "isConst": true
+  },
+  {
+    "decl": "type",
+    "id": "GeometryScene",
+    "name": "GeometryScene",
+    "platform": "linux",
+    "loc": {
+      "file": "fixtures/c/geometry/geometry.h"
+    },
+    "docs": "Opaque scene handle; create with geometry_scene_new, free with\ngeometry_scene_free.",
+    "kind": "opaque"
+  },
+  {
+    "decl": "type",
+    "id": "Point",
+    "name": "Point",
+    "platform": "linux",
+    "loc": {
+      "file": "fixtures/c/geometry/geometry.h"
+    },
+    "docs": "A point in the plane.",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "x",
+        "kind": "field",
+        "returns": {
+          "name": "double",
+          "native": "ffi.Double"
+        }
+      },
+      {
+        "name": "y",
+        "kind": "field",
+        "returns": {
+          "name": "double",
+          "native": "ffi.Double"
+        }
+      }
+    ]
+  },
+  {
+    "decl": "type",
+    "id": "Rect",
+    "name": "Rect",
+    "platform": "linux",
+    "loc": {
+      "file": "fixtures/c/geometry/geometry.h"
+    },
+    "docs": "An axis-aligned rectangle.",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "origin",
+        "kind": "field",
+        "returns": {
+          "name": "Point"
+        }
+      },
+      {
+        "name": "width",
+        "kind": "field",
+        "returns": {
+          "name": "double",
+          "native": "ffi.Double"
+        }
+      },
+      {
+        "name": "height",
+        "kind": "field",
+        "returns": {
+          "name": "double",
+          "native": "ffi.Double"
+        }
+      }
+    ]
+  },
+  {
+    "decl": "type",
+    "id": "Shape",
+    "name": "Shape",
+    "platform": "linux",
+    "loc": {
+      "file": "fixtures/c/geometry/geometry.h"
+    },
+    "docs": "Kinds of shape the library can measure.",
+    "markers": [
+      {
+        "kind": "verify",
+        "reason": "enum storage size is implementation-defined; ffigen mimics the platform compiler"
+      }
+    ],
+    "kind": "enumeration",
+    "members": [
+      {
+        "name": "SHAPE_CIRCLE",
+        "kind": "constant",
+        "value": "0",
+        "returns": {
+          "name": "int"
+        },
+        "docs": "Measured by its radius."
+      },
+      {
+        "name": "SHAPE_SQUARE",
+        "kind": "constant",
+        "value": "1",
+        "returns": {
+          "name": "int"
+        }
+      },
+      {
+        "name": "SHAPE_TRIANGLE",
+        "kind": "constant",
+        "value": "2",
+        "returns": {
+          "name": "int"
+        }
+      }
+    ]
+  },
+  {
+    "decl": "type",
+    "id": "geometry_id",
+    "name": "geometry_id",
+    "platform": "linux",
+    "loc": {
+      "file": "fixtures/c/geometry/geometry.h"
+    },
+    "docs": "Identifier of a shape inside a scene.",
+    "kind": "typedef",
+    "supertypes": [
+      {
+        "name": "int",
+        "native": "ffi.Uint32"
+      }
+    ]
+  },
+  {
+    "decl": "type",
+    "id": "geometry_visitor",
+    "name": "geometry_visitor",
+    "platform": "linux",
+    "loc": {
+      "file": "fixtures/c/geometry/geometry.h"
+    },
+    "docs": "Called once per shape by geometry_scene_each.\nCallback signature: void Function(Dartgeometry_id id, Shape shape, ffi.Pointer<ffi.Void> user_data)",
+    "markers": [
+      {
+        "kind": "verify",
+        "reason": "C function pointer: pass Pointer.fromFunction or a NativeCallable; Dart closures are not marshalled"
+      }
+    ],
+    "kind": "typedef",
+    "supertypes": [
+      {
+        "name": "Pointer",
+        "args": [
+          {
+            "name": "NativeFunction",
+            "args": [
+              {
+                "name": "geometry_visitorFunction"
+              }
+            ]
+          }
+        ],
+        "native": "ffi.Pointer<ffi.NativeFunction<geometry_visitorFunction>>"
+      }
+    ]
+  }
+]

@@ -1,0 +1,374 @@
+[
+  {
+    "decl": "type",
+    "id": "GreeterWrapper",
+    "name": "GreeterWrapper",
+    "platform": "macos",
+    "loc": {
+      "file": "fixtures/swift/greeter/Greeter.swift"
+    },
+    "docs": "Greets people.",
+    "kind": "klass",
+    "supertypes": [
+      {
+        "name": "NSObject"
+      }
+    ],
+    "members": [
+      {
+        "name": "alloc",
+        "kind": "method",
+        "returns": {
+          "name": "GreeterWrapper"
+        },
+        "isStatic": true
+      },
+      {
+        "name": "allocWithZone",
+        "kind": "method",
+        "native": "allocWithZone:",
+        "params": [
+          {
+            "name": "zone",
+            "type": {
+              "name": "Pointer",
+              "args": [
+                {
+                  "name": "NSZone"
+                }
+              ]
+            }
+          }
+        ],
+        "returns": {
+          "name": "GreeterWrapper"
+        },
+        "isStatic": true
+      },
+      {
+        "name": "count",
+        "kind": "property",
+        "returns": {
+          "name": "int"
+        },
+        "docs": "The number of greetings so far."
+      },
+      {
+        "name": "greetSlowlyWithName",
+        "kind": "method",
+        "native": "greetSlowlyWithName:completionHandler:",
+        "params": [
+          {
+            "name": "name",
+            "type": {
+              "name": "NSString"
+            }
+          },
+          {
+            "name": "completionHandler",
+            "type": {
+              "name": "ObjCBlock",
+              "args": [
+                {
+                  "name": "ffi.Void Function(objc.NSString)"
+                }
+              ]
+            },
+            "named": true
+          }
+        ],
+        "async": "callback",
+        "docs": "Greets `name` after yielding.",
+        "markers": [
+          {
+            "kind": "verify",
+            "reason": "takes an Objective-C block: build it with ObjCBlock_ffiVoid_NSString.listener (any thread, void return only), ObjCBlock_ffiVoid_NSString.blocking (blocks the caller) or ObjCBlock_ffiVoid_NSString.fromFunction (owner isolate only). A completion handler becomes a Future in the facade"
+          }
+        ]
+      },
+      {
+        "name": "greetWithName",
+        "kind": "method",
+        "native": "greetWithName:",
+        "params": [
+          {
+            "name": "name",
+            "type": {
+              "name": "NSString"
+            },
+            "docs": "The person to greet."
+          }
+        ],
+        "returns": {
+          "name": "NSString"
+        },
+        "docs": "Greets `name`."
+      },
+      {
+        "name": "initWithPrefix",
+        "kind": "method",
+        "native": "initWithPrefix:",
+        "params": [
+          {
+            "name": "prefix",
+            "type": {
+              "name": "NSString"
+            }
+          }
+        ],
+        "returns": {
+          "name": "GreeterWrapper"
+        }
+      },
+      {
+        "name": "prefix",
+        "kind": "property",
+        "returns": {
+          "name": "NSString"
+        },
+        "docs": "The prefix put before every name."
+      },
+      {
+        "name": "prefix",
+        "kind": "setter",
+        "native": "setPrefix:",
+        "params": [
+          {
+            "name": "value",
+            "type": {
+              "name": "NSString"
+            }
+          }
+        ],
+        "docs": "The prefix put before every name."
+      }
+    ]
+  },
+  {
+    "decl": "type",
+    "id": "VolumeWrapper",
+    "name": "VolumeWrapper",
+    "platform": "macos",
+    "loc": {
+      "file": "fixtures/swift/greeter/Greeter.swift"
+    },
+    "docs": "A Swift value type: it has no Objective-C representation of its own.",
+    "kind": "klass",
+    "supertypes": [
+      {
+        "name": "NSObject"
+      }
+    ],
+    "members": [
+      {
+        "name": "alloc",
+        "kind": "method",
+        "returns": {
+          "name": "VolumeWrapper"
+        },
+        "isStatic": true
+      },
+      {
+        "name": "allocWithZone",
+        "kind": "method",
+        "native": "allocWithZone:",
+        "params": [
+          {
+            "name": "zone",
+            "type": {
+              "name": "Pointer",
+              "args": [
+                {
+                  "name": "NSZone"
+                }
+              ]
+            }
+          }
+        ],
+        "returns": {
+          "name": "VolumeWrapper"
+        },
+        "isStatic": true
+      },
+      {
+        "name": "initWithLevel",
+        "kind": "method",
+        "native": "initWithLevel:",
+        "params": [
+          {
+            "name": "level",
+            "type": {
+              "name": "int"
+            }
+          }
+        ],
+        "returns": {
+          "name": "VolumeWrapper"
+        }
+      },
+      {
+        "name": "level",
+        "kind": "property",
+        "returns": {
+          "name": "int"
+        }
+      },
+      {
+        "name": "louder",
+        "kind": "method",
+        "returns": {
+          "name": "VolumeWrapper"
+        },
+        "docs": "Doubles the level."
+      },
+      {
+        "name": "level",
+        "kind": "setter",
+        "native": "setLevel:",
+        "params": [
+          {
+            "name": "value",
+            "type": {
+              "name": "int"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "decl": "type",
+    "id": "instancetype",
+    "name": "instancetype",
+    "platform": "macos",
+    "loc": {
+      "file": "fixtures/swift/greeter/Greeter.swift"
+    },
+    "kind": "typedef",
+    "supertypes": [
+      {
+        "name": "ObjCObject",
+        "native": "ffi.Pointer<objc.ObjCObjectImpl>"
+      }
+    ]
+  },
+  {
+    "decl": "type",
+    "id": "s:18symbolgraph_module7GreeterC",
+    "name": "Greeter",
+    "platform": "macos",
+    "loc": {
+      "file": "fixtures/swift/greeter/Greeter.swift"
+    },
+    "docs": "Greets people.",
+    "kind": "klass",
+    "members": [
+      {
+        "name": "greetAll",
+        "kind": "method",
+        "native": "func greetAll(names: [String], at volume: Volume) -> [String]",
+        "params": [
+          {
+            "name": "names",
+            "type": {
+              "name": "[String]"
+            },
+            "named": true
+          },
+          {
+            "name": "at",
+            "type": {
+              "name": "Volume"
+            },
+            "named": true
+          }
+        ],
+        "returns": {
+          "name": "[String]"
+        },
+        "docs": "Greets everyone in `names`, at `volume`.\n\nThe array is what swift2objc cannot parse; `Volume` is a Swift struct\nthat it *can* carry, so a bridge has to pass it as the wrapper.",
+        "markers": [
+          {
+            "kind": "dropped",
+            "reason": "swift2objc could not parse this declaration, so it is absent from the @objc wrapper: Exception: Malformed parameter list at symbols/5/declarationFragments: [{\"kind\":\"keyword\",\"spelling\":\"func\"},{\"kind\":\"text\",\"spelling\":\" \"},{\"kind\":\"identifier\",\"spelling\":\"greetAll\"},{\"kind\":\"text\",\"spelling\":\"(\"},{\"kind\":\"externalParam\",\"spelling\":\"names\"},{\"kind\":\"text\",\"spelling\":\": [\"},{\"kind\":\"typeIdentifier\",\"spelling\":\"String\",\"preciseIdentifier\":\"s:SS\"},{\"kind\":\"text\",\"spelling\":\"], \"},{\"kind\":\"externalParam\",\"spelling\":\"at\"},{\"kind\":\"text\",\"spelling\":\" \"},{\"kind\":\"internalParam\",\"spelling\":\"volume\"},{\"kind\":\"text\",\"spelling\":\": \"},{\"kind\":\"typeIdentifier\",\"spelling\":\"Volume\",\"preciseIdentifier\":\"s:18symbolgraph_module6VolumeV\"},{\"kind\":\"text\",\"spelling\":\") -> [\"},{\"kind\":\"typeIdentifier\",\"spelling\":\"String\",\"preciseIdentifier\":\"s:SS\"},{\"kind\":\"text\",\"spelling\":\"]\"}]"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "decl": "type",
+    "id": "s:18symbolgraph_module3BoxV",
+    "name": "Box",
+    "platform": "macos",
+    "loc": {
+      "file": "fixtures/swift/greeter/Greeter.swift"
+    },
+    "docs": "A Swift generic, which cannot cross into Objective-C at all.",
+    "kind": "struct",
+    "typeParams": [
+      "T"
+    ],
+    "members": [
+      {
+        "name": "value",
+        "kind": "property",
+        "native": "var value: T",
+        "returns": {
+          "name": "T"
+        },
+        "markers": [
+          {
+            "kind": "dropped",
+            "reason": "swift2objc could not parse this declaration, so it is absent from the @objc wrapper: Exception: The type at \"symbols/12/names/subHeading/4\" does not exist among parsed symbols: {\"kind\":\"typeIdentifier\",\"spelling\":\"T\",\"preciseIdentifier\":\"s:18symbolgraph_module3BoxV1Txmfp\"}"
+          }
+        ]
+      },
+      {
+        "name": "value",
+        "kind": "setter",
+        "native": "var value: T",
+        "params": [
+          {
+            "name": "value",
+            "type": {
+              "name": "T"
+            }
+          }
+        ],
+        "returns": {
+          "name": "Void"
+        },
+        "markers": [
+          {
+            "kind": "dropped",
+            "reason": "swift2objc could not parse this declaration, so it is absent from the @objc wrapper: Exception: The type at \"symbols/12/names/subHeading/4\" does not exist among parsed symbols: {\"kind\":\"typeIdentifier\",\"spelling\":\"T\",\"preciseIdentifier\":\"s:18symbolgraph_module3BoxV1Txmfp\"}"
+          }
+        ]
+      },
+      {
+        "name": "",
+        "kind": "constructor",
+        "native": "init(value: T)",
+        "params": [
+          {
+            "name": "value",
+            "type": {
+              "name": "T"
+            },
+            "named": true
+          }
+        ],
+        "returns": {
+          "name": "Void"
+        },
+        "markers": [
+          {
+            "kind": "dropped",
+            "reason": "swift2objc could not parse this declaration, so it is absent from the @objc wrapper: Exception: The type at \"symbols/13/declarationFragments/4\" does not exist among parsed symbols: {\"kind\":\"typeIdentifier\",\"spelling\":\"T\",\"preciseIdentifier\":\"s:18symbolgraph_module3BoxV1Txmfp\"}"
+          }
+        ]
+      }
+    ]
+  }
+]

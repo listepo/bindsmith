@@ -1,0 +1,49 @@
+# Toolchain for bindsmith, managed by mise (https://mise.jdx.dev).
+#   mise trust && mise install     # once per machine
+#   mise run setup                 # pub get + sidecar npm ci
+#   mise run check && mise run test
+#
+# libclang (needed by ffigen) is not managed here: macOS uses the Xcode
+# toolchain, Linux `apt install libclang-dev`, Windows the LLVM installer.
+# `bindsmith doctor` reports where it looked. The generator itself runs on the
+# Dart SDK; Flutter is only there because package:jni requires it, so the JVM
+# end-to-end tests resolve jni in a throwaway Flutter project (P3-5).
+
+[tools]
+dart = "3.13.1"        # matches the SDK bundled with Flutter 3.47
+node = "24"            # TypeScript sidecar (.d.ts driver)
+java = "temurin-21"    # jnigen needs JDK 17–21
+kotlin = "2.4.20"      # compiles the Kotlin fixture and the generated bridge (P7-2)
+flutter = "3.47.1"     # package:jni declares a Flutter SDK constraint (P3-5)
+cmake = "3.31.12"      # builds libdartjni for the desktop JVM runtime test (P3-5)
+
+[tasks.setup]
+description = "Resolve Dart packages and install the TypeScript sidecar"
+run = [
+  "dart pub get",
+  "npm ci --prefix packages/bindsmith/tool/ts_sidecar",
+]
+
+[tasks.check]
+description = "Format check, analyzer (strict), generated fixtures analyze clean"
+run = [
+  "dart format --output=none --set-exit-if-changed packages fixtures",
+  "dart analyze --fatal-infos",
+  "dart analyze --fatal-infos fixtures",
+]
+
+[tasks."test:runtime"]
+dir = "packages/bindsmith_runtime"
+run = "dart test"
+
+[tasks."test:core"]
+dir = "packages/bindsmith"
+run = "dart test"
+
+[tasks."test:sidecar"]
+dir = "packages/bindsmith/tool/ts_sidecar"
+run = "node --test"
+
+[tasks.test]
+description = "All test suites"
+depends = ["test:*"]

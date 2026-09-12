@@ -1,0 +1,726 @@
+[
+  {
+    "decl": "type",
+    "id": "com.example.ktgreeter.KtGreeter$Companion",
+    "name": "KtGreeter$Companion",
+    "platform": "android",
+    "kind": "klass",
+    "members": [
+      {
+        "name": "",
+        "kind": "constructor",
+        "native": "<init>",
+        "params": [
+          {
+            "name": "defaultConstructorMarker",
+            "type": {
+              "name": "DefaultConstructorMarker",
+              "nullability": "nullable",
+              "native": "kotlin.jvm.internal.DefaultConstructorMarker"
+            }
+          }
+        ],
+        "markers": [
+          {
+            "kind": "dropped",
+            "reason": "synthetic: the path Kotlin takes to a private constructor, not meant to be called"
+          }
+        ]
+      },
+      {
+        "name": "version",
+        "kind": "method",
+        "returns": {
+          "name": "int",
+          "native": "kotlin.Int"
+        },
+        "docs": "The library version."
+      }
+    ]
+  },
+  {
+    "decl": "type",
+    "id": "com.example.ktgreeter.KtGreeter",
+    "name": "KtGreeter",
+    "platform": "android",
+    "docs": "Greets people, in the Kotlin shapes jnigen cannot carry across on its own.\n\nEach member here exists to pin one of them down:\n- [greet] has a default argument, which Kotlin compiles to a synthetic\n`greet$default` taking a bitmask, so Dart only ever sees full arity;\n- [greetAll] returns a `Flow`, which is an opaque object to JNI;\n- [tryGreet] returns a sealed class, whose subclass is invisible to Dart;\n- [greetSlowly] is `suspend`, the one shape jnigen already lowers itself\n(to a `Future`), so the bridge must leave it alone;\n- [shout] is overloaded, so jnigen numbers the second one `shout$1`;\n- [nickname] is nullable only because Kotlin says so: in the bytecode\nevery reference is nullable;\n- [greetTo] takes a Kotlin `fun interface`, implemented from Dart;\n- [DEFAULT_PREFIX] and [version] live on the companion object.",
+    "kind": "klass",
+    "members": [
+      {
+        "name": "Companion",
+        "kind": "property",
+        "returns": {
+          "name": "KtGreeter$Companion",
+          "native": "com.example.ktgreeter.KtGreeter$Companion"
+        },
+        "isStatic": true
+      },
+      {
+        "name": "DEFAULT_PREFIX",
+        "kind": "property",
+        "returns": {
+          "name": "JString",
+          "native": "java.lang.String"
+        },
+        "isStatic": true,
+        "docs": "The prefix a greeter uses when none is given."
+      },
+      {
+        "name": "",
+        "kind": "constructor",
+        "native": "<init>",
+        "params": [
+          {
+            "name": "string",
+            "type": {
+              "name": "JString",
+              "native": "java.lang.String"
+            }
+          }
+        ]
+      },
+      {
+        "name": "",
+        "kind": "constructor",
+        "binding": "new$1",
+        "native": "<init>",
+        "params": [
+          {
+            "name": "string",
+            "type": {
+              "name": "JString",
+              "nullability": "nullable",
+              "native": "java.lang.String"
+            }
+          },
+          {
+            "name": "i",
+            "type": {
+              "name": "int",
+              "native": "int"
+            }
+          },
+          {
+            "name": "defaultConstructorMarker",
+            "type": {
+              "name": "DefaultConstructorMarker",
+              "nullability": "nullable",
+              "native": "kotlin.jvm.internal.DefaultConstructorMarker"
+            }
+          }
+        ],
+        "markers": [
+          {
+            "kind": "dropped",
+            "reason": "synthetic: Kotlin's carrier for a constructor's default arguments, behind a bitmask and a DefaultConstructorMarker. Annotate the constructor with `@JvmOverloads` to bind each arity instead"
+          }
+        ]
+      },
+      {
+        "name": "",
+        "kind": "constructor",
+        "binding": "new$2",
+        "native": "<init>"
+      },
+      {
+        "name": "greet",
+        "kind": "method",
+        "params": [
+          {
+            "name": "name",
+            "type": {
+              "name": "JString",
+              "native": "kotlin.String"
+            }
+          },
+          {
+            "name": "volume",
+            "type": {
+              "name": "Volume",
+              "native": "com.example.ktgreeter.Volume"
+            }
+          }
+        ],
+        "returns": {
+          "name": "JString",
+          "native": "kotlin.String"
+        },
+        "docs": "Greets [name], at [volume]."
+      },
+      {
+        "name": "greetAll",
+        "kind": "method",
+        "params": [
+          {
+            "name": "names",
+            "type": {
+              "name": "JList",
+              "args": [
+                {
+                  "name": "JString"
+                }
+              ],
+              "native": "kotlin.collections.List<kotlin.String>"
+            }
+          }
+        ],
+        "returns": {
+          "name": "Flow",
+          "native": "kotlinx.coroutines.flow.Flow<kotlin.String>"
+        },
+        "docs": "One greeting per name, emitted as a cold flow.",
+        "markers": [
+          {
+            "kind": "verify",
+            "reason": "returns a Kotlin `Flow`, which has no JNI surface: Dart gets an opaque object. emitKotlinBridge declares a method that collects it into a listener"
+          }
+        ]
+      },
+      {
+        "name": "greetSlowly",
+        "kind": "method",
+        "params": [
+          {
+            "name": "name",
+            "type": {
+              "name": "JString",
+              "native": "kotlin.String"
+            }
+          }
+        ],
+        "returns": {
+          "name": "JString",
+          "native": "kotlin.String"
+        },
+        "async": "future",
+        "docs": "Greets [name] after suspending, so it resumes on another thread."
+      },
+      {
+        "name": "tryGreet",
+        "kind": "method",
+        "params": [
+          {
+            "name": "name",
+            "type": {
+              "name": "JString",
+              "native": "kotlin.String"
+            }
+          }
+        ],
+        "returns": {
+          "name": "Reply",
+          "native": "com.example.ktgreeter.Reply"
+        },
+        "docs": "Greets [name], or says why it could not."
+      },
+      {
+        "name": "shout",
+        "kind": "method",
+        "params": [
+          {
+            "name": "name",
+            "type": {
+              "name": "JString",
+              "native": "kotlin.String"
+            }
+          }
+        ],
+        "returns": {
+          "name": "JString",
+          "native": "kotlin.String"
+        },
+        "docs": "Greets [name] loudly."
+      },
+      {
+        "name": "shout$1",
+        "kind": "method",
+        "native": "shout",
+        "params": [
+          {
+            "name": "name",
+            "type": {
+              "name": "JString",
+              "native": "kotlin.String"
+            }
+          },
+          {
+            "name": "times",
+            "type": {
+              "name": "int",
+              "native": "kotlin.Int"
+            }
+          }
+        ],
+        "returns": {
+          "name": "JString",
+          "native": "kotlin.String"
+        },
+        "docs": "Greets [name] loudly, [times] times over."
+      },
+      {
+        "name": "nickname",
+        "kind": "method",
+        "params": [
+          {
+            "name": "name",
+            "type": {
+              "name": "JString",
+              "native": "kotlin.String"
+            }
+          }
+        ],
+        "returns": {
+          "name": "JString",
+          "nullability": "nullable",
+          "native": "kotlin.String"
+        },
+        "docs": "The first three letters of [name], or `null` when it is shorter."
+      },
+      {
+        "name": "greetTo",
+        "kind": "method",
+        "params": [
+          {
+            "name": "name",
+            "type": {
+              "name": "JString",
+              "native": "kotlin.String"
+            }
+          },
+          {
+            "name": "listener",
+            "type": {
+              "name": "Listener",
+              "native": "com.example.ktgreeter.Listener"
+            }
+          }
+        ],
+        "docs": "Greets [name] and hands the greeting to [listener]."
+      },
+      {
+        "name": "greet$default",
+        "kind": "method",
+        "isStatic": true,
+        "markers": [
+          {
+            "kind": "dropped",
+            "reason": "Kotlin's synthetic carrier for the default arguments of `greet`, which jnigen drops: Dart only sees the full arity. emitKotlinBridge declares the shorter overload, or annotate `greet` with `@JvmOverloads`"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "decl": "type",
+    "id": "com.example.ktgreeter.Listener",
+    "name": "Listener",
+    "platform": "android",
+    "docs": "Receives a greeting.",
+    "markers": [
+      {
+        "kind": "verify",
+        "reason": "Java interface: implement it from Dart with Listener.implement($Listener(...))"
+      }
+    ],
+    "kind": "interface",
+    "members": [
+      {
+        "name": "onGreeting",
+        "kind": "method",
+        "params": [
+          {
+            "name": "greeting",
+            "type": {
+              "name": "JString",
+              "native": "kotlin.String"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "decl": "type",
+    "id": "com.example.ktgreeter.Reply$Failed",
+    "name": "Reply$Failed",
+    "platform": "android",
+    "docs": "Why there is no greeting.",
+    "kind": "klass",
+    "supertypes": [
+      {
+        "name": "Reply",
+        "native": "com.example.ktgreeter.Reply"
+      }
+    ],
+    "members": [
+      {
+        "name": "",
+        "kind": "constructor",
+        "native": "<init>",
+        "params": [
+          {
+            "name": "string",
+            "type": {
+              "name": "JString",
+              "native": "java.lang.String"
+            }
+          }
+        ]
+      },
+      {
+        "name": "reason",
+        "kind": "property",
+        "native": "getReason",
+        "returns": {
+          "name": "JString",
+          "native": "java.lang.String"
+        }
+      },
+      {
+        "name": "component1",
+        "kind": "method",
+        "returns": {
+          "name": "JString",
+          "native": "kotlin.String"
+        }
+      },
+      {
+        "name": "copy",
+        "kind": "method",
+        "params": [
+          {
+            "name": "reason",
+            "type": {
+              "name": "JString",
+              "native": "kotlin.String"
+            }
+          }
+        ],
+        "returns": {
+          "name": "Reply$Failed",
+          "native": "com.example.ktgreeter.Reply.Failed"
+        }
+      },
+      {
+        "name": "toString$1",
+        "kind": "method",
+        "native": "toString",
+        "returns": {
+          "name": "JString",
+          "native": "kotlin.String"
+        }
+      },
+      {
+        "name": "hashCode$1",
+        "kind": "method",
+        "native": "hashCode",
+        "returns": {
+          "name": "int",
+          "native": "kotlin.Int"
+        }
+      },
+      {
+        "name": "equals",
+        "kind": "method",
+        "params": [
+          {
+            "name": "other",
+            "type": {
+              "name": "JObject",
+              "nullability": "nullable",
+              "native": "kotlin.Any"
+            }
+          }
+        ],
+        "returns": {
+          "name": "bool",
+          "native": "kotlin.Boolean"
+        }
+      },
+      {
+        "name": "copy$default",
+        "kind": "method",
+        "isStatic": true,
+        "markers": [
+          {
+            "kind": "dropped",
+            "reason": "Kotlin's synthetic carrier for the default arguments of `copy`, which jnigen drops: Dart only sees the full arity. emitKotlinBridge declares the shorter overload, or annotate `copy` with `@JvmOverloads`"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "decl": "type",
+    "id": "com.example.ktgreeter.Reply$Ok",
+    "name": "Reply$Ok",
+    "platform": "android",
+    "docs": "The greeting.",
+    "kind": "klass",
+    "supertypes": [
+      {
+        "name": "Reply",
+        "native": "com.example.ktgreeter.Reply"
+      }
+    ],
+    "members": [
+      {
+        "name": "",
+        "kind": "constructor",
+        "native": "<init>",
+        "params": [
+          {
+            "name": "string",
+            "type": {
+              "name": "JString",
+              "native": "java.lang.String"
+            }
+          }
+        ]
+      },
+      {
+        "name": "text",
+        "kind": "property",
+        "native": "getText",
+        "returns": {
+          "name": "JString",
+          "native": "java.lang.String"
+        }
+      },
+      {
+        "name": "component1",
+        "kind": "method",
+        "returns": {
+          "name": "JString",
+          "native": "kotlin.String"
+        }
+      },
+      {
+        "name": "copy",
+        "kind": "method",
+        "params": [
+          {
+            "name": "text",
+            "type": {
+              "name": "JString",
+              "native": "kotlin.String"
+            }
+          }
+        ],
+        "returns": {
+          "name": "Reply$Ok",
+          "native": "com.example.ktgreeter.Reply.Ok"
+        }
+      },
+      {
+        "name": "toString$1",
+        "kind": "method",
+        "native": "toString",
+        "returns": {
+          "name": "JString",
+          "native": "kotlin.String"
+        }
+      },
+      {
+        "name": "hashCode$1",
+        "kind": "method",
+        "native": "hashCode",
+        "returns": {
+          "name": "int",
+          "native": "kotlin.Int"
+        }
+      },
+      {
+        "name": "equals",
+        "kind": "method",
+        "params": [
+          {
+            "name": "other",
+            "type": {
+              "name": "JObject",
+              "nullability": "nullable",
+              "native": "kotlin.Any"
+            }
+          }
+        ],
+        "returns": {
+          "name": "bool",
+          "native": "kotlin.Boolean"
+        }
+      },
+      {
+        "name": "copy$default",
+        "kind": "method",
+        "isStatic": true,
+        "markers": [
+          {
+            "kind": "dropped",
+            "reason": "Kotlin's synthetic carrier for the default arguments of `copy`, which jnigen drops: Dart only sees the full arity. emitKotlinBridge declares the shorter overload, or annotate `copy` with `@JvmOverloads`"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "decl": "type",
+    "id": "com.example.ktgreeter.Reply",
+    "name": "Reply",
+    "platform": "android",
+    "docs": "The outcome of [KtGreeter.tryGreet].",
+    "kind": "klass"
+  },
+  {
+    "decl": "type",
+    "id": "com.example.ktgreeter.Volume",
+    "name": "Volume",
+    "platform": "android",
+    "docs": "How loudly to greet.",
+    "kind": "enumeration",
+    "supertypes": [
+      {
+        "name": "Enum",
+        "native": "java.lang.Enum"
+      }
+    ],
+    "members": [
+      {
+        "name": "QUIET",
+        "kind": "property",
+        "returns": {
+          "name": "Volume",
+          "native": "com.example.ktgreeter.Volume"
+        },
+        "isStatic": true
+      },
+      {
+        "name": "NORMAL",
+        "kind": "property",
+        "returns": {
+          "name": "Volume",
+          "native": "com.example.ktgreeter.Volume"
+        },
+        "isStatic": true
+      },
+      {
+        "name": "LOUD",
+        "kind": "property",
+        "returns": {
+          "name": "Volume",
+          "native": "com.example.ktgreeter.Volume"
+        },
+        "isStatic": true
+      },
+      {
+        "name": "values",
+        "kind": "method",
+        "returns": {
+          "name": "JArray",
+          "args": [
+            {
+              "name": "Volume",
+              "nullability": "nullable"
+            }
+          ],
+          "nullability": "nullable",
+          "native": "com.example.ktgreeter.Volume[]"
+        },
+        "isStatic": true
+      },
+      {
+        "name": "valueOf",
+        "kind": "method",
+        "params": [
+          {
+            "name": "string",
+            "type": {
+              "name": "JString",
+              "nullability": "nullable",
+              "native": "java.lang.String"
+            }
+          }
+        ],
+        "returns": {
+          "name": "Volume",
+          "nullability": "nullable",
+          "native": "com.example.ktgreeter.Volume"
+        },
+        "isStatic": true
+      },
+      {
+        "name": "entries",
+        "kind": "property",
+        "native": "getEntries",
+        "returns": {
+          "name": "EnumEntries",
+          "native": "kotlin.enums.EnumEntries<com.example.ktgreeter.Volume>"
+        },
+        "isStatic": true
+      }
+    ]
+  },
+  {
+    "decl": "type",
+    "id": "kotlin.jvm.internal.DefaultConstructorMarker",
+    "name": "DefaultConstructorMarker",
+    "platform": "android",
+    "markers": [
+      {
+        "kind": "dropped",
+        "reason": "not in the pull list; jnigen emitted a stub. Add kotlin.jvm.internal.DefaultConstructorMarker to `classes` to bind it"
+      }
+    ],
+    "kind": "klass"
+  },
+  {
+    "decl": "type",
+    "id": "kotlinx.coroutines.flow.Flow",
+    "name": "Flow",
+    "platform": "android",
+    "markers": [
+      {
+        "kind": "dropped",
+        "reason": "not in the pull list; jnigen emitted a stub. Add kotlinx.coroutines.flow.Flow to `classes` to bind it"
+      }
+    ],
+    "kind": "klass"
+  },
+  {
+    "decl": "type",
+    "id": "kotlin.coroutines.Continuation",
+    "name": "Continuation",
+    "platform": "android",
+    "markers": [
+      {
+        "kind": "dropped",
+        "reason": "not in the pull list; jnigen emitted a stub. Add kotlin.coroutines.Continuation to `classes` to bind it"
+      }
+    ],
+    "kind": "klass"
+  },
+  {
+    "decl": "type",
+    "id": "java.lang.Enum",
+    "name": "Enum",
+    "platform": "android",
+    "markers": [
+      {
+        "kind": "dropped",
+        "reason": "not in the pull list; jnigen emitted a stub. Add java.lang.Enum to `classes` to bind it"
+      }
+    ],
+    "kind": "klass"
+  },
+  {
+    "decl": "type",
+    "id": "kotlin.enums.EnumEntries",
+    "name": "EnumEntries",
+    "platform": "android",
+    "markers": [
+      {
+        "kind": "dropped",
+        "reason": "not in the pull list; jnigen emitted a stub. Add kotlin.enums.EnumEntries to `classes` to bind it"
+      }
+    ],
+    "kind": "klass"
+  }
+]

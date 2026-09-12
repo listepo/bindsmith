@@ -1,0 +1,51 @@
+# Dependabot version updates.
+#
+# Not covered: mise.toml (Dart, Node, JDK, Flutter, Kotlin, CMake) is not an
+# ecosystem Dependabot supports, so toolchain bumps stay manual.
+version: 2
+updates:
+  - package-ecosystem: pub
+    # The members of the pub workspace; the root pubspec.yaml declares no
+    # dependencies of its own.
+    directories:
+      - /packages/bindsmith
+      - /packages/bindsmith_runtime
+      - /fixtures
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: build
+      include: scope
+    groups:
+      # A major bump of an upstream generator (ffigen, jnigen, swiftgen, winmd)
+      # is an adapter migration (AGENTS.md rules 1-2), so majors are never
+      # grouped: each arrives as its own pull request.
+      pub-minor-patch:
+        update-types: [minor, patch]
+
+  - package-ecosystem: npm
+    directory: /packages/bindsmith/tool/ts_sidecar
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: build
+      include: scope
+    ignore:
+      # typescript@7 is the Go-native compiler and ships no JavaScript
+      # Compiler API, which the sidecar is written against.
+      - dependency-name: typescript
+        update-types: ["version-update:semver-major"]
+    groups:
+      npm-minor-patch:
+        update-types: [minor, patch]
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: ci
+      include: scope
+    groups:
+      actions:
+        patterns: ["*"]

@@ -1,0 +1,633 @@
+<title>bindsmith</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --bg:#F3F5F2; --surface:#FFFFFF; --surface-2:#E9EDEA; --ink:#1B2326; --muted:#5C6A6E; --line:#D5DCD9; --line-strong:#B9C4C0;
+  --accent:#137A72; --accent-ink:#0E5F59; --accent-soft:#DCEFEC; --accent-line:#8FC7C0;
+  --warn:#B0661C; --warn-soft:#F6E9D6; --bad:#B0402B; --bad-soft:#F6E0DB; --good:#2E7B4F; --good-soft:#DDEFE3;
+  --code-bg:#EAEEEC; --shadow:0 1px 2px rgba(27,35,38,.06),0 8px 24px rgba(27,35,38,.06);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#121819; --surface:#1A2224; --surface-2:#212B2D; --ink:#E4EBE8; --muted:#9AA9A5; --line:#2A3639; --line-strong:#3B4A4E;
+    --accent:#4FB8AD; --accent-ink:#8FD9D0; --accent-soft:#163533; --accent-line:#2E6B65;
+    --warn:#E0984F; --warn-soft:#3A2A16; --bad:#E27460; --bad-soft:#3E211C; --good:#63C08A; --good-soft:#193226;
+    --code-bg:#0E1415; --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.35);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#121819; --surface:#1A2224; --surface-2:#212B2D; --ink:#E4EBE8; --muted:#9AA9A5; --line:#2A3639; --line-strong:#3B4A4E;
+  --accent:#4FB8AD; --accent-ink:#8FD9D0; --accent-soft:#163533; --accent-line:#2E6B65;
+  --warn:#E0984F; --warn-soft:#3A2A16; --bad:#E27460; --bad-soft:#3E211C; --good:#63C08A; --good-soft:#193226;
+  --code-bg:#0E1415; --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.35);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
+a{color:var(--accent-ink);text-decoration-color:var(--accent-line);text-underline-offset:3px}
+a:hover{text-decoration-color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:2px}
+code,kbd,pre{font-family:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+code{font-size:.9em;background:var(--code-bg);padding:.1em .35em;border-radius:3px}
+pre{margin:0;background:var(--code-bg);border:1px solid var(--line);border-radius:6px;padding:14px 16px;overflow-x:auto;font-size:13px;line-height:1.55}
+pre code{background:none;padding:0;font-size:inherit}
+h1,h2,h3,h4{font-family:"Bricolage Grotesque","IBM Plex Sans",system-ui,sans-serif;font-weight:700;letter-spacing:-.01em;text-wrap:balance;margin:0}
+h1{font-size:clamp(40px,6vw,64px);line-height:1;font-weight:800;letter-spacing:-.03em}
+h2{font-size:30px;line-height:1.15;margin-top:8px}
+h3{font-size:20px;line-height:1.3}
+h4{font-size:16px;line-height:1.35;font-weight:600;font-family:"IBM Plex Sans",system-ui,sans-serif}
+p{margin:0}
+.eyebrow{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent-ink);font-weight:600}
+.muted{color:var(--muted)}
+.num{font-variant-numeric:tabular-nums}
+
+.page{display:grid;grid-template-columns:minmax(0,1fr);gap:0}
+@media (min-width:1100px){
+  .page{grid-template-columns:240px minmax(0,1fr);}
+  .toc{position:sticky;top:0;align-self:start;height:100vh;overflow:auto;padding:36px 20px 36px 28px;border-right:1px solid var(--line)}
+}
+.toc{display:none}
+@media (min-width:1100px){.toc{display:block}}
+.toc .brand{font-family:"Bricolage Grotesque",sans-serif;font-weight:800;font-size:20px;letter-spacing:-.02em;margin-bottom:22px;display:flex;align-items:center;gap:10px}
+.toc .brand i{display:inline-block;width:14px;height:14px;background:var(--accent);border-radius:2px;transform:rotate(45deg)}
+.toc ol{list-style:none;margin:0;padding:0;display:grid;gap:2px}
+.toc a{display:block;padding:6px 8px;border-radius:5px;color:var(--muted);text-decoration:none;font-size:13.5px;line-height:1.35}
+.toc a:hover{background:var(--surface-2);color:var(--ink)}
+.toc a.active{background:var(--accent-soft);color:var(--accent-ink);font-weight:600}
+.toc .group{margin:14px 0 4px;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);padding-left:8px}
+
+main{min-width:0;padding:44px clamp(20px,4vw,64px) 96px}
+.wrap{max-width:900px}
+.prose{max-width:72ch}
+section{padding:40px 0;border-top:1px solid var(--line)}
+section:first-of-type{border-top:0;padding-top:0}
+.sec-head{display:grid;gap:8px;margin-bottom:22px}
+.lede{font-size:18px;line-height:1.5;max-width:68ch}
+
+header.top{display:grid;gap:18px;padding-bottom:40px}
+header.top .meta{display:flex;flex-wrap:wrap;gap:8px 18px;color:var(--muted);font-size:13.5px}
+header.top .meta b{color:var(--ink);font-weight:600}
+.verdict{background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:8px;padding:22px 24px;display:grid;gap:12px;box-shadow:var(--shadow)}
+.verdict p{max-width:72ch}
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.facts div{background:var(--surface);padding:14px 16px;display:grid;gap:4px}
+.facts .k{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.facts .v{font-family:"Bricolage Grotesque",sans-serif;font-weight:700;font-size:22px;line-height:1.1;letter-spacing:-.01em}
+.facts .v small{font-family:"IBM Plex Sans",sans-serif;font-weight:500;font-size:13px;color:var(--muted);letter-spacing:0}
+
+.scroll{overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:14px;line-height:1.45}
+thead th{text-align:left;font-weight:600;font-size:12.5px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);background:var(--surface-2);padding:10px 12px;border-bottom:1px solid var(--line);white-space:nowrap}
+tbody td{padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+tbody tr:last-child td{border-bottom:0}
+td.k{font-weight:600;white-space:nowrap}
+td .sub{display:block;color:var(--muted);font-size:12.5px;margin-top:2px}
+table.tight td,table.tight th{padding:8px 10px}
+.wide{min-width:880px}
+
+.tag{display:inline-block;font-size:11.5px;font-weight:600;letter-spacing:.03em;padding:2px 7px;border-radius:999px;border:1px solid var(--line-strong);color:var(--muted);white-space:nowrap;vertical-align:middle}
+.tag.ok{background:var(--good-soft);color:var(--good);border-color:transparent}
+.tag.exp{background:var(--warn-soft);color:var(--warn);border-color:transparent}
+.tag.gap{background:var(--bad-soft);color:var(--bad);border-color:transparent}
+.tag.acc{background:var(--accent-soft);color:var(--accent-ink);border-color:transparent}
+
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:18px 20px;display:grid;gap:8px;align-content:start}
+.card h3{font-size:17px}
+.card ul{margin:0;padding-left:18px;display:grid;gap:4px}
+.card ul li{font-size:14.5px}
+
+/* pipeline */
+.pipe{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px;align-items:stretch}
+@media (max-width:900px){.pipe{grid-template-columns:1fr}}
+.stage{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:14px 14px 12px;display:grid;gap:8px;align-content:start}
+.stage .st{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent-ink);font-weight:600}
+.stage .nm{font-family:"Bricolage Grotesque",sans-serif;font-weight:700;font-size:17px;line-height:1.15}
+.stage ul{margin:0;padding:0;list-style:none;display:grid;gap:4px}
+.stage li{font-size:12.5px;line-height:1.35;color:var(--muted)}
+.stage li code{font-size:11.5px}
+.stage.ir{background:var(--accent-soft);border-color:var(--accent-line)}
+.stage.ir li{color:var(--ink)}
+@media (min-width:901px){
+  .stage:not(:last-child)::after{content:"";position:absolute;right:-8px;top:50%;width:10px;height:10px;border-top:2px solid var(--line-strong);border-right:2px solid var(--line-strong);transform:translateY(-50%) rotate(45deg)}
+}
+
+/* recipes */
+.recipe{background:var(--surface);border:1px solid var(--line);border-radius:8px;overflow:hidden;margin-top:18px}
+.recipe .rh{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 14px;padding:14px 20px;background:var(--surface-2);border-bottom:1px solid var(--line)}
+.recipe .rh h3{font-size:19px}
+.recipe .rh .path{font-family:"IBM Plex Mono",monospace;font-size:12.5px;color:var(--muted)}
+.recipe dl{display:grid;grid-template-columns:150px minmax(0,1fr);margin:0}
+.recipe dt{padding:12px 20px;border-bottom:1px solid var(--line);font-size:12.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.recipe dd{margin:0;padding:12px 20px 12px 0;border-bottom:1px solid var(--line);font-size:14.5px;min-width:0}
+.recipe dt:last-of-type,.recipe dd:last-of-type{border-bottom:0}
+.recipe dd pre{margin-top:6px}
+.recipe dd ul{margin:0;padding-left:18px;display:grid;gap:3px}
+@media (max-width:640px){.recipe dl{grid-template-columns:1fr}.recipe dt{padding-bottom:0;border-bottom:0}.recipe dd{padding-left:20px}}
+
+/* phases */
+.phases{display:grid;gap:12px;counter-reset:ph}
+.phase{display:grid;grid-template-columns:56px minmax(0,1fr);gap:0 16px;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:16px 18px}
+.phase .n{font-family:"Bricolage Grotesque",sans-serif;font-weight:800;font-size:28px;line-height:1;color:var(--accent);letter-spacing:-.02em}
+.phase .n small{display:block;font-family:"IBM Plex Sans",sans-serif;font-weight:500;font-size:11px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-top:6px}
+.phase h3{font-size:18px;margin-bottom:6px;display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.phase p{font-size:14.5px;max-width:72ch}
+.phase .acc{margin-top:8px;font-size:13.5px;color:var(--muted)}
+.phase .acc b{color:var(--ink);font-weight:600}
+
+.compare td:first-child{font-weight:600}
+.fc td.was{color:var(--muted);text-decoration:line-through;text-decoration-color:var(--bad)}
+.fc td.now{font-weight:500}
+
+.callout{border:1px solid var(--line);border-radius:8px;padding:14px 18px;background:var(--surface);display:grid;gap:6px;font-size:14.5px}
+.callout.warn{border-color:var(--warn);background:var(--warn-soft)}
+.callout b{font-weight:600}
+ul.plain{margin:0;padding-left:20px;display:grid;gap:6px}
+ol.plain{margin:0;padding-left:22px;display:grid;gap:6px}
+footer{margin-top:60px;color:var(--muted);font-size:13px;border-top:1px solid var(--line);padding-top:20px;max-width:72ch}
+</style>
+
+<div class="page">
+<nav class="toc" aria-label="Contents">
+  <div class="brand"><i></i>bindsmith</div>
+  <ol>
+    <li><a href="#verdict">Verdict</a></li>
+    <li><a href="#task">Task and scope</a></li>
+    <div class="group">Landscape</div>
+    <li><a href="#dart">What Dart has</a></li>
+    <li><a href="#analogs">Analogs</a></li>
+    <li><a href="#matrix">Comparison matrix</a></li>
+    <li><a href="#dynamic">Static vs dynamic</a></li>
+    <div class="group">How it is done</div>
+    <li><a href="#recipes">Per-platform recipes</a></li>
+    <div class="group">Project</div>
+    <li><a href="#language">Implementation language</a></li>
+    <li><a href="#arch">Architecture</a></li>
+    <li><a href="#config">Config and CLI</a></li>
+    <li><a href="#plan">Plan and complexity</a></li>
+    <li><a href="#best">Why it will be better</a></li>
+    <li><a href="#risks">Risks</a></li>
+    <div class="group">Method</div>
+    <li><a href="#factcheck">Fact-check</a></li>
+    <li><a href="#sources">Sources</a></li>
+  </ol>
+</nav>
+
+<main>
+<div class="wrap">
+
+<header class="top">
+  <div class="eyebrow">Research · September 8, 2026</div>
+  <h1>bindsmith</h1>
+  <p class="lede">How to build a command-line generator of native-API bindings for the six Flutter platforms — Android, iOS, macOS, Windows, Linux and Web — and what already exists for that in Dart, .NET, NativeScript and the Rust world.</p>
+  <div class="meta">
+    <span>Method: <b>8 research agents → 5 fact-checks → synthesis</b></span>
+    <span>Claims refuted: <b class="num">17</b></span>
+    <span>Project files: <b>~/GitHub/bindsmith/research.md · plan.md · AGENTS.md</b></span>
+  </div>
+</header>
+
+<section id="verdict">
+  <div class="verdict">
+    <div class="eyebrow">Verdict</div>
+    <p><b>Write it in Dart, as static codegen, as an orchestrator over the official generators.</b> All the bricks for the individual platforms exist and are alive: ffigen 22 (C and Objective-C), swiftgen 0.2 (Swift), jnigen 1.0 (Java/Kotlin), package:win32 built from Win32Metadata, dart-dbus, dart:js_interop. No tool takes one declaration and emits bindings for all six platforms plus a unified Dart facade — the closest, flutter_rust_bridge, does it only for Rust input.</p>
+    <p>The bindsmith niche: one config → drivers over ffigen/swiftgen/jnigen/winmd/dbus and an own <code>.d.ts</code> driver for Web → one intermediate representation → passes (filters, renames, nullability, async, threading, fixups) → platform bindings, a facade with dispatch, thin native wrappers for what does not bind directly, and a dependency lockfile. The dynamic NativeScript path is rejected: its own runtime, no tree-shaking, ≈3.5× per-call overhead.</p>
+  </div>
+  <div class="facts" style="margin-top:14px">
+    <div><span class="k">Platforms</span><span class="v num">6</span></div>
+    <div><span class="k">Official Dart generators</span><span class="v num">7 <small>one platform each</small></span></div>
+    <div><span class="k">Multi-platform orchestrators</span><span class="v num">0 <small>for native input</small></span></div>
+    <div><span class="k">Refuted by fact-check</span><span class="v num">17 <small>agent claims</small></span></div>
+  </div>
+</section>
+
+<section id="task">
+  <div class="sec-head"><div class="eyebrow">Problem</div><h2>Task and scope</h2></div>
+  <div class="prose" style="display:grid;gap:12px">
+    <p>We need a program that takes a description of a native API — C/Objective-C headers, Swift modules, JAR/AAR, TypeScript declarations, <code>.winmd</code>, <code>.gir</code>, D-Bus XML — and generates Dart bindings for every Flutter platform, runs from the command line and is driven by config files. Reference points: Mono/Xamarin/.NET MAUI, NativeScript, plus uniffi, flutter_rust_bridge and Gluecodium.</p>
+    <p>Two interop directions must be kept apart. First, <b>native → Dart</b>: Dart calls an existing native API directly (ffigen, swiftgen, jnigen, js_interop). Second, <b>Dart ↔ native over channels</b>: we define a message interface and generate both sides (pigeon). The task is the first one; pigeon stays the escape hatch where a direct call is impossible.</p>
+  </div>
+</section>
+
+<section id="dart">
+  <div class="sec-head"><div class="eyebrow">Landscape</div><h2>What already exists in Dart and Flutter</h2><p class="lede">Versions and dates verified against the pub.dev API and the repositories on September 8, 2026.</p></div>
+  <div class="scroll"><table class="wide">
+    <thead><tr><th>Package</th><th>Version</th><th>Does</th><th>Config</th><th>Limits</th></tr></thead>
+    <tbody>
+      <tr><td class="k">ffigen</td><td>22.0.0<span class="sub">2026-09-08</span></td><td>C and Objective-C headers → Dart FFI via libclang</td><td>Dart script <code>tool/ffigen.dart</code>: <code>FfiGenerator</code>, <code>Input</code>, <code>Output(dart: DartOutput)</code>, visitor API. YAML deprecated</td><td>No C++; macros, varargs, SAL, <code>__stdcall</code></td></tr>
+      <tr><td class="k">objective_c</td><td>9.6.0<span class="sub">2026-08-20</span></td><td>ObjC runtime: ARC via NativeFinalizer, blocks <code>.listener/.blocking</code>, protocols</td><td>—</td><td>Apple only</td></tr>
+      <tr><td class="k">swift2objc · swiftgen</td><td>0.3.0 · 0.2.0<span class="sub">2026-09-08</span></td><td>Swift → ObjC wrapper → ffigen; emits <code>.g.dart</code> + <code>.m</code></td><td>Dart class <code>SwiftGenerator</code></td><td><span class="tag exp">experimental</span> NSObject-compatible types only</td></tr>
+      <tr><td class="k">jnigen · jni</td><td>1.0.0 · 1.0.3<span class="sub">2026-09-03 · 2026-07-30</span></td><td>Java/Kotlin (bytecode, Maven) → Dart via JNI; suspend → Future, nullability from Kotlin metadata</td><td><code>JniGenerator</code>, <code>Input</code>, <code>DartOutput</code>, <code>generate()</code></td><td>JDK 17–21 and Android SDK at generation time; manual <code>.release()</code>; overloads <code>new$2 → new$12</code> between versions</td></tr>
+      <tr><td class="k">pigeon</td><td>28.0.0<span class="sub">2026-08-21</span></td><td>Type-safe channels: Kotlin, Java, Swift, ObjC, C++, GObject; <code>@ProxyApi</code></td><td><code>@ConfigurePigeon(PigeonOptions(...))</code></td><td>No Web (flutter/flutter#98084 open since 2022); one version on both sides</td></tr>
+      <tr><td class="k">win32 · winmd</td><td>6.4.0 · 7.1.1<span class="sub">August 2026</span></td><td>Win32/COM from Microsoft Win32Metadata; winmd is a metadata reader</td><td>Internal generator with curated lists</td><td>Users do not generate bindings themselves</td></tr>
+      <tr><td class="k">dbus (Canonical)</td><td>0.7.15<span class="sub">2026-08-20</span></td><td><code>dart-dbus generate-remote-object</code> / <code>generate-object</code> from introspection XML</td><td>CLI</td><td>Linux only; LGPL 2.1</td></tr>
+      <tr><td class="k">gir-binding-gen</td><td>community<span class="sub">2026-09-06</span></td><td><code>.gir</code> → Dart</td><td>—</td><td><span class="tag exp">immature</span></td></tr>
+      <tr><td class="k">web · web_generator</td><td>internal</td><td>package:web is generated from WebIDL</td><td>—</td><td>Not on pub.dev; does not handle <code>.d.ts</code></td></tr>
+      <tr><td class="k">js_interop_gen</td><td>unpublished</td><td><code>.d.ts</code> → dart:js_interop (2025 PRs in dart-lang/web)</td><td>—</td><td><span class="tag gap">gap</span> the only living TS→Dart generator; js_facade_gen archived in 2022</td></tr>
+      <tr><td class="k">hooks · code_assets · native_toolchain_c/cmake</td><td>2.2.0 · 2.0.0 · 0.19.4 · 0.3.2</td><td>Build hooks: building and bundling native code from <code>hook/build.dart</code></td><td>Dart</td><td>On by default in stable since Flutter 3.38 (November 2025); template <code>package_ffi</code>, <code>plugin_ffi</code> deprecated</td></tr>
+    </tbody>
+  </table></div>
+  <div class="grid2" style="margin-top:18px">
+    <div class="card"><h3>Who uses what</h3><ul>
+      <li>Flutter-team plugins (webview_flutter, camera, video_player, in_app_purchase, local_auth) — pigeon; path_provider, url_launcher, shared_preferences — hand-written channels.</li>
+      <li>Dart team: cupertino_http — ffigen ObjC; ok_http — jnigen; sqlite3 — ffigen C.</li>
+      <li>HERE SDK — Gluecodium with an official Dart target. Sentry and Nutrient are moving to FFI/JNI bindings instead of channels <span class="tag">not re-verified</span>.</li>
+      <li>No vendor generates Flutter wrappers from an SDK automatically.</li>
+    </ul></div>
+    <div class="card"><h3>What hurts plugin authors</h3><ul>
+      <li>Web is always a separate implementation — pigeon does not cover it.</li>
+      <li>jnigen needs a compiled classpath: "build Android first".</li>
+      <li>Swift-only SDKs without <code>@objc</code> are invisible to ffigen; Swift structs and generics do not bridge.</li>
+      <li>Kotlin coroutines, default parameters and companion objects need a facade.</li>
+      <li>Memory and threads: JNI global refs, main-thread UIKit APIs, callbacks the GC collects.</li>
+      <li>Every tool has its own config; YAML → Dart-script migration in 2026.</li>
+    </ul></div>
+  </div>
+</section>
+
+<section id="analogs">
+  <div class="sec-head"><div class="eyebrow">Landscape</div><h2>Analogs in other ecosystems</h2><p class="lede">What to take from them: decisions, not code.</p></div>
+  <div class="grid2">
+    <div class="card"><div class="eyebrow">Mono · Xamarin · .NET MAUI</div><h3>Hand-written IDL, generator, fixups, slim binding</h3><ul>
+      <li><b>bgen</b> (iOS/macOS): ApiDefinition.cs with <code>[BaseType]</code>, <code>[Export]</code>, <code>[NullAllowed]</code>, <code>[Wrap]</code>; every Apple SDK is bound this way, by hand. The RFC for a Roslyn generator has been open since 2024 with no work.</li>
+      <li><b>Objective Sharpie</b>: dotnet global tool <code>Sharpie.Bind.Tool</code>, macOS only, libclang. The <code>[Verify]</code> attribute deliberately breaks compilation until the developer reviews the spot. The best UX for forced review.</li>
+      <li><b>.NET for Android</b>: class-parse (bytecode + Kotlin metadata) → api.xml → generator; fixups in <code>Metadata.xml</code> on XPath (<code>remove-node</code>, <code>attr</code>, <code>add-node</code>); <code>&lt;AndroidMavenLibrary&gt;</code> in .NET 9 pulls Maven and verifies dependencies.</li>
+      <li><b>Native Library Interop</b>: the official advice is not to bind the SDK as a whole but to write a thin Swift/Kotlin wrapper and bind that (template in CommunityToolkit/Maui.NativeLibraryInterop).</li>
+      <li><b>CsWin32</b>: pull model — <code>NativeMethods.txt</code> lists the APIs you need, the source generator takes them from <code>.winmd</code>. CppSharp 1.2, ClangSharp 21.1.8 — C/C++ through libclang with a passes pipeline.</li>
+    </ul></div>
+    <div class="card"><div class="eyebrow">NativeScript</div><h3>The dynamic pole</h3><ul>
+      <li>Metadata for the whole SDK is generated at build time: iOS — C++/libclang generator → binary <code>metadata-&lt;arch&gt;.bin</code>; Android — ASM/BCEL → tree streams.</li>
+      <li>The runtime (V8 on iOS since 7.0, 2020) dispatches through libffi/objc_msgSend and JNI reflection. 100% coverage without per-library codegen.</li>
+      <li>Filtering — <code>native-api-usage.json</code> (whitelist/blacklist); IDE types — <code>ns typings ios|android</code>; type packages of 15 and 48 MB.</li>
+      <li>Price: runtime and metadata in the binary, no tree-shaking, ≈3.5× per-call overhead by NativeScript's own benchmark. Closed for Flutter with AOT on iOS. We take the API-usage whitelist idea.</li>
+      <li>Relatives: dart_native (Alibaba) — abandoned since December 2022; PyObjC, Pyjnius, JNA, koffi.</li>
+    </ul></div>
+    <div class="card"><div class="eyebrow">Rust and IDL</div><h3>One model and templates</h3><ul>
+      <li><b>uniffi-rs 0.32</b>: Rust → Kotlin/Swift/Python/Ruby; third-party Go, C#, React Native and Dart (Uniffi-Dart 0.2.1, active). ComponentInterface + Askama templates + compatibility checksums.</li>
+      <li><b>flutter_rust_bridge 2.13</b>: the only mature "one declaration → 6 platforms", but Rust input only; <code>flutter_rust_bridge.yaml</code>, cargokit or native assets.</li>
+      <li><b>Gluecodium 14.1</b> (HERE): LIME IDL → C++, Java, Kotlin, Swift, Dart. Djinni is dead (2023 release), SWIG and wit-bindgen have no Dart.</li>
+      <li><b>objc2 header-translator</b>: <code>translation-config.toml</code> per framework — skipped, per-OS availability, safety flags. The model for declarative fixups.</li>
+      <li><b>gtk-rs gir</b>: <code>Gir.toml</code>, two layers sys and safe. <b>windows-bindgen 0.100</b>: <code>--filter</code> as a pull model from winmd.</li>
+    </ul></div>
+    <div class="card"><div class="eyebrow">Kotlin · Swift · Java · JS</div><h3>Mapping lessons</h3><ul>
+      <li>Kotlin cinterop <code>.def</code>; Swift export experimental; SKIE 0.10 fixes suspend/Flow on the Swift side; karakum — <code>.d.ts</code> → Kotlin through the TypeScript Compiler API.</li>
+      <li>swift-java 0.6: FFM (JDK 25+) and JNI (Android) modes. jextract: dump-then-curate — <code>--dump-includes</code>, edit, <code>--config</code>.</li>
+      <li>React Native codegen from TS specs; Nitro/nitrogen; Expo Modules DSL. Agora Terra: cppast + libclang → AST → TS renderers, YAML config.</li>
+      <li>Common: async differs everywhere (suspend/Flow, Swift async, Promise → Future/Stream); nullability from annotations; generics erased; docs lost almost everywhere; snapshot tests and a compile matrix are standard.</li>
+    </ul></div>
+  </div>
+</section>
+
+<section id="matrix">
+  <div class="sec-head"><div class="eyebrow">Comparison</div><h2>Comparison matrix</h2></div>
+  <div class="scroll"><table class="wide compare tight">
+    <thead><tr><th>Tool</th><th>Approach</th><th>Input</th><th>Targets</th><th>Config</th><th>Fixups</th><th>Review</th><th>Dependencies</th><th>Status</th></tr></thead>
+    <tbody>
+      <tr><td>bgen + Sharpie</td><td>static, hand-written IDL in C#</td><td>ObjC .h</td><td>C# iOS/macOS</td><td>C# attributes</td><td>in ApiDefinition</td><td><code>[Verify]</code></td><td>manual; NLI template</td><td>mature</td></tr>
+      <tr><td>.NET for Android</td><td>static from bytecode</td><td>JAR/AAR</td><td>C# Android</td><td>MSBuild + Metadata.xml</td><td>XPath</td><td>—</td><td>AndroidMavenLibrary + verification</td><td>mature</td></tr>
+      <tr><td>CsWin32</td><td>source generator, pull</td><td>.winmd</td><td>C# Windows</td><td>NativeMethods.txt</td><td>JSON</td><td>—</td><td>NuGet</td><td>mature</td></tr>
+      <tr><td>NativeScript</td><td>dynamic runtime</td><td>whole SDK</td><td>JS/TS iOS, Android</td><td>native-api-usage.json</td><td>—</td><td>—</td><td>CocoaPods/Gradle</td><td>mature</td></tr>
+      <tr><td>uniffi-rs</td><td>static from Rust</td><td>Rust</td><td>Kotlin, Swift, Py, Ruby, +Dart</td><td>uniffi.toml</td><td>custom_types</td><td>—</td><td>cargo</td><td>mature</td></tr>
+      <tr><td>flutter_rust_bridge</td><td>static from Rust</td><td>Rust</td><td>Dart × 6</td><td>YAML</td><td>attributes</td><td>—</td><td>cargokit / native assets</td><td>mature</td></tr>
+      <tr><td>Gluecodium</td><td>static from IDL</td><td>LIME</td><td>C++, Java, Kotlin, Swift, Dart</td><td>CLI</td><td>in IDL</td><td>—</td><td>—</td><td>mature</td></tr>
+      <tr><td>objc2 header-translator</td><td>static from SDK</td><td>Apple .h</td><td>Rust</td><td>translation-config.toml</td><td>declarative</td><td>—</td><td>—</td><td>mature</td></tr>
+      <tr><td>ffigen · jnigen · swiftgen · pigeon</td><td>static, one platform each</td><td>.h / .class / Swift / Dart IDL</td><td>Dart</td><td>Dart scripts</td><td>visitor, include</td><td>—</td><td>jnigen: Maven</td><td>stable / exp.</td></tr>
+      <tr style="background:var(--accent-soft)"><td>bindsmith</td><td>static orchestrator + unified IR</td><td>.h, Swift, JAR, .d.ts, .winmd, .gir, D-Bus</td><td>Dart × 6 + facade + wrappers</td><td>YAML + JSON Schema, Dart escape hatch</td><td>declarative + visitor</td><td>verify markers</td><td>Maven, SwiftPM, npm, NuGet, pkg-config + lockfile</td><td>in progress</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="dynamic">
+  <div class="sec-head"><div class="eyebrow">Fork in the road</div><h2>Static codegen versus a dynamic bridge</h2></div>
+  <div class="scroll"><table class="tight">
+    <thead><tr><th>Criterion</th><th>Static (ffigen, jnigen, bgen)</th><th>Dynamic (NativeScript)</th></tr></thead>
+    <tbody>
+      <tr><td class="k">API coverage</td><td>only what the config describes</td><td>100% immediately</td></tr>
+      <tr><td class="k">Type safety</td><td>full, dart analyze</td><td>types for the IDE only</td></tr>
+      <tr><td class="k">App size</td><td>minimal, tree-shaking</td><td>+metadata, +runtime</td></tr>
+      <tr><td class="k">Call</td><td>direct FFI</td><td>≈3.5× slower than native</td></tr>
+      <tr><td class="k">AOT and iOS</td><td>natural</td><td>needs an interpreter, impossible on iOS</td></tr>
+      <tr><td class="k">Maintenance</td><td>generator × platforms</td><td>runtime × platforms + metadata</td></tr>
+    </tbody>
+  </table></div>
+  <p class="prose" style="margin-top:14px">Decision: static codegen. From the dynamic world we take the pull model (a list of the APIs in use) and type generation from metadata.</p>
+</section>
+
+<section id="recipes">
+  <div class="sec-head"><div class="eyebrow">How it is done</div><h2>How native-API interop is generated on each platform</h2><p class="lede">One scheme: input → generator and config → commands → runtime → build → pitfalls. Snippets are schematic: class names come from the ffigen 22 and jnigen 1.0 changelogs, exact signatures are in the package API docs.</p></div>
+
+  <div class="recipe">
+    <div class="rh"><h3>Android</h3><span class="tag ok">stable</span><span class="path">jnigen 1.0.0 · jni 1.0.3</span></div>
+    <dl>
+      <dt>Input</dt><dd><code>.class</code>, JAR/AAR (including from Maven) or Java sources. Kotlin only compiled; its metadata gives nullability and <code>suspend</code>.</dd>
+      <dt>Config</dt><dd><code>tool/jnigen.dart</code>; YAML remains as legacy.<pre><code>import 'package:jnigen/jnigen.dart';
+
+void main() => JniGenerator(
+      input: Input(
+        classes: ['androidx.biometric.BiometricPrompt'],
+        // maven dependencies, android_sdk_config(add_gradle_deps), source_path…
+      ),
+      output: DartOutput(path: Uri.directory('lib/src/android/')),
+    ).generate();</code></pre></dd>
+      <dt>Commands</dt><dd><code>dart run tool/jnigen.dart</code>. For a plugin with an Android example jnigen runs Gradle itself to obtain the classpath.</dd>
+      <dt>Runtime</dt><dd><code>package:jni</code>: JObject, JString, JList/JMap, <code>Jni.spawn()</code> for a desktop JVM, interfaces implemented from Dart via <code>implement()</code>, global refs released with <code>.release()</code>.</dd>
+      <dt>Build</dt><dd><code>ffiPlugin: true</code>, Gradle dependencies, R8/ProGuard keep rules for classes called from Dart; JDK 17–21.</dd>
+      <dt>Pitfalls</dt><dd><ul><li>Numbered overload suffixes change between generator versions.</li><li>Coroutines, default parameters and companion objects need a Kotlin facade.</li><li>A callback object must be kept in a Dart reference or the GC collects it.</li></ul></dd>
+    </dl>
+  </div>
+
+  <div class="recipe">
+    <div class="rh"><h3>iOS and macOS</h3><span class="tag ok">ObjC stable</span><span class="tag exp">Swift experimental</span><span class="path">ffigen 22 · objective_c 9.6 · swiftgen 0.2</span></div>
+    <dl>
+      <dt>Input</dt><dd>Objective-C: framework headers (system, from an xcframework or a pod). Swift: a module; swiftgen itself runs swift2objc → <code>swiftc -emit-objc-header</code> → ffigen.</dd>
+      <dt>Config</dt><dd><code>tool/ffigen.dart</code> for ObjC, <code>tool/swiftgen.dart</code> with <code>SwiftGenerator(target:, inputs:, include:, output:, ffigen:)</code> for Swift.<pre><code>import 'package:ffigen/ffigen.dart';
+
+Future&lt;void&gt; main() => FfiGenerator(
+      input: Input(entryPoints: [Uri.file('src/wrapper.h')] /*, compilerOptions */),
+      objectiveC: ObjectiveC(),
+      output: Output(dart: DartOutput(path: Uri.file('lib/src/ios/av.dart'))),
+      visitors: [Visitor(objCInterface: (n) => n.isIncluded = n.name.startsWith('AV'))],
+    ).generate();</code></pre></dd>
+      <dt>Commands</dt><dd><code>dart run tool/ffigen.dart</code>, <code>dart run tool/swiftgen.dart</code>. Commit both <code>.g.dart</code> and <code>.m</code>: the latter must fall under the podspec's <code>Classes/**</code>.</dd>
+      <dt>Runtime</dt><dd><code>package:objective_c</code>: ARC via NativeFinalizer, blocks <code>.fromFunction</code> / <code>.listener</code> / <code>.blocking</code>, protocols via <code>$Builder.implementAsListener</code>; <code>package:ffi</code>.</dd>
+      <dt>Build</dt><dd>podspec <code>s.frameworks = 'AVFoundation'</code> or SwiftPM <code>linkerSettings: [.linkedFramework(...)]</code>; <code>ffiPlugin: true</code> for ios and macos.</dd>
+      <dt>Pitfalls</dt><dd><ul><li>Only <code>@objc</code>/NSObject-compatible Swift APIs are visible; structs and generics do not bridge.</li><li>Blocks from a foreign thread — only <code>.listener</code>/<code>.blocking</code>; UIKit and AppKit — main thread.</li><li>Without include filters ffigen pulls millions of lines from transitive frameworks; macros are not carried over.</li></ul></dd>
+    </dl>
+  </div>
+
+  <div class="recipe">
+    <div class="rh"><h3>Windows</h3><span class="tag ok">stable</span><span class="path">ffigen 22 · win32 6.4 · winmd 7.1 · native_toolchain_c</span></div>
+    <dl>
+      <dt>Input</dt><dd>C headers, your own or from the Windows SDK (<code>Windows Kits\10\Include\…\um|shared</code>). For Win32/COM — <code>.winmd</code> from NuGet Microsoft.Windows.SDK.Win32Metadata.</dd>
+      <dt>Generator</dt><dd>ffigen with <code>compilerOptions: ['-I…']</code>. Win32 — the pre-built <code>package:win32</code>, do not regenerate; for a custom slice — <code>package:winmd</code> as a metadata reader. C++ SDKs — an <code>extern "C"</code> shim built from <code>hook/build.dart</code>.</dd>
+      <dt>Runtime</dt><dd><code>package:ffi</code>, <code>package:win32</code> (COM vtables, calloc/free).</dd>
+      <dt>Build</dt><dd><pre><code>// hook/build.dart
+import 'package:hooks/hooks.dart';
+import 'package:native_toolchain_c/native_toolchain_c.dart';
+
+void main(List&lt;String&gt; args) => build(args, (input, output) async {
+      await CBuilder.library(
+        name: 'sdk_shim', assetName: 'sdk_shim.dart', sources: ['src/shim.c'],
+      ).run(input: input, output: output);
+    });</code></pre>Channels — pigeon C++ (<code>cppHeaderOut</code>, <code>cppSourceOut</code>).</dd>
+      <dt>Pitfalls</dt><dd><ul><li>ffigen needs libclang on Windows too.</li><li>SAL annotations and <code>__stdcall</code>; MSVC redistributables when distributing.</li><li>pigeon C++ has forward-declaration bugs (flutter/flutter#128330).</li></ul></dd>
+    </dl>
+  </div>
+
+  <div class="recipe">
+    <div class="rh"><h3>Linux</h3><span class="tag ok">C and D-Bus stable</span><span class="tag exp">.gir immature</span><span class="path">ffigen 22 · dbus 0.7.15 · gir-binding-gen</span></div>
+    <dl>
+      <dt>Input</dt><dd>C headers with include paths from <code>pkg-config --cflags gtk+-3.0</code>; D-Bus introspection XML; <code>.gir</code>.</dd>
+      <dt>Generator</dt><dd>ffigen (this is how Canonical makes glib.dart and stdlibc.dart); <code>dart-dbus generate-remote-object iface.xml -o lib/x.dart</code> for a client, <code>generate-object</code> for a server; the community gir-binding-gen.</dd>
+      <dt>Runtime</dt><dd><code>package:ffi</code>, <code>package:dbus</code>.</dd>
+      <dt>Build</dt><dd><code>hook/build.dart</code> + <code>ffiPlugin: true</code>; channels — pigeon GObject. The Flutter Linux embedder is GTK3; the GTK4 migration has been stalled since 2021.</dd>
+      <dt>Pitfalls</dt><dd><ul><li><code>G_OBJECT()</code> cast macros and <code>g_object_new</code> varargs are not carried over by ffigen.</li><li>glibc versions on target distributions.</li><li>dart-dbus output is a draft and needs finishing by hand.</li></ul></dd>
+    </dl>
+  </div>
+
+  <div class="recipe">
+    <div class="rh"><h3>Web</h3><span class="tag ok">js_interop stable</span><span class="tag gap">no generation from .d.ts</span><span class="path">dart:js_interop · package:web</span></div>
+    <dl>
+      <dt>Input</dt><dd>Browser APIs — WebIDL, already generated into <code>package:web</code>. JS libraries — <code>.d.ts</code> from npm or hand-written declarations.</dd>
+      <dt>Generator</dt><dd>For apps — hand-written extension types. Automation from <code>.d.ts</code> — only the unpublished js_interop_gen in dart-lang/web; js_facade_gen was archived in 2022.<pre><code>import 'dart:js_interop';
+
+extension type Chart(JSObject _) implements JSObject {
+  external Chart(JSObject context, JSObject options);
+  external JSPromise&lt;JSAny?&gt; update();
+  external void destroy();
+}
+
+Future&lt;void&gt; refresh(Chart c) => c.update().toDart;</code></pre></dd>
+      <dt>Runtime</dt><dd><code>dart:js_interop</code> (<code>JSPromise.toDart</code>, <code>.toJS</code>, JSFunction), <code>package:web</code>.</dd>
+      <dt>Build</dt><dd><code>&lt;script&gt;</code> in <code>web/index.html</code> or loading in flutter_bootstrap.js; plugin — <code>pluginClass</code> and <code>fileName</code> in the <code>web</code> block.</dd>
+      <dt>Pitfalls</dt><dd><ul><li>TS structural typing against nominal extension types.</li><li>Keep callbacks referenced (<code>.toJS</code>) or the GC collects them.</li><li><code>dart:html</code> and <code>package:js</code> do not compile under dart2wasm.</li></ul></dd>
+    </dl>
+  </div>
+
+  <div class="recipe">
+    <div class="rh"><h3>Packaging and channels</h3><span class="tag ok">stable</span><span class="path">package_ffi · federated plugin · pigeon 28</span></div>
+    <dl>
+      <dt>Template</dt><dd><code>flutter create --template=package_ffi &lt;name&gt;</code> (Flutter ≥ 3.38): <code>lib/</code>, <code>src/</code>, <code>hook/build.dart</code>; hooks, code_assets and native_toolchain_c in dev_dependencies.</dd>
+      <dt>Federated</dt><dd>App-facing package with <code>default_package:</code> per platform; implementations with <code>implements:</code>; FFI implementations use <code>ffiPlugin: true</code>.</dd>
+      <dt>Pigeon</dt><dd><code>dart run pigeon --input pigeons/messages.dart</code>; <code>@HostApi</code>, <code>@FlutterApi</code>, <code>@ProxyApi</code>; <code>@async</code> → Kotlin suspend and Swift async throws. One pigeon version on both sides; pigeon in public APIs is discouraged.</dd>
+    </dl>
+  </div>
+</section>
+
+<section id="language">
+  <div class="sec-head"><div class="eyebrow">Project</div><h2>Implementation language</h2></div>
+  <div class="scroll"><table class="tight wide">
+    <thead><tr><th>Criterion</th><th>Dart</th><th>Rust</th><th>Kotlin/JVM</th><th>TypeScript/Node</th><th>C#</th></tr></thead>
+    <tbody>
+      <tr><td class="k">Official generators as libraries</td><td>direct: FfiGenerator, JniGenerator, SwiftGenerator, Pigeon.runWithOptions, winmd</td><td>subprocess</td><td>subprocess</td><td>subprocess</td><td>subprocess</td></tr>
+      <tr><td class="k">Emitting Dart</td><td>code_builder 4.12, dart_style 3.1, analyzer 14.3</td><td>no</td><td>no</td><td>no</td><td>no</td></tr>
+      <tr><td class="k">Distribution to Flutter developers</td><td>dart pub global activate, dart run, dart compile exe</td><td>cargo/binary</td><td>JVM</td><td>npm</td><td>dotnet tool</td></tr>
+      <tr><td class="k">Parsing .d.ts</td><td>node sidecar</td><td>swc/oxc without type semantics</td><td>karakum approach</td><td>TypeScript Compiler API</td><td>no</td></tr>
+      <tr><td class="k">Who will contribute</td><td>Flutter community</td><td>narrow</td><td>narrow</td><td>broad, but foreign to Flutter</td><td>narrow</td></tr>
+    </tbody>
+  </table></div>
+  <p class="prose" style="margin-top:14px"><b>Decision: Dart</b> for the core, the CLI and all drivers. For <code>.d.ts</code> — a narrow sidecar on the TypeScript Compiler API (typescript 6.x; the 7.x Go port has no JavaScript API), invoked by the web driver; swapped for js_interop_gen from dart-lang/web once it is published. No second language in the core.</p>
+</section>
+
+<section id="arch">
+  <div class="sec-head"><div class="eyebrow">Project</div><h2>Architecture</h2><p class="lede">An orchestrator: thin drivers over the official generators, one intermediate representation, passes, emitters, verification.</p></div>
+  <div class="pipe">
+    <div class="stage"><div class="st">Input</div><div class="nm">Config and sources</div><ul><li><code>bindsmith.yaml</code> + JSON Schema</li><li><code>tool/bindsmith.dart</code> escape hatch</li><li>.h · Swift · JAR/AAR · .d.ts · .winmd · .gir · D-Bus XML</li><li>Maven, SwiftPM, npm, NuGet, pkg-config → <code>bindsmith.lock</code></li></ul></div>
+    <div class="stage"><div class="st">Drivers</div><div class="nm">Over the official APIs</div><ul><li>c, objc — ffigen</li><li>swift — swiftgen</li><li>jvm — jnigen</li><li>web — TS sidecar → js_interop</li><li>winmd — package:winmd</li><li>dbus — dart-dbus</li></ul></div>
+    <div class="stage ir"><div class="st">Core</div><div class="nm">Unified IR</div><ul><li>types, members, params</li><li>nullability, async, threading</li><li>availability, docs</li><li>markers: verify, dropped</li></ul></div>
+    <div class="stage"><div class="st">Passes</div><div class="nm">Pure functions over IR</div><ul><li>include/exclude (pull)</li><li>rename, nullability</li><li>async → Future/Stream</li><li>threading → listener</li><li>availability, docs</li><li>fixups DSL, verify, budget</li></ul></div>
+    <div class="stage"><div class="st">Emitters</div><div class="nm">Artifacts</div><ul><li>platform <code>.g.dart</code></li><li>facade with conditional imports</li><li>Swift <code>@objc</code> and Kotlin wrappers</li><li><code>hook/build.dart</code>, podspec, Gradle, index.html</li></ul></div>
+    <div class="stage"><div class="st">Verification</div><div class="nm">Not green, not done</div><ul><li>dart analyze</li><li>compile matrix macOS / Linux / Windows</li><li>golden tests</li><li>verify markers block</li><li>lockfile and <code>--check</code></li></ul></div>
+  </div>
+  <div class="grid2" style="margin-top:18px">
+    <div class="card"><h3>What we borrow and from where</h3><ul>
+      <li>Pull model of API lists — CsWin32 NativeMethods.txt, windows-bindgen <code>--filter</code>, NativeScript native-api-usage.json.</li>
+      <li>Dump-then-curate — jextract <code>--dump-includes</code> → <code>bindsmith dump</code>.</li>
+      <li>Declarative fixups — objc2 translation-config.toml, Xamarin Metadata.xml, gtk-rs Gir.toml.</li>
+      <li>Review markers that break the build — Objective Sharpie <code>[Verify]</code>.</li>
+      <li>Slim binding as an artifact — MAUI Native Library Interop, but generated.</li>
+      <li>Dependency resolution with verification — AndroidMavenLibrary; lockfile — cargo/pub.</li>
+    </ul></div>
+    <div class="card"><h3>What we do not do (YAGNI)</h3><ul>
+      <li>Our own runtime or dynamic dispatch.</li>
+      <li>Our own C++ parser — an <code>extern "C"</code> shim and a thin wrapper instead.</li>
+      <li>Preprocessor macro support.</li>
+      <li>GUI, mandatory AI dependencies, our own formatter and analyzer.</li>
+    </ul></div>
+  </div>
+</section>
+
+<section id="config">
+  <div class="sec-head"><div class="eyebrow">Project</div><h2>Config and CLI</h2></div>
+  <div class="grid2">
+    <div style="min-width:0"><h4 style="margin-bottom:8px">bindsmith.yaml</h4><pre><code># yaml-language-server: $schema=…/bindsmith.schema.json
+name: my_sdk
+output: lib/src/generated
+facade:
+  library: lib/my_sdk.dart
+  unsupported: throw          # throw | stub | omit
+
+platforms:
+  android:
+    driver: jvm
+    deps: { maven: [com.example:sdk-android:2.3.1] }
+    include: { classes: [com.example.sdk.Client] }
+    kotlin: { suspend: future, flow: stream }
+  ios:
+    driver: swift
+    deps: { swiftpm: [{ url: https://github.com/example/sdk-ios, from: 2.3.0 }] }
+    include: { types: [Client, ClientDelegate] }
+    wrapper: auto             # @objc wrapper for Swift-only members
+  macos: { inherit: ios }
+  windows:
+    driver: c
+    headers: [third_party/sdk/include/sdk.h]
+    include: { functions: ["sdk_*"], structs: ["sdk_*"] }
+    build: { hook: native_toolchain_c, sources: [src/shim.c] }
+  linux: { inherit: windows }
+  web:
+    driver: dts
+    deps: { npm: ["@example/sdk@2.3.1"] }
+    include: { exports: [Client, ClientOptions] }
+
+fixups:
+  - match: { platform: android, symbol: "Client#connect$2" }
+    rename: connectWithTimeout
+  - match: { symbol: "Client.*Legacy*" }
+    hide: true
+  - match: { platform: ios, symbol: Client.onEvent }
+    threading: main
+
+verify:
+  markers: error
+  compile: [android, ios, macos, windows, linux, web]
+  size_budget: { lines: 40000 }</code></pre></div>
+    <div class="scroll"><table class="tight">
+      <thead><tr><th>Command</th><th>Does</th></tr></thead>
+      <tbody>
+        <tr><td class="k">init</td><td>Writes a config with examples, adds dev dependencies</td></tr>
+        <tr><td class="k">doctor</td><td>Checks libclang, Xcode and swiftc, JDK 17–21 and Android SDK, VS Build Tools, node, pkg-config; prints the commands that fix it</td></tr>
+        <tr><td class="k">resolve</td><td>Downloads Maven/SwiftPM/npm/NuGet inputs, writes <code>bindsmith.lock</code> with sha256</td></tr>
+        <tr><td class="k">dump</td><td>Prints every visible symbol in include-list syntax</td></tr>
+        <tr><td class="k">generate</td><td>Drivers → IR → passes → emitters; <code>--check</code> for CI</td></tr>
+        <tr><td class="k">verify</td><td>dart analyze, unresolved markers, compile matrix, size budget</td></tr>
+        <tr><td class="k">diff</td><td>After a generator or SDK bump: what was renamed, removed, added</td></tr>
+        <tr><td class="k">watch · explain</td><td>Regenerate on change; how a symbol was mapped and which fixups fired</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+</section>
+
+<section id="plan">
+  <div class="sec-head"><div class="eyebrow">Project</div><h2>Plan and complexity</h2><p class="lede">Every task in <code>plan.md</code> carries a complexity rating from C1 (mechanical, hours) to C5 (research-grade, no upstream to lean on) and a status. Work runs <b>risk-first</b>: IR, passes and facade synthesis first, then the <code>.d.ts</code> driver, then the ffigen adapter — the places where the design is most likely to be wrong. Estimates are for one experienced engineer; agents can parallelize phases 2–5. The toolchain is installed with mise from <code>mise.toml</code>.</p></div>
+  <div class="phases">
+    <div class="phase"><div class="n">0<small>3 days</small></div><div><h3>Skeleton and decisions <span class="tag acc">C2</span><span class="tag ok">done</span></h3><p>Pub workspace: packages <code>bindsmith</code> (CLI, drivers, IR, passes, emitters) and <code>bindsmith_runtime</code> (verify annotation, dispatch, errors). CI on three OSes. Five ADRs: language, static codegen, config format, drivers over libraries, pull model. Upstream pinned to one major version. mise toolchain.</p><p class="acc"><b>Done when:</b> CI is green on macOS, Ubuntu, Windows; <code>bindsmith --help</code> prints the commands.</p></div></div>
+    <div class="phase"><div class="n">1<small>1.5 weeks</small></div><div><h3>Config, IR, first slice — the C driver <span class="tag acc">C4</span><span class="tag ok">config, IR, C driver, layout and CLI done</span></h3><p>Typed config with JSON Schema and clear errors; IR model (done, with JSON snapshots); driver interface; C driver over ffigen through FfiGenerator and the visitor API — the public AST exposes names and inclusion but no types, so signatures are read from the generated Dart with the analyzer; emitter with <code>hook/build.dart</code>; commands init, doctor, generate, dump; golden tests on the fixture.</p><p>The config keeps one schema and uses it twice, which is the only way the two halves stay honest: the same document is exported for an editor's YAML language server and walked against the parsed file by the loader, so what gets underlined in an editor and what bindsmith refuses cannot drift apart. Shape is settled first — spelling, types, which keys exist — and nothing proceeds past a shape that did not hold; then meaning, which a schema states badly: that a platform names a driver or inherits from one that is configured directly, that <code>headers:</code> was not written under an Android entry, that a Maven coordinate parses, so a typo is caught while reading the file rather than when a download fails. Every problem is reported, not the first, and each one carries the line, the column and the offending line underlined. A key written under the wrong driver is an error rather than a key that quietly does nothing, which is the no-silent-drops rule wearing a config file. The <code>bindsmith.yaml</code> printed above loads verbatim as one of the tests, so this page and the loader cannot disagree.</p><p>Where a generated file goes turned out to deserve its own object rather than a line of path-joining at each call site. Three things have to agree about one file and none of them can see the others: the generator is handed an output path and an asset name before any content exists, the facade imports each binding by a path relative to itself, and the build hook declares the asset that the binding's own annotation names. Get the last pair out of step and nothing complains until the first call at runtime, which then has nothing to point at. So all three are derived from each other in one place, and the configuration gained the rule they depend on — generated Dart lives under <code>lib/</code>, because a file anywhere else has no <code>package:</code> URI and so no asset name. Iteration follows the platform list rather than the order the config file happens to be written in, so reformatting <code>bindsmith.yaml</code> cannot change a generated file.</p><p>The build hook is one file with one guard per platform, because a package may only have one and it runs once per target. Both flavours are emitted: one compiles the listed sources directly, the other runs an existing <code>CMakeLists.txt</code>, installs into the hook's own output directory and collects what appeared there, since CMake names the built file itself. Both are committed as fixtures and type-checked by the analyzer against the real upstream APIs — a snapshot test would only ever catch our own edits, never a renamed parameter three packages away.</p><p>The command line is where all of that finally meets, and it is deliberately one file that returns an exit code instead of ending the process. Everything it prints goes through sinks it was handed, and the directory it works in is an argument rather than the process's own, so the whole command line is exercised in memory against a throwaway project directory — thirteen cases in about a second, none of them starting a second Dart. The exit codes are the old <code>sysexits</code> ones, and the split is the reason to bother: a script needs to tell "your configuration is wrong" from "the generator broke", and a build that shells out to this deserves better than a bare 1. <code>init</code> writes the schema next to the config and points the file at it, so the editor completes the file it has just created; the test for that template does not compare it against saved text but loads it through the real loader, because what makes a starting point right is that it starts. Four of the six drivers are not wired in yet — each still needs something the configuration cannot say or resolve — and asking for one names the platform, names the driver and says how to leave it out, rather than generating nothing and reporting success. One test runs the whole thing twice and compares the bytes.</p><p class="acc"><b>Done when:</b> the fixture <code>fixtures/c/geometry</code> generates and compiles on Ubuntu and macOS.</p></div></div>
+    <div class="phase"><div class="n">2<small>2 weeks</small></div><div><h3>Apple: Objective-C and Swift <span class="tag acc">C4</span><span class="tag ok">drivers and fixtures done</span></h3><p>ObjC driver: completion handlers → Future, blocks from foreign threads → listener, the threading fixup. Swift driver through SwiftGenerator behind an adapter for the unstable API; Swift-only members recorded as dropped markers. podspec and SwiftPM emission.</p><p>Both fixtures are now built and called, not just generated and analyzed, because on Apple platforms the analyzer sees almost none of what can go wrong: a selector that does not exist fails at the call, a protocol written in Dart is only implemented once Objective-C dispatches to it, a block invoked from the wrong thread crashes, and an <code>NSError**</code> filled by the callee is invisible in the Dart signature. Swift adds three more, because the binding is three translations deep: the mangled class name only resolves if the module is really named what the wrapper thinks, a Swift struct only arrives as the wrapper class around it, and an <code>async</code> method reaches Dart as a completion handler that Swift invokes from its own executor thread — so it needs a listener block, and an ordinary one deadlocks. Building the Swift fixture is also the only check that the phase 7 bridge generator writes Swift a compiler accepts. The exercise paid for itself immediately: ffigen had been writing the glue's <code>#import</code> as a relative walk to the header it parsed, which for an absolute path meant a committed file carrying someone's home directory and building on no other machine. It now ships the header's own name, found through the include path a podspec sets.</p><p class="acc"><b>Done when:</b> the ObjC and Swift fixtures pass dart test on macOS; the podspec passes lint.</p></div></div>
+    <div class="phase"><div class="n">3<small>2 weeks</small></div><div><h3>Android: jnigen, Maven, lockfile <span class="tag acc">C4</span><span class="tag ok">driver, Maven and the lockfile done</span></h3><p>Maven resolver with transitive POMs and sha256 in the lockfile; JVM driver over JniGenerator; R8 keep rules, Gradle snippet; Kotlin fixture with overloads, an interface, suspend, Flow, default parameters; tests through Jni.spawn on a desktop JVM.</p><p>The Maven resolver is bindsmith's own, which was not the plan: jnigen resolves coordinates by writing a stub Gradle project and running <code>gradlew</code>, so there is no API to call and nothing that can be pinned. It reads POMs directly instead — parent inheritance, properties, <code>dependencyManagement</code> including BOMs imported with <code>scope=import</code>, <code>optional</code> and scope filtering, exclusions down the subtree, nearest definition wins. Parsing a POM is a pure function with its own tests, the way a pass is, and the fetch is injectable, so every resolution case runs against an in-memory repository and only one test reaches Maven Central. Two things only a real artifact could teach. A single repository is not enough: <code>androidx.annotation:annotation-experimental</code> is served by Google's Maven and the Kotlin standard library it needs only by Central, so repositories are a list searched in order. And a version range, <code>LATEST</code> or a snapshot is refused by name rather than resolved, because each makes one coordinate mean different bytes on a different day and there is nothing honest to write in a lockfile. The download cache mirrors the repository layout, so it is itself a Maven repository and the offline second run comes almost free.</p><p>The lockfile itself is short, and most of the design is about what it deliberately does not record. It does not name the repository that served the bytes: once the digest matches, which mirror answered does not change what you compiled against, and recording it would rewrite the file every time a team added one. It does not say which platform asked, because a coordinate names the same bytes whoever wanted it, and a dependency two platforms share should be downloaded and written once. Entries are sorted by coordinate, so reordering the configuration cannot produce a diff. A section whose resolver has not been written yet is refused by name rather than carried along, so a typo in the file cannot look like a working lock, and every problem is reported with its line and column the way a bad configuration is — this file is read by every offline build, and one it half-understands is worse than one it rejects. Re-resolving a coordinate whose bytes disagree with the lock is an error naming it and never a quiet rewrite: a released artifact does not change, so either the lock was edited or something is serving different bytes under that name. Offline is asked as a question rather than hoped for — the flag installs a fetch that throws, and since the download cache mirrors a repository’s own layout it is one, so a resolve it can answer never reaches for the network at all. Testing that end to end needed neither a network nor a test-only seam, because a repository may now be a <code>file://</code> directory as well as an <code>https://</code> one — which Gradle has always allowed and a vendored mirror on a shared drive actually wants — so the test publishes two artifacts into a temporary directory, resolves, deletes the repository, and resolves again offline. Plain <code>http://</code> stays refused: an artifact fetched over it is one that whoever sits between you and the mirror chose, and it would then be pinned as if it were yours.</p><p class="acc"><b>Done when:</b> regeneration with the lockfile works offline; diff catches overload renumbering.</p></div></div>
+    <div class="phase"><div class="n">4<small>2 weeks</small></div><div><h3>Web: the .d.ts driver <span class="tag acc">C5</span><span class="tag ok">driver and emitter done</span></h3><p>A sidecar on the TypeScript Compiler API emits a JSON model of the declarations (done, with node tests); the driver turns it into IR and the emitter writes extension types with <code>@JS</code>, JSPromise → Future in the facade. A callback parameter takes a typed Dart function converted with <code>.toJS</code>, and an inline literal union such as <code>'formal' | 'casual'</code> becomes a Dart enum named after where it was declared — both invented on the facade side, so the binding keeps saying exactly what the <code>.d.ts</code> said. Everything unsupported is a marker, never a silent drop. The generated code is compiled by <b>both</b> dart2js and dart2wasm in the test suite, which is not ceremony: it caught a bug the analyzer accepts, that a top-level <code>external</code> member needs its own <code>@JS()</code>.</p><p class="acc"><b>Done when:</b> the nanoid, uuid and chart.js-subset fixtures compile to JS and Wasm.</p></div></div>
+    <div class="phase"><div class="n">5<small>1.5 weeks</small></div><div><h3>Windows and Linux <span class="tag acc">C4 / C2</span><span class="tag ok">winmd and build hooks done</span></h3><p>winmd driver with a pull list: when a symbol already exists in package:win32 the facade re-exports it, only gaps are generated (done). There is no upstream generator for Windows — winmd reads metadata, it does not emit — so bindsmith writes the dart:ffi binding itself, and the COM vtable layout is proved by reading a generated struct back out of a raw buffer. Linux: pkg-config for the C driver, D-Bus driver, markers for GLib macros. hook/build.dart templates for C and CMake, a shim for C++.</p><p class="acc"><b>Done when:</b> the fixtures generate and analyze on windows-latest and ubuntu-latest.</p></div></div>
+    <div class="phase"><div class="n">6<small>2 weeks</small></div><div><h3>Facade, passes, fixups, verify <span class="tag acc">C5</span><span class="tag ok">passes, facade and commands done</span></h3><p>All passes as pure functions with unit tests (include, nullability and the fixups DSL are done); facade with conditional imports and runtime dispatch (done: throw/stub/omit policies, marshalling table, verify markers, goldens); the verify annotation blocks <code>bindsmith verify</code> until removed or acknowledged in the config; commands explain, diff, watch, generate --check.</p><p>The facade over C is where the design had to be sharpest, and it is split so neither half parses the other's output: a pure pass rewrites the dart:ffi types into the API the facade offers and leaves the dart:ffi spelling in the IR, and the emitter reads that spelling to decide how each value crosses. Strings go through an arena, an opaque handle keeps its pointer and gains a <code>dispose</code>, an enum crosses by constant name, and a struct is built with <code>ffi.Struct.create</code> — on the Dart heap, so it is garbage-collected and needs no <code>dispose</code> at all, which is the opposite of what the plan assumed. A struct passed by pointer is an arena copy read back field by field afterwards, because dart:ffi copies a struct into a pointer but has nothing that copies one out; without that, a C out-parameter would be silently lost. Every one of those was settled by calling a real compiled library, not by reading generated text.</p><p>The commands around generation turned out to be one idea rather than four. Every one of them is the same run with a different destination, so the pipeline was moved behind a single function that is told where the generators should write; a command that only reads points them at a directory it deletes afterwards. That is what makes the reproducibility check honest — it is the entire run again, into a throwaway directory, compared against what is committed, touching nothing in the tree it is checking, so continuous integration can run it on a clean checkout. It repaid the design immediately: because the throwaway directory has a different path every time, a check that passes also proves no generated file has recorded where it was generated, which is precisely the bug that had put a home directory into the Objective-C glue two phases earlier. The same change made printing the intermediate model read-only; until then it wrote a binding into the project as a side effect of showing you something. <b>diff</b> compares an earlier printout against the current sources symbol by symbol, and on shape rather than on the raw model, because review markers and doc comments move constantly while a changed signature is what actually breaks a caller. <b>explain</b> answers the question the markers exist for — why is this a pointer, why is this nullable, where did my method go — for one symbol, on every platform, with the reason attached. And <b>watch</b> keeps going while the configuration is broken, which is most of the time while someone is editing it, and takes its snapshot of the inputs before a run rather than after, or a header saved while generation is in flight is quietly absorbed and never rebuilt.</p><p class="acc"><b>Done when:</b> a six-platform fixture yields one library with an identical public API (checked with the analyzer).</p></div></div>
+    <div class="phase"><div class="n">7<small>2 weeks</small></div><div><h3>Slim-wrapper generation <span class="tag acc">C5</span></h3><p>From dropped markers: a Swift <code>@objc</code> bridge for structs, generics and async; a Kotlin bridge for Flow, default parameters and sealed classes; a C++ <code>extern "C"</code> shim. Wrappers are committed and edited inside marked regions, then fed through the ordinary drivers.</p><p class="acc"><b>Done when:</b> the fixture's Swift-only method is callable from Dart; Flow becomes a Stream.</p></div></div>
+    <div class="phase"><div class="n">8<small>2 weeks</small></div><div><h3>Real examples, docs, release <span class="tag acc">C4 / C3</span><span class="tag ok">docs done</span></h3><p>Five examples: AVFoundation, androidx.biometric, sqlite on desktop, chart.js on Web, a Swift-only package through the wrapper. Docs generated from the JSON Schema. Publishing to pub.dev, binaries on GitHub Releases (dart compile exe cross-compiles only to Linux, so build on each OS), Homebrew tap, pana ≥ 140.</p><p>The documentation is written, and the reference half of it is generated. A hand-written list of configuration keys drifts the moment someone adds one, and nothing fails when it does — so the reference page is walked out of the same schema an editor completes against and the loader rejects by, committed as a fixture, and a test fails when a new key has not reached it. Two more checks come cheaply from having the schema in hand: one walks it from the other side and fails on a key the page does not list, and one confirms every cross-reference on the page points at a heading that exists, computing the anchor the way the site will. The rest is prose that a schema cannot carry — what each driver needs on the host and what it will not do, a recipe per fixup with a note that acknowledging a marker is the one edit that can hide a real problem, and the order to upgrade in: record the API, bump, then diff. Publishing is one line of theme in the folder GitHub Pages already knows how to serve; nothing is installed and nothing is built.</p><p class="acc"><b>Done when:</b> all examples build in CI; packages are published; the docs site is live.</p></div></div>
+  </div>
+</section>
+
+<section id="best">
+  <div class="sec-head"><div class="eyebrow">Project</div><h2>Why bindsmith will beat what exists</h2></div>
+  <ol class="plain prose">
+    <li><b>One declaration → six platforms and one facade.</b> Today only flutter_rust_bridge does this, and only for Rust input.</li>
+    <li><b>Web parity.</b> <code>.d.ts</code> → dart:js_interop — no public tool since 2022; the pigeon Web issue has been open for four years.</li>
+    <li><b>Pull model, declarative fixups and verify markers</b> — a synthesis of CsWin32, objc2 and Sharpie; no Dart tool has any of it.</li>
+    <li><b>Slim binding as a generated artifact</b>, not advice in the docs.</li>
+    <li><b>Dependencies and a lockfile</b> — generation reproducible on CI without "build Android first".</li>
+    <li><b>Resilience to upstream</b> — pins, adapters, contract tests, <code>diff</code> after bumps.</li>
+    <li><b>Docs and availability carried over</b> into dartdoc and runtime checks.</li>
+    <li><b>A size budget</b> for generated code with a report of what can be excluded.</li>
+  </ol>
+</section>
+
+<section id="risks">
+  <div class="sec-head"><div class="eyebrow">Project</div><h2>Risks</h2></div>
+  <div class="scroll"><table class="tight">
+    <thead><tr><th>Risk</th><th>Likelihood</th><th>Mitigation</th></tr></thead>
+    <tbody>
+      <tr><td class="k">Upstream breaking changes</td><td>high</td><td>ffigen 22 rewrote its API, jnigen 1.0 renamed classes, swiftgen 0.x. One adapter per driver, contract tests, one-major pins, <code>diff</code> for users.</td></tr>
+      <tr><td class="k">swiftgen and swift2objc are experimental</td><td>high</td><td>The wrapper path (phase 7) is the fallback for everything swiftgen does not bridge.</td></tr>
+      <tr><td class="k">.d.ts semantics</td><td>medium</td><td>A subset plus markers; track js_interop_gen; never lose anything silently.</td></tr>
+      <tr><td class="k">Heavy toolchains</td><td>high</td><td><code>doctor</code> with exact commands; mise for Dart/node/JDK; documented CI images; cache in <code>.dart_tool/bindsmith</code>.</td></tr>
+      <tr><td class="k">Six platforms with one team</td><td>high</td><td>Phases ship independently: publish 0.x after the C, Web and JVM drivers.</td></tr>
+      <tr><td class="k">Macros and C++</td><td>medium</td><td>A documented "no"; a shim generator.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="factcheck">
+  <div class="sec-head"><div class="eyebrow">Method</div><h2>Fact-check</h2><p class="lede">Eight agents gathered facts by dimension, five agents adversarially checked them against primary sources: the pub.dev API, crates.io, npm, the GitHub API, official documentation. Below is what had to be corrected.</p></div>
+  <div class="scroll"><table class="fc tight">
+    <thead><tr><th>In the agent's report</th><th>After verification</th></tr></thead>
+    <tbody>
+      <tr><td class="was">jni 1.0.0</td><td class="now">jni 1.0.3 (2026-07-30); jnigen 1.0.0 (2026-09-03)</td></tr>
+      <tr><td class="was">swift2objc is not on pub.dev</td><td class="now">swift2objc 0.3.0 and swiftgen 0.2.0 published 2026-09-08</td></tr>
+      <tr><td class="was">web_generator on pub.dev, supports .d.ts</td><td class="now">internal dart-lang/web tool, WebIDL only; .d.ts is the separate unpublished js_interop_gen</td></tr>
+      <tr><td class="was">flutter_rust_bridge 1.8.2</td><td class="now">2.13.0 (2026-08-23), 2.14.0-beta.1</td></tr>
+      <tr><td class="was">uniffi 0.31.0, January 2026</td><td class="now">0.32.0 (2026-06-30)</td></tr>
+      <tr><td class="was">windows-bindgen 0.66 in May 2026 with a --minimal flag</td><td class="now">0.66 — January 2026; current 0.100.0; flag unconfirmed</td></tr>
+      <tr><td class="was">NativeScript switched iOS to V8 in 9.0 (2025)</td><td class="now">in 7.0 (2020)</td></tr>
+      <tr><td class="was">metadata filtering through .mdg files</td><td class="now">native-api-usage.json</td></tr>
+      <tr><td class="was">NativeScript overhead 1.5–2×</td><td class="now">≈3.5× by NativeScript's own benchmark</td></tr>
+      <tr><td class="was">dart_native is maintained</td><td class="now">last release December 2022</td></tr>
+      <tr><td class="was">Objective Sharpie is a closed utility</td><td class="now">dotnet global tool Sharpie.Bind.Tool; sources not public</td></tr>
+      <tr><td class="was">Djinni is maintained, has Dart</td><td class="now">release 1.4.1 (2023), C++, Java, ObjC only</td></tr>
+      <tr><td class="was">template plugin_ffi</td><td class="now">deprecated; package_ffi since Flutter 3.38</td></tr>
+      <tr><td class="was">dart compile exe cross-compiles</td><td class="now">Linux targets only</td></tr>
+      <tr><td class="was">YAML is the standard config of ffigen and jnigen</td><td class="now">Dart scripts; YAML legacy</td></tr>
+      <tr><td class="was">native assets stable in Flutter 3.38, September 2024</td><td class="now">Flutter 3.38 — November 2025; build hooks on by default</td></tr>
+      <tr><td class="was">Roslyn generator rgen in development</td><td class="now">RFC dotnet/macios#21308 open, no work</td></tr>
+      <tr><td class="was">jnigen's Maven support is reusable through its library API</td><td class="now">it writes a stub Gradle project and shells out to gradlew; no resolver API, no checksums</td></tr>
+    </tbody>
+  </table></div>
+  <div class="callout" style="margin-top:14px"><b>Not re-verified</b><span>Kotlin Swift export status on 2.4.x; Nitro after the repository move; Sentry, Nutrient and Mapbox data; the jextract --dump-includes flag; Terra in the Agora Flutter SDK. Such spots are marked in research.md.</span></div>
+</section>
+
+<section id="sources">
+  <div class="sec-head"><div class="eyebrow">Method</div><h2>Sources</h2></div>
+  <ul class="plain prose">
+    <li>pub.dev API and changelogs: ffigen, objective_c, swift2objc, swiftgen, jnigen, jni, pigeon, win32, winmd, dbus, hooks, code_assets, native_toolchain_c, native_toolchain_cmake, web, flutter_rust_bridge, dart_native, code_builder, dart_style, analyzer, build_runner.</li>
+    <li>dart-lang/native (README and CHANGELOG of ffigen, jnigen, swiftgen, swift2objc); dart.dev/interop; dart.dev/tools/hooks; dart.dev/tools/dart-compile; dart.dev/tools/pub/workspaces.</li>
+    <li>docs.flutter.dev: developing-packages, release notes 3.35 and 3.38, breaking-changes.</li>
+    <li>dart-lang/web (web_generator, PR #549 and #554); dart-lang/http (cupertino_http, ok_http); halildurmus/win32; canonical/dbus.dart; llamadonica/dart-gobject-bindings.</li>
+    <li>learn.microsoft.com: Objective Sharpie, AndroidMavenLibrary, CallConvSwift, MAUI Native Library Interop; dotnet/macios#21308; dotnet/runtimelab SwiftBindings; mono/CppSharp; NuGet ClangSharpPInvokeGenerator and CsWin32; microsoft/win32metadata.</li>
+    <li>docs.nativescript.org (metadata, generate-typings); blog.nativescript.org (V8 beta 2020, perf-metrics part 1); NativeScript/ios-metadata-generator and android-metadata-generator.</li>
+    <li>crates.io: uniffi, windows-bindgen, objc2; Uniffi-Dart/uniffi-dart; heremaps/gluecodium; cross-language-cpp/djinni-generator; swig.org/compat.html; bytecodealliance/wit-bindgen; madsmtm/objc2 header-translator.</li>
+    <li>JetBrains/kotlin; touchlab/skie; npm karakum and react-native; swiftlang/swift-java; openjdk/jextract; AgoraIO-Extensions/terra.</li>
+    <li>roszkowski.dev/2026/swiftgen-jnigen/ (May 18, 2026); flutter/flutter#98084.</li>
+  </ul>
+  <footer>Report prepared on September 8, 2026. Raw agent reports and fact-check logs are in <code>docs/research-raw/</code> of the bindsmith project. A Russian version is kept at <code>docs/report.ru.html</code>.</footer>
+</section>
+
+</div>
+</main>
+</div>
+
+<script>
+(function(){
+  var links = Array.prototype.slice.call(document.querySelectorAll('.toc a'));
+  var map = {};
+  links.forEach(function(a){ var id = a.getAttribute('href').slice(1); var el = document.getElementById(id); if (el) map[id] = a; });
+  if (!('IntersectionObserver' in window)) return;
+  var current = null;
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if (e.isIntersecting) {
+        var a = map[e.target.id]; if (!a) return;
+        if (current) current.classList.remove('active');
+        a.classList.add('active'); current = a;
+      }
+    });
+  }, { rootMargin: '-10% 0px -70% 0px', threshold: 0 });
+  Object.keys(map).forEach(function(id){ io.observe(document.getElementById(id)); });
+})();
+</script>

@@ -1,0 +1,35 @@
+name: bindsmith
+description: >-
+  One config, six Flutter platforms. Generates Dart bindings for native APIs by
+  orchestrating ffigen, swiftgen, jnigen, winmd and dart-dbus, plus a TypeScript
+  .d.ts driver for Web, through a unified IR with fixup passes and review markers.
+version: 0.1.0
+repository: https://github.com/listepo/bindsmith
+resolution: workspace
+
+environment:
+  sdk: ^3.13.0
+
+executables:
+  bindsmith: bindsmith
+
+dependencies:
+  analyzer: ^14.3.0
+  archive: ^4.2.0 # an Android .aar is a zip; its classes.jar is the classpath entry
+  args: ^2.7.0
+  crypto: ^3.0.7 # sha256 of every downloaded artifact, for bindsmith.lock
+  dart_style: ^3.1.0
+  dbus: ^0.7.15
+  ffigen: ^22.0.0
+  jnigen: ^1.0.0
+  logging: ^1.3.0
+  package_config: ^3.0.0 # finds package:jni the way jnigen does, before jnigen exit(1)s without it
+  path: ^1.9.0
+  swiftgen: ^0.2.0
+  winmd: ^7.0.0
+  xml: ^7.0.1 # Maven POMs are XML; hand-rolling that parser would be worse
+  yaml: ^3.1.0
+
+dev_dependencies:
+  lints: ^6.0.0
+  test: ^1.26.0

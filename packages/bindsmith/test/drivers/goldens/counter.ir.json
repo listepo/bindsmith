@@ -1,0 +1,402 @@
+[
+  {
+    "decl": "type",
+    "id": "BSMCounter",
+    "name": "BSMCounter",
+    "platform": "macos",
+    "loc": {
+      "file": "fixtures/objc/counter/counter.h"
+    },
+    "docs": "Counts things, loudly or otherwise.\n\n`BSMCounter(Formatting)`: Formatting helpers kept out of the main interface.",
+    "kind": "klass",
+    "supertypes": [
+      {
+        "name": "NSObject"
+      }
+    ],
+    "members": [
+      {
+        "name": "alloc",
+        "kind": "method",
+        "returns": {
+          "name": "BSMCounter"
+        },
+        "isStatic": true
+      },
+      {
+        "name": "allocWithZone",
+        "kind": "method",
+        "native": "allocWithZone:",
+        "params": [
+          {
+            "name": "zone",
+            "type": {
+              "name": "Pointer",
+              "args": [
+                {
+                  "name": "NSZone"
+                }
+              ]
+            }
+          }
+        ],
+        "returns": {
+          "name": "BSMCounter"
+        },
+        "isStatic": true
+      },
+      {
+        "name": "counterWithLabel",
+        "kind": "method",
+        "native": "counterWithLabel:",
+        "params": [
+          {
+            "name": "label",
+            "type": {
+              "name": "NSString"
+            }
+          }
+        ],
+        "returns": {
+          "name": "BSMCounter"
+        },
+        "isStatic": true,
+        "docs": "A counter that starts at zero."
+      },
+      {
+        "name": "new$",
+        "kind": "method",
+        "native": "new",
+        "returns": {
+          "name": "BSMCounter"
+        },
+        "isStatic": true
+      },
+      {
+        "name": "",
+        "kind": "constructor",
+        "native": "new"
+      },
+      {
+        "name": "countTo",
+        "kind": "method",
+        "native": "countTo:completion:",
+        "params": [
+          {
+            "name": "target",
+            "type": {
+              "name": "int",
+              "native": "NSInteger"
+            }
+          },
+          {
+            "name": "completion",
+            "type": {
+              "name": "ObjCBlock",
+              "args": [
+                {
+                  "name": "ffi.Void Function(ffi.Long, objc.NSError?)"
+                }
+              ],
+              "native": "BSMCountHandler"
+            },
+            "named": true
+          }
+        ],
+        "async": "callback",
+        "docs": "Counts up to `target`, then calls `handler`.",
+        "markers": [
+          {
+            "kind": "verify",
+            "reason": "takes an Objective-C block: build it with ObjCBlock_ffiVoid_NSInteger_NSError.listener (any thread, void return only), ObjCBlock_ffiVoid_NSInteger_NSError.blocking (blocks the caller) or ObjCBlock_ffiVoid_NSInteger_NSError.fromFunction (owner isolate only). A completion handler becomes a Future in the facade"
+          }
+        ]
+      },
+      {
+        "name": "delegate",
+        "kind": "property",
+        "returns": {
+          "name": "BSMCounterDelegate",
+          "nullability": "nullable"
+        },
+        "docs": "Who to notify on every tick."
+      },
+      {
+        "name": "increment",
+        "kind": "method",
+        "native": "increment:",
+        "params": [
+          {
+            "name": "amount",
+            "type": {
+              "name": "int",
+              "native": "NSInteger"
+            }
+          }
+        ],
+        "returns": {
+          "name": "int",
+          "native": "NSInteger"
+        },
+        "docs": "Adds `amount` and returns the new value."
+      },
+      {
+        "name": "init",
+        "kind": "method",
+        "returns": {
+          "name": "BSMCounter"
+        }
+      },
+      {
+        "name": "initWithLabel",
+        "kind": "method",
+        "native": "initWithLabel:",
+        "params": [
+          {
+            "name": "label",
+            "type": {
+              "name": "NSString"
+            }
+          }
+        ],
+        "returns": {
+          "name": "BSMCounter"
+        }
+      },
+      {
+        "name": "label",
+        "kind": "property",
+        "returns": {
+          "name": "NSString"
+        },
+        "docs": "The label shown next to the value."
+      },
+      {
+        "name": "delegate",
+        "kind": "setter",
+        "native": "setDelegate:",
+        "params": [
+          {
+            "name": "value",
+            "type": {
+              "name": "BSMCounterDelegate",
+              "nullability": "nullable"
+            }
+          }
+        ],
+        "docs": "Who to notify on every tick."
+      },
+      {
+        "name": "label",
+        "kind": "setter",
+        "native": "setLabel:",
+        "params": [
+          {
+            "name": "value",
+            "type": {
+              "name": "NSString"
+            }
+          }
+        ],
+        "docs": "The label shown next to the value."
+      },
+      {
+        "name": "validate",
+        "kind": "method",
+        "native": "validate:error:",
+        "params": [
+          {
+            "name": "target",
+            "type": {
+              "name": "int",
+              "native": "NSInteger"
+            }
+          }
+        ],
+        "returns": {
+          "name": "bool"
+        },
+        "docs": "Reports `NO` and fills `error` when `target` is negative.",
+        "markers": [
+          {
+            "kind": "verify",
+            "reason": "the Objective-C `error:` out-parameter is dropped; a failure throws NSErrorException instead"
+          }
+        ]
+      },
+      {
+        "name": "value",
+        "kind": "property",
+        "returns": {
+          "name": "int",
+          "native": "NSInteger"
+        },
+        "docs": "The current value."
+      },
+      {
+        "name": "describeWithVolume",
+        "kind": "method",
+        "native": "describeWithVolume:",
+        "params": [
+          {
+            "name": "volume",
+            "type": {
+              "name": "BSMVolume"
+            }
+          }
+        ],
+        "returns": {
+          "name": "NSString"
+        },
+        "docs": "Renders the value at the given volume."
+      }
+    ]
+  },
+  {
+    "decl": "type",
+    "id": "BSMCounterDelegate",
+    "name": "BSMCounterDelegate",
+    "platform": "macos",
+    "loc": {
+      "file": "fixtures/objc/counter/counter.h"
+    },
+    "docs": "Receives counter updates.",
+    "markers": [
+      {
+        "kind": "verify",
+        "reason": "Objective-C protocol: implement it from Dart with BSMCounterDelegate$Builder.implement(...)"
+      }
+    ],
+    "kind": "interface",
+    "supertypes": [
+      {
+        "name": "NSObjectProtocol"
+      }
+    ],
+    "members": [
+      {
+        "name": "counterDidFinish",
+        "kind": "method",
+        "docs": "Called once, after the last tick.",
+        "markers": [
+          {
+            "kind": "verify",
+            "reason": "@optional protocol method: throws UnimplementedOptionalMethodException when the receiver does not implement it"
+          }
+        ]
+      },
+      {
+        "name": "counterDidTick",
+        "kind": "method",
+        "native": "counterDidTick:",
+        "params": [
+          {
+            "name": "value",
+            "type": {
+              "name": "int",
+              "native": "NSInteger"
+            }
+          }
+        ],
+        "docs": "Called on every tick."
+      }
+    ]
+  },
+  {
+    "decl": "type",
+    "id": "BSMCountHandler",
+    "name": "BSMCountHandler",
+    "platform": "macos",
+    "loc": {
+      "file": "fixtures/objc/counter/counter.h"
+    },
+    "docs": "Called once a count finishes.",
+    "kind": "typedef",
+    "supertypes": [
+      {
+        "name": "ObjCBlock",
+        "args": [
+          {
+            "name": "ffi.Void Function(ffi.Long, objc.NSError?)"
+          }
+        ],
+        "native": "ffi.Pointer<objc.ObjCBlockImpl>"
+      }
+    ]
+  },
+  {
+    "decl": "type",
+    "id": "BSMVolume",
+    "name": "BSMVolume",
+    "platform": "macos",
+    "loc": {
+      "file": "fixtures/objc/counter/counter.h"
+    },
+    "docs": "How loudly the counter reports itself.",
+    "markers": [
+      {
+        "kind": "verify",
+        "reason": "enum storage size is implementation-defined; ffigen mimics the platform compiler"
+      }
+    ],
+    "kind": "enumeration",
+    "members": [
+      {
+        "name": "BSMVolumeQuiet",
+        "kind": "constant",
+        "value": "0",
+        "returns": {
+          "name": "int"
+        }
+      },
+      {
+        "name": "BSMVolumeNormal",
+        "kind": "constant",
+        "value": "1",
+        "returns": {
+          "name": "int"
+        }
+      },
+      {
+        "name": "BSMVolumeLoud",
+        "kind": "constant",
+        "value": "2",
+        "returns": {
+          "name": "int"
+        }
+      }
+    ]
+  },
+  {
+    "decl": "type",
+    "id": "NSInteger",
+    "name": "NSInteger",
+    "platform": "macos",
+    "loc": {
+      "file": "fixtures/objc/counter/counter.h"
+    },
+    "kind": "typedef",
+    "supertypes": [
+      {
+        "name": "int",
+        "native": "ffi.Long"
+      }
+    ]
+  },
+  {
+    "decl": "type",
+    "id": "instancetype",
+    "name": "instancetype",
+    "platform": "macos",
+    "loc": {
+      "file": "fixtures/objc/counter/counter.h"
+    },
+    "kind": "typedef",
+    "supertypes": [
+      {
+        "name": "ObjCObject",
+        "native": "ffi.Pointer<objc.ObjCObjectImpl>"
+      }
+    ]
+  }
+]

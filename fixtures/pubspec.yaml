@@ -1,0 +1,27 @@
+name: bindsmith_fixtures
+description: Fixture inputs and generated outputs used by bindsmith tests. Not published.
+publish_to: none
+resolution: workspace
+
+environment:
+  sdk: ^3.13.0
+
+dependencies:
+  bindsmith_runtime: ^0.1.0
+  dbus: ^0.7.15
+  ffi: ^2.2.0
+  objective_c: ^9.6.0
+  # Proves the winmd driver's re-export path: a symbol package:win32 already
+  # covers is exported from there instead of regenerated (P5-1).
+  win32: ^6.4.0
+
+dev_dependencies:
+  lints: ^6.0.0
+  # What a generated hook/build.dart imports. They are here so that
+  # `dart analyze --fatal-infos fixtures` type-checks the emitted hooks under
+  # tool/build_hook/ against the real APIs; a golden would only catch our own
+  # edits, not an upstream rename.
+  code_assets: ^2.0.0
+  hooks: ^2.2.0
+  native_toolchain_c: ^0.19.4
+  native_toolchain_cmake: ^0.3.2

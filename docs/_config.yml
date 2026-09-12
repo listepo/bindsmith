@@ -1,0 +1,13 @@
+# GitHub Pages, served from /docs on the default branch (Settings → Pages →
+# Source: Deploy from a branch, folder /docs). Nothing is built locally and
+# nothing is installed: Jekyll is what Pages already runs, and a theme it
+# already ships costs one line.
+title: bindsmith
+description: One config, six Flutter platforms.
+theme: jekyll-theme-primer
+exclude:
+  # Working material, not documentation: raw agent reports, fact-check logs
+  # and the Russian copies of the research.
+  - research-raw/
+  - research.ru.md
+  - report.ru.html
