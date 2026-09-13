@@ -1,0 +1,28 @@
+# yaml-language-server: $schema=../../schema/bindsmith.schema.json
+name: swift_volume
+output: lib/src/generated
+facade:
+  library: lib/swift_volume.dart
+  unsupported: throw
+
+platforms:
+  ios:
+    driver: swift
+    module: VolumeKit
+    sources: [native/VolumeKit/Sources/VolumeKit/Volume.swift]
+    wrapper: auto
+  macos:
+    inherit: ios
+
+fixups:
+  - match: { symbol: 'MixerWrapper.new$' }
+    hide: true
+  - match: { symbol: 'VolumeWrapper.new$' }
+    hide: true
+  - match: { symbol: 'MixerWrapper.allocWithZone' }
+    hide: true
+  - match: { symbol: 'VolumeWrapper.allocWithZone' }
+    hide: true
+
+verify:
+  markers: warn

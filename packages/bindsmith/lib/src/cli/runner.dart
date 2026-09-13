@@ -31,6 +31,7 @@ import 'package:args/args.dart';
 import 'package:args/command_runner.dart';
 import 'package:logging/logging.dart';
 import 'package:path/path.dart' as p;
+import 'package:winmd/winmd.dart' as winmd;
 import 'package:yaml/yaml.dart';
 
 import '../config/config.dart';
@@ -44,16 +45,20 @@ import '../drivers/c/c_driver.dart';
 import '../drivers/c/objc_driver.dart';
 import '../drivers/c/pkg_config.dart';
 import '../drivers/dbus/dbus_driver.dart';
+import '../drivers/dts/dts_driver.dart';
 import '../drivers/jvm/jvm_driver.dart';
 import '../drivers/swift/swift_driver.dart';
+import '../drivers/winmd/winmd_driver.dart';
 import '../emit/android_glue.dart';
 import '../emit/apple_glue.dart';
 import '../emit/build_hook.dart';
 import '../emit/editable_regions.dart';
 import '../emit/facade.dart';
+import '../emit/js_interop.dart';
 import '../emit/kotlin_bridge.dart';
 import '../emit/layout.dart';
 import '../emit/swift_bridge.dart';
+import '../emit/win32.dart';
 import '../ir/ir.dart';
 import '../passes/fixups.dart';
 import '../passes/passes.dart';
@@ -119,6 +124,9 @@ Future<int> runBindsmith(
     err.writeln('bindsmith: ${e.message}');
     return exitSoftware;
   } on PkgConfigException catch (e) {
+    err.writeln('bindsmith: ${e.message}');
+    return exitSoftware;
+  } on ProcessException catch (e) {
     err.writeln('bindsmith: ${e.message}');
     return exitSoftware;
   } on _Failure catch (e) {
@@ -1043,6 +1051,7 @@ final class _Project {
         if (_patterns(spec).isNotEmpty) includePass(_patterns(spec)),
         nullabilityPass(),
         if (spec.driver == Driver.c) cFacadePass(),
+        if (spec.driver == Driver.dts) dtsFacadePass(),
         if (config.fixups.isNotEmpty) fixupsPass(config.fixups),
       ]);
     }
@@ -1058,14 +1067,20 @@ final class _Project {
     // headers still resolve against the project while the binding lands
     // wherever the command wanted it.
     final output = p.join(outputRoot, layout.binding(platform));
-    final assetId = layout.assetId(platform);
+    // A linked Apple framework lives in the process. A C hook has to name
+    // the asset the binding's `@DefaultAsset` looks up, so only then is an id
+    // handed down. Swift still receives one: swiftgen's lookup needs a value
+    // even when the module is linked rather than loaded as a code asset.
+    final assetId = spec.build == null && spec.driver == Driver.objc
+        ? null
+        : layout.assetId(platform);
     final include = _include(spec);
     return switch (spec.driver) {
       Driver.c => CDriver(
         platform: platform,
         headers: spec.headers,
         include: include,
-        assetId: assetId,
+        assetId: layout.assetId(platform),
         compilerOptions: pkgConfigCflags(spec.deps.pkgConfig),
       ).load(workingDirectory: root, output: output, logger: logger),
       Driver.objc =>
@@ -1094,19 +1109,159 @@ final class _Project {
         spec: spec,
         output: output,
         outputRoot: outputRoot,
-        assetId: assetId,
+        assetId: layout.assetId(platform),
         include: include,
       ),
-      // dts and winmd need resolved npm / NuGet files on generate, which
-      // resolve() now locks. Saying so beats generating nothing and reporting
-      // success.
-      _ => throw _Failure(
-        exitSoftware,
-        'the ${spec.driver.name} driver is not wired to the command line yet, '
-        'so ${platform.name} cannot be generated; '
-        'use --platform to leave it out',
-      ),
+      Driver.dts => _dts(spec: spec, output: output),
+      Driver.winmd => _winmd(spec: spec, output: output),
     };
+  }
+
+  Future<List<Decl>> _dts({
+    required PlatformConfig spec,
+    required String output,
+  }) async {
+    if (spec.deps.npm.isEmpty && spec.sources.isEmpty) {
+      throw _Failure(
+        exitData,
+        'the dts driver needs deps.npm or sources with a .d.ts file',
+      );
+    }
+    final files = [...spec.sources];
+    if (spec.deps.npm.isNotEmpty) {
+      final lockFile = File(p.join(root, Lockfile.fileName));
+      if (!lockFile.existsSync()) {
+        throw _Failure(
+          exitData,
+          'no ${Lockfile.fileName}; run "bindsmith resolve" before generating',
+        );
+      }
+      final lock = parseLockfile(
+        lockFile.readAsStringSync(),
+        sourceUrl: lockFile.uri,
+      );
+      for (final coordinate in spec.deps.npm) {
+        if (!lock.digests.containsKey('npm $coordinate')) {
+          throw _Failure(
+            exitData,
+            '${Lockfile.fileName} does not pin $coordinate; '
+            'run "bindsmith resolve"',
+          );
+        }
+      }
+      final artifacts = await NpmResolver(
+        cache: Directory(p.join(root, '.dart_tool', 'bindsmith', 'npm')),
+        fetch: (url) => throw NpmException(
+          '$url is not in the download cache; run "bindsmith resolve" with a '
+          'network first',
+        ),
+      ).resolve(spec.deps.npm);
+      for (final artifact in artifacts) {
+        final expected = lock.digests['npm ${artifact.coordinate}'];
+        if (expected != null && expected != artifact.sha256) {
+          throw _Failure(
+            exitData,
+            'the bytes behind ${artifact.coordinate} are not the ones '
+            '${Lockfile.fileName} records; run "bindsmith resolve"',
+          );
+        }
+      }
+      files.addAll([
+        for (final artifact in artifacts)
+          p.relative(artifact.entrypoint.path, from: root),
+      ]);
+    }
+    final sidecar = await DtsDriver.bundledSidecarDir();
+    var ir = await DtsDriver(sidecarDir: sidecar)
+        .load(files, workingDirectory: root);
+    final patterns = _patterns(spec);
+    if (patterns.isNotEmpty) {
+      ir = includePass(patterns)(ir);
+    }
+    File(output)
+      ..parent.createSync(recursive: true)
+      ..writeAsStringSync(emitJsInterop(ir));
+    return ir;
+  }
+
+  Future<List<Decl>> _winmd({
+    required PlatformConfig spec,
+    required String output,
+  }) async {
+    if (spec.deps.nuget.isEmpty) {
+      throw _Failure(
+        exitData,
+        'the winmd driver needs deps.nuget with a PackageId@version, for '
+        'example Microsoft.Windows.SDK.Win32Metadata@60.0.34-preview',
+      );
+    }
+    final functions = {...?spec.include[IncludeKind.functions]};
+    final types = {
+      ...?spec.include[IncludeKind.types],
+      ...?spec.include[IncludeKind.structs],
+      ...?spec.include[IncludeKind.enums],
+    };
+    if (functions.isEmpty && types.isEmpty) {
+      throw _Failure(
+        exitData,
+        'the winmd driver needs include.functions, include.types, '
+        'include.structs or include.enums',
+      );
+    }
+    final lockFile = File(p.join(root, Lockfile.fileName));
+    if (!lockFile.existsSync()) {
+      throw _Failure(
+        exitData,
+        'no ${Lockfile.fileName}; run "bindsmith resolve" before generating',
+      );
+    }
+    final lock = parseLockfile(
+      lockFile.readAsStringSync(),
+      sourceUrl: lockFile.uri,
+    );
+    for (final coordinate in spec.deps.nuget) {
+      if (!lock.digests.containsKey('nuget $coordinate')) {
+        throw _Failure(
+          exitData,
+          '${Lockfile.fileName} does not pin $coordinate; '
+          'run "bindsmith resolve"',
+        );
+      }
+    }
+    final artifacts = await NugetResolver(
+      cache: Directory(p.join(root, '.dart_tool', 'bindsmith', 'nuget')),
+      fetch: (url) => throw NugetException(
+        '$url is not in the download cache; run "bindsmith resolve" with a '
+        'network first',
+      ),
+    ).resolve(spec.deps.nuget);
+    for (final artifact in artifacts) {
+      final expected = lock.digests['nuget ${artifact.coordinate}'];
+      if (expected != null && expected != artifact.sha256) {
+        throw _Failure(
+          exitData,
+          'the bytes behind ${artifact.coordinate} are not the ones '
+          '${Lockfile.fileName} records; run "bindsmith resolve"',
+        );
+      }
+    }
+    final readers = [
+      for (final artifact in artifacts)
+        winmd.MetadataReader.read(artifact.winmd.readAsBytesSync()),
+    ];
+    final index = readers.length == 1
+        ? winmd.MetadataIndex.fromReader(readers.single)
+        : winmd.MetadataIndex.fromReaders(readers);
+    final List<Decl> ir;
+    try {
+      ir = WinmdDriver(index: index, functions: functions, types: types).load();
+    } on ArgumentError catch (e) {
+      throw _Failure(exitData, e.message?.toString() ?? '$e');
+    }
+    File(output)
+      ..parent.createSync(recursive: true)
+      ..writeAsStringSync(emitWin32(ir).source);
+    return ir;
   }
 
   Future<List<Decl>> _jvm({

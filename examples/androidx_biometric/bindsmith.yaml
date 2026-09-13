@@ -1,0 +1,29 @@
+# yaml-language-server: $schema=../../schema/bindsmith.schema.json
+name: androidx_biometric
+output: lib/src/generated
+facade:
+  library: lib/androidx_biometric.dart
+  unsupported: throw
+
+platforms:
+  android:
+    driver: jvm
+    compile_sdk: 36
+    deps:
+      maven: ['androidx.biometric:biometric:1.2.0-alpha05']
+      repositories:
+        - https://maven.google.com
+        - https://repo1.maven.org/maven2
+    include:
+      classes:
+        - androidx.biometric.BiometricManager
+
+fixups:
+  # Context / nested types are stubs unless listed in include.classes.
+  - match: { symbol: 'BiometricManager.from' }
+    hide: true
+  - match: { symbol: 'BiometricManager.getStrings' }
+    hide: true
+
+verify:
+  markers: warn

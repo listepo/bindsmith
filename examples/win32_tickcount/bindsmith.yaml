@@ -1,0 +1,17 @@
+# yaml-language-server: $schema=../../schema/bindsmith.schema.json
+name: win32_tickcount
+output: lib/src/generated
+facade:
+  library: lib/win32_tickcount.dart
+  unsupported: throw
+
+platforms:
+  windows:
+    driver: winmd
+    deps:
+      nuget: ['Microsoft.Windows.SDK.Win32Metadata@60.0.34-preview']
+    include:
+      functions: [GetTickCount64]
+
+verify:
+  markers: warn

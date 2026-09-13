@@ -1,0 +1,19 @@
+name: Bug
+description: Something bindsmith generated or ran incorrectly
+labels: [bug]
+body:
+  - type: textarea
+    id: doctor
+    attributes:
+      label: bindsmith doctor --json
+      description: Paste the output of `bindsmith doctor --json` from the machine that failed.
+      render: json
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: What you ran, what you expected, what you got.
+    validations:
+      required: true

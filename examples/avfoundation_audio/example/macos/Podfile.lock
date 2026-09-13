@@ -1,0 +1,22 @@
+PODS:
+  - avfoundation_audio (0.0.1):
+    - FlutterMacOS
+  - FlutterMacOS (1.0.0)
+
+DEPENDENCIES:
+  - avfoundation_audio (from `Flutter/ephemeral/.symlinks/plugins/avfoundation_audio/macos`)
+  - FlutterMacOS (from `Flutter/ephemeral`)
+
+EXTERNAL SOURCES:
+  avfoundation_audio:
+    :path: Flutter/ephemeral/.symlinks/plugins/avfoundation_audio/macos
+  FlutterMacOS:
+    :path: Flutter/ephemeral
+
+SPEC CHECKSUMS:
+  avfoundation_audio: a331ed984f344ee7c68e58dd123b13b36a149a0d
+  FlutterMacOS: c232990155153907050900a2e175c7773903ba4e
+
+PODFILE CHECKSUM: 1e95c36afbfd1cb6423ceca4de7a8e1b256fb6ac
+
+COCOAPODS: 1.17.0

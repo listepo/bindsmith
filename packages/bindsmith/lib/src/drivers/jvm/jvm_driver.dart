@@ -362,7 +362,11 @@ List<Decl> jvmToIr(
 }) => _withDefaults(
   _withKdocs(
     _Reader(
-      parseString(content: binding, path: 'binding.g.dart').unit,
+      parseString(
+        content: binding,
+        path: 'binding.g.dart',
+        throwIfDiagnostics: false,
+      ).unit,
       platform,
       loc,
     ).read(),

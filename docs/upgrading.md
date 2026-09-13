@@ -76,3 +76,10 @@ against what came back, and anything missing is recorded with the reason.
 `bindsmith explain` on the symbol tells you which one it was, and the wrapper
 path — a generated Swift `@objc` bridge, a Kotlin bridge, or a C++ shim — is
 how you get it back.
+
+## Releases
+
+GitHub Releases attach a native `dart compile exe` binary per OS. Homebrew
+installs that macOS binary through the formula `scripts/formula.sh` writes.
+`dart pub publish` is a separate creator step, not part of the tag workflow.
+

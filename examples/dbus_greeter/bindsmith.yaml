@@ -1,0 +1,18 @@
+# yaml-language-server: $schema=../../schema/bindsmith.schema.json
+name: dbus_greeter
+output: lib/src/generated
+facade:
+  library: lib/dbus_greeter.dart
+  unsupported: throw
+
+platforms:
+  linux:
+    driver: dbus
+    xml: [xml/com.example.Greeter.xml]
+
+fixups:
+  - match: { symbol: ComExampleGreeter.greeted }
+    hide: true
+
+verify:
+  markers: warn

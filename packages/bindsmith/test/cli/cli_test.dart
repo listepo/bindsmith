@@ -9,14 +9,16 @@ library;
 
 import 'dart:convert';
 import 'dart:io' as io;
+import 'dart:typed_data';
 
+import 'package:archive/archive.dart';
 import 'package:bindsmith/bindsmith.dart';
+import 'package:bindsmith/src/cli/android_sdk.dart';
 import 'package:crypto/crypto.dart' as crypto;
 import 'package:path/path.dart' as p;
 import 'package:test/test.dart';
 
-import 'package:bindsmith/src/cli/android_sdk.dart';
-
+import '../drivers/winmd_sample.dart';
 import '../jvm_toolchain.dart';
 
 final _root = p.dirname(p.dirname(io.Directory.current.path));
@@ -60,6 +62,12 @@ String _project({String? bindsmith, String pubspec = 'name: demo\n'}) {
     io.File(p.join(dir.path, 'bindsmith.yaml')).writeAsStringSync(bindsmith);
   }
   return dir.path;
+}
+
+Uint8List _winmdNupkg() {
+  final archive = Archive()
+    ..add(ArchiveFile.bytes('Windows.Win32.winmd', sampleWinmd()));
+  return Uint8List.fromList(ZipEncoder().encode(archive));
 }
 
 typedef _Result = ({int code, String out, String err});
@@ -912,6 +920,91 @@ platforms:
         0,
       );
     }, timeout: Timeout(Duration(minutes: 10)));
+  });
+
+  group('generate dts', () {
+    test('needs bindsmith.lock before it reads npm', () async {
+      final dir = _project(
+        bindsmith: '''
+name: demo
+output: lib/src/generated
+facade:
+  library: lib/demo.dart
+platforms:
+  web:
+    driver: dts
+    deps:
+      npm: ["demo@1.0.0"]
+    include:
+      exports: [value]
+''',
+      );
+      final run = await _run(dir, ['generate', '--platform', 'web']);
+      expect(run.code, exitData);
+      expect(run.err, contains('bindsmith.lock'));
+      expect(run.err, contains('resolve'));
+    });
+  });
+
+  group('generate winmd', () {
+    const coordinate = 'Microsoft.Windows.SDK.Win32Metadata@1.0.0';
+    const config =
+        '''
+name: demo
+output: lib/src/generated
+facade:
+  library: lib/demo.dart
+platforms:
+  windows:
+    driver: winmd
+    deps:
+      nuget: ["$coordinate"]
+    include:
+      functions: [SampleGetVersion]
+''';
+
+    test('needs bindsmith.lock before it reads nuget', () async {
+      final dir = _project(bindsmith: config);
+      final run = await _run(dir, ['generate', '--platform', 'windows']);
+      expect(run.code, exitData);
+      expect(run.err, contains('bindsmith.lock'));
+      expect(run.err, contains('resolve'));
+    });
+
+    test('writes the binding from the nuget cache', () async {
+      final dir = _project(bindsmith: config);
+      final nupkg = _winmdNupkg();
+      final digest = crypto.sha256.convert(nupkg).toString();
+      final cache = io.Directory(
+        p.join(
+          dir,
+          '.dart_tool',
+          'bindsmith',
+          'nuget',
+          'microsoft.windows.sdk.win32metadata',
+          '1.0.0',
+        ),
+      )..createSync(recursive: true);
+      io.File(
+        p.join(cache.path, 'microsoft.windows.sdk.win32metadata.1.0.0.nupkg'),
+      ).writeAsBytesSync(nupkg);
+      io.File(p.join(dir, Lockfile.fileName)).writeAsStringSync(
+        writeLockfile(
+          Lockfile({
+            'nuget': [
+              (coordinate: coordinate, extension: 'nupkg', sha256: digest),
+            ],
+          }),
+        ),
+      );
+
+      final run = await _run(dir, ['generate', '--platform', 'windows']);
+      expect(run.code, 0, reason: run.err);
+      expect(
+        _read(dir, 'lib/src/generated/windows/winmd.g.dart'),
+        contains('SampleGetVersion'),
+      );
+    });
   });
 
   test('a bad flag is a usage error, not a crash', () async {

@@ -1,0 +1,60 @@
+name: release
+
+# Native `dart compile exe` per OS. Cross-compile only targets Linux, so each
+# runner builds its own host. Does not `dart pub publish` — that stays a
+# creator step. Tag `v<version>` or run workflow_dispatch.
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: macos-latest
+            asset: bindsmith-macos-arm64
+          - os: ubuntu-latest
+            asset: bindsmith-linux-x64
+          - os: windows-latest
+            asset: bindsmith-windows-x64.exe
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dart-lang/setup-dart@v1
+        with:
+          sdk: 3.13.1
+      - run: dart pub get
+      - name: Compile
+        run: dart compile exe packages/bindsmith/bin/bindsmith.dart -o ${{ matrix.asset }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.asset }}
+          path: ${{ matrix.asset }}
+          if-no-files-found: error
+
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+      - name: Flatten artefacts
+        run: |
+          mkdir -p assets
+          find dist -type f -exec mv {} assets/ \;
+          ls -l assets
+      - name: GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: assets/*
+          generate_release_notes: true

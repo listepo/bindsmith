@@ -1,0 +1,30 @@
+# yaml-language-server: $schema=../../schema/bindsmith.schema.json
+name: sqlite_desktop
+output: lib/src/generated
+facade:
+  library: lib/sqlite_desktop.dart
+  unsupported: throw
+
+platforms:
+  windows:
+    driver: c
+    headers: [third_party/sqlite/sqlite3.h]
+    include:
+      functions:
+        - sqlite3_libversion
+        - sqlite3_libversion_number
+        - sqlite3_open
+        - sqlite3_close
+        - sqlite3_errmsg
+      structs:
+        - sqlite3
+    build:
+      hook: native_toolchain_c
+      sources: [third_party/sqlite/sqlite3.c]
+  linux:
+    inherit: windows
+  macos:
+    inherit: windows
+
+verify:
+  markers: warn

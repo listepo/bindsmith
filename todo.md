@@ -1,0 +1,3 @@
+- P0-4. Upstream pins
+- P2-5. Swift docs in the raw binding
+- P8-3. Release and publish

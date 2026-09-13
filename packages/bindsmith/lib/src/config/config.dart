@@ -251,7 +251,7 @@ const _accepts = <Driver, _Accepts>{
     deps: {'nuget'},
   ),
   Driver.dts: (
-    keys: {},
+    keys: {'sources'},
     include: {IncludeKind.exports, IncludeKind.types},
     deps: {'npm'},
   ),

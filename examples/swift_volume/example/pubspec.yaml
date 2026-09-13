@@ -1,0 +1,28 @@
+name: swift_volume_example
+description: "Demonstrates how to use the swift_volume plugin."
+version: 0.0.1+1
+publish_to: 'none'
+
+environment:
+  sdk: ^3.13.1
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  swift_volume:
+    path: ../
+
+  cupertino_icons: ^1.0.8
+
+dev_dependencies:
+  integration_test:
+    sdk: flutter
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  config:
+    enable-swift-package-manager: false
+  uses-material-design: true

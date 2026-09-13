@@ -1,0 +1,17 @@
+# yaml-language-server: $schema=../../schema/bindsmith.schema.json
+name: chartjs_web
+output: lib/src/generated
+facade:
+  library: lib/chartjs_web.dart
+  unsupported: throw
+
+platforms:
+  web:
+    driver: dts
+    sources: [src/chart.d.ts]
+    include:
+      exports: [Chart, ChartConfiguration, ChartData, ChartDataset]
+      types: [Chart, ChartConfiguration, ChartData, ChartDataset]
+
+verify:
+  markers: warn

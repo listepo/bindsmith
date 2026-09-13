@@ -1,0 +1,24 @@
+# yaml-language-server: $schema=../../schema/bindsmith.schema.json
+name: avfoundation_audio
+output: lib/src/generated
+facade:
+  library: lib/avfoundation_audio.dart
+  unsupported: throw
+
+platforms:
+  ios:
+    driver: objc
+    headers: [src/avfoundation_audio.h]
+    include:
+      types: ['BSMAudioPlayer']
+  macos:
+    inherit: ios
+
+fixups:
+  - match: { symbol: 'BSMAudioPlayer.new$' }
+    hide: true
+  - match: { symbol: 'BSMAudioPlayer.allocWithZone' }
+    hide: true
+
+verify:
+  markers: warn

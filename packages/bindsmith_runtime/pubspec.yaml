@@ -4,6 +4,12 @@ description: >-
   review markers, platform dispatch and unsupported-API errors.
 version: 0.1.0
 repository: https://github.com/listepo/bindsmith
+homepage: https://github.com/listepo/bindsmith
+issue_tracker: https://github.com/listepo/bindsmith/issues
+topics:
+  - flutter
+  - ffi
+  - cli
 resolution: workspace
 
 environment:

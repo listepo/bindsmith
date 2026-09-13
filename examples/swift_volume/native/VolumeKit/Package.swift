@@ -1,0 +1,16 @@
+// swift-tools-version: 5.9
+import PackageDescription
+
+let package = Package(
+  name: "VolumeKit",
+  platforms: [
+    .iOS(.v15),
+    .macOS(.v11),
+  ],
+  products: [
+    .library(name: "VolumeKit", targets: ["VolumeKit"]),
+  ],
+  targets: [
+    .target(name: "VolumeKit"),
+  ]
+)

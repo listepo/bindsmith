@@ -1,12 +1,55 @@
-# bindsmith — implementation plan
+# bindsmith
+https://github.com/listepo/bindsmith
+One bindsmith.yaml, six Flutter platforms. Generates Dart bindings for native APIs by driving official generators (ffigen, swiftgen, jnigen, winmd, dart-dbus) plus a TypeScript .d.ts driver, unified IR, review markers, one cross-platform facade.
 
-Status: research complete (2026-09-08); workspace skeleton and the first core packages are being built. This plan is written for coding agents. Every task carries a complexity rating and a status; finished tasks and their implementation notes live in `done.md`; §5 gives the risk-first execution order. Read `research.md` for the evidence; `docs/research-raw/` holds the raw agent reports and fact-check logs; `AGENTS.md` holds the working rules.
+| # | Статус | Приоритет | Сложность | Готовность | Агент |
+| --- | --- | --- | --- | --- | --- |
+| P0-4 | in progress | P2 | 1 | 90% | Cursor / composer-2.5 |
+| P2-5 | in progress | P2 | 3 | 0% | Cursor / grok 4.6 |
+| P8-3 | in progress | P3 | 3 | 80% | Cursor / grok 4.6 |
 
-## 0. What we are building
+### P0-4. Upstream pins
+
+Pin upstream versions in `pubspec.yaml` with caret ranges no wider than one major as each driver lands, and cite each remaining pin against the registry.
+
+**Landed and cited** (see `toolchain.md`, verified on pub.dev 2026-09-12): `ffigen: ^22.0.0`, `jnigen: ^1.0.0`, `swiftgen: ^0.2.0`, `objective_c: ^9.6.0` (fixtures), `jni: ^1.0.3` (JVM probe in `test/jvm_toolchain.dart`), `winmd: ^7.1.0` (7.1.1 blocked: needs `cli_util ^0.5.1`, ffigen 22 pins `^0.4.2`), `dbus: ^0.7.15`, `hooks: ^2.2.0`, `code_assets: ^2.0.0`, `native_toolchain_c: ^0.19.4` (fixtures dev_deps); tooling `args: ^2.7.0`, `yaml: ^3.1.0`, `dart_style: ^3.1.0`, `path: ^1.9.0`, `analyzer: ^14.3.0`, `crypto: ^3.0.7`.
+
+**Still waiting on driver:** `pigeon: ^28.0.0` (channels fallback — no driver yet). Optional tooling (`mason_logger`, `cli_completion`, `checked_yaml`, `code_builder`, `glob`, `pub_semver`) — add only when a task needs them.
+
+Done when every remaining pin is cited against the registry; `dart pub get` at root resolves.
+
+### P2-5. Swift docs in the raw binding
+
+Swift docs in the raw Objective-C binding: swift2objc should carry `docComment` into its wrapper (upstream). The cause, checked in the pub cache:
+
+- swift2objc 0.3.0 never reads `docComment` from the symbol graph. The word appears nowhere in `swift2objc-0.3.0/lib/`.
+- So the `@objc` wrapper it writes has no comments, and neither does the `-Swift.h` that `swiftc` emits from that wrapper.
+- ffigen therefore falls back to the class name: `/// GreeterWrapper` in `fixtures/lib/generated/greeter_swift/swift.g.dart`.
+- swiftgen 0.2.0 builds its own `fg.Output` without a `commentType`. That means ffigen's default `CommentType.def()` (doxygen style, full length), which does read `///`, so nothing on the swiftgen side needs changing.
+
+Only the raw binding is affected: the IR and the facade already take Swift docs from the symbol graph (`_withDocs` in `swift_driver.dart`). The fix belongs upstream. Both local alternatives drive a tool through its output (rule 1): editing swift2objc's output text, or splitting swiftgen's single `generate()` into its three steps so the wrapper can be patched between them.
+
+1. **Prove the rest of the chain first.** The P7-1 bridge skips swift2objc (`objcCompatibleSources`) and already carries `///` docs (`GreeterKit.bridge.g.swift`), so it tests `swiftc` → header → ffigen with no swift2objc involved. The committed `swift.g.dart` has no `GreeterBridge` at all, so a grep proves nothing; the check needs a run. Run the round trip in `test/drivers/swift_test.dart` and look at the Dart it generates for `GreeterBridge`. If the bridge's text is missing there too, find where it is lost (`swiftc -emit-objc-header-path`, or ffigen on that header) before going upstream. A swift2objc change only helps if everything after it works.
+2. **Open the issue** on dart-lang/native, labelled swift2objc, with that evidence. Propose: parse `docComment.lines[].text` in the symbol-graph parser, keep it on the AST declarations, and write it as `///` above each generated wrapper declaration. Offer the PR, and link the issue from this row.
+3. **When a swift2objc release carries it:** bump the pin (P0-4) and cite pub.dev in the commit message; regenerate the Swift goldens with `UPDATE_GOLDENS=1` and check the binding carries the Swift text; keep `_withDocs` (it only fills docs that are still empty, so it becomes a no-op rather than a conflict); remove the Swift caveat from `AGENTS.md` (Style → documentation bullet) and from `docs/platforms.md` (Documentation).
+
+Done when `swift.g.dart` documents `GreeterWrapper` and its members with the Swift text, and no bindsmith code rewrites upstream output. Until upstream ships, the row stays open with the issue link; nothing local stands in for it.
+
+### P8-3. Release and publish
+
+Release engineering: `dart pub publish` for `bindsmith` and `bindsmith_runtime`; GitHub Release with `dart compile exe` binaries built natively per OS (cross-compile only targets Linux); Homebrew tap formula; `pana` score target ≥ 140; CHANGELOG; version policy: bindsmith minor bump per upstream generator major. Telemetry: none. Issue templates ask for `bindsmith doctor --json` output.
+
+Depends on P8-1. Do not `pub publish` until asked. Done when packages are published and the release artefacts above exist.
+
+Plan (Cursor / grok 4.6): artefacts only, no `pub publish`. 1. CHANGELOG.md on both packages + version policy in docs/upgrading.md. 2. Issue templates that ask for `bindsmith doctor --json`. 3. GitHub Release workflow: native `dart compile exe` per OS. 4. Homebrew formula generator (tap push stays creator). 5. pana ≥ 140 in CI. Leave the row open until the creator asks to publish.
+
+## Reference
 
 `bindsmith` is a Dart command-line tool that reads one config (`bindsmith.yaml`) describing a native API and generates Dart bindings for the six Flutter platforms, plus a unified Dart facade with platform dispatch, native "slim" wrappers where direct binding is impossible, and the build glue (`hook/build.dart`, podspec/SwiftPM, Gradle, `web/index.html` snippets).
 
 It does not implement parsers or FFI itself. It orchestrates the official generators through their Dart library APIs and adds what none of them has: one config for all platforms, a unified intermediate representation (IR) with fixup passes, review markers, dependency resolution with a lockfile, and a verification matrix.
+
+Finished tasks and their implementation notes live in `done.md`. Read `research.md` for the evidence; `docs/research-raw/` holds the raw agent reports and fact-check logs; `AGENTS.md` holds the working rules.
 
 | Surface | Input | Upstream we drive | Version pinned at start |
 |---|---|---|---|
@@ -25,7 +68,7 @@ Decisions already made (see research.md §6–§8): host language Dart; static c
 
 Out of scope for v1: C++ parsing (emit an `extern "C"` shim instead), macros, GUI, mandatory AI features, our own formatter/analyzer, dynamic runtime.
 
-## 1. Repository layout
+### Repository layout
 
 Pub workspace (Dart ≥ 3.6). Two publishable packages, one fixtures package.
 
@@ -56,15 +99,15 @@ bindsmith/
     dts/                       # .d.ts fixtures (nanoid, uuid, chart subset)
     winmd/                     # NativeMethods-style include list against real Win32Metadata
     dbus/org.example.Greeter.xml
-  examples/                    # end-to-end real SDK bindings (Phase 8)
+  examples/                    # end-to-end real SDK bindings (P8-1)
   docs/                        # research (EN + RU), ADRs, research-raw
 ```
 
 Rules: `bindsmith_runtime` has no dependency on the generator. Generated code depends only on `bindsmith_runtime`, `ffi`, `objective_c`, `jni`, `web`/`dart:js_interop` as appropriate. `lints/recommended` plus `analysis_options.yaml` with `strict-casts`, `strict-inference`, `strict-raw-types`.
 
-## 2. Config and CLI contract
+### Config and CLI contract
 
-### 2.1 `bindsmith.yaml`
+#### `bindsmith.yaml`
 
 ```yaml
 # yaml-language-server: $schema=https://raw.githubusercontent.com/listepo/bindsmith/main/packages/bindsmith/schema/bindsmith.schema.json
@@ -127,7 +170,7 @@ Semantics: `include` is a pull list (globs allowed). Nothing outside the pull li
 
 Escape hatch: `tool/bindsmith.dart` may construct the same model in Dart (`Bindsmith(config: ..., drivers: ...).run()`) for cases YAML cannot express (custom visitors). The YAML loader and the Dart API must produce the same `BindsmithConfig` object.
 
-### 2.2 Commands
+#### Commands
 
 | Command | Behavior | Exit code |
 |---|---|---|
@@ -143,7 +186,7 @@ Escape hatch: `tool/bindsmith.dart` may construct the same model in Dart (`Binds
 
 Logging via `mason_logger` (levels, progress). Machine-readable `--json` for `doctor`, `dump`, `diff`.
 
-## 3. IR sketch
+### IR sketch
 
 ```dart
 sealed class Decl { String id; Platform platform; SourceLoc loc; Docs? docs; Availability? availability; List<Marker> markers; }
@@ -157,28 +200,19 @@ Every driver produces `List<Decl>` for its platform. Passes are pure functions `
 
 The Dart facade is synthesized from the per-platform IR by name matching within `facade.groups` (config) or automatically when a symbol exists on all configured platforms with compatible shapes; mismatches produce `@BindsmithVerify('shape differs on ios vs android')`.
 
-## 4. Complexity scale and task register
+### Complexity scale
 
-Complexity is rated on one scale for the whole plan:
+| Rating | Meaning |
+|---|---|
+| **C1** | Mechanical. Known API, no design decisions, no toolchain. |
+| **C2** | Straightforward. One known library or CLI; the shape of the code is obvious. |
+| **C3** | Needs a design or an external toolchain (JDK, Xcode, libclang, NuGet) and CI plumbing. |
+| **C4** | Depends on upstream behavior we do not control (experimental generators, rewritten APIs) or cuts across several modules; expect a spike before the real code. |
+| **C5** | Research-grade. Semantic gaps with no upstream to lean on (structural vs nominal typing, unifying six platform shapes into one facade, generating native wrappers); several iterations and fixtures needed before the design settles. |
 
-| Rating | Meaning | Typical size |
-|---|---|---|
-| **C1** | Mechanical. Known API, no design decisions, no toolchain. | hours |
-| **C2** | Straightforward. One known library or CLI; the shape of the code is obvious. | 1–2 days |
-| **C3** | Needs a design or an external toolchain (JDK, Xcode, libclang, NuGet) and CI plumbing. | 3–5 days |
-| **C4** | Depends on upstream behavior we do not control (experimental generators, rewritten APIs) or cuts across several modules; expect a spike before the real code. | 1–2 weeks |
-| **C5** | Research-grade. Semantic gaps with no upstream to lean on (structural vs nominal typing, unifying six platform shapes into one facade, generating native wrappers); several iterations and fixtures needed before the design settles. | 2+ weeks |
+A finished task moves to `done.md` in the change that finishes it.
 
-Status marks: `[~]` in progress, `[ ]` not started; a finished task moves to `done.md` in the change that finishes it. Update the mark in the same change that finishes the task.
-
-| ID | Task | Complexity | Prerequisites | Status |
-|---|---|---|---|---|
-| P0-4 | Upstream pins (one major each) added as drivers land | C1 | per driver | [~] |
-| P2-5 | Swift docs in the raw binding: swift2objc carries `docComment` into its wrapper (upstream) | C3 | — | [ ] |
-| P8-1 | Five real examples (AVFoundation, androidx.biometric, sqlite desktop, chart.js web, Swift-only SwiftPM) | C4 | all drivers | [ ] |
-| P8-3 | Release: pub publish both packages, `dart compile exe` per OS, Homebrew tap, pana ≥ 140, CHANGELOG, version policy | C3 | P8-1 | [ ] |
-
-## 5. Execution order (risk-first)
+### Execution order (risk-first)
 
 The order is by risk, not by phase number. Highest-complexity work with no unfinished prerequisite goes first, so the design settles where it is most likely to be wrong.
 
@@ -191,79 +225,57 @@ The order is by risk, not by phase number. Highest-complexity work with no unfin
 7. **Remaining drivers (C4/C2):** P5-1 winmd, P5-3 pkg-config, P5-4 D-Bus, P5-5 hook templates, P5-2 NuGet.
 8. **Product surface (C3/C2):** P1-1 config loader + schema (can start any time after step 1; needed before the CLI is usable end to end), P1-4 CLI, P1-5 doctor, P6-3 fixups DSL, P6-5 verify, P6-6 explain/diff/watch, P0-3 runtime, P0-2 ADRs.
 9. **Examples, docs, release (C4/C3):** P8-1 → P8-2 → P8-3.
-10. **Left:** P2-5 waits on upstream swift2objc `docComment` (prove the chain, open the issue, keep `_withDocs` until a release carries it). P8-1 examples once dts/winmd `generate` are wired from the npm/nuget caches. P8-3 release after that — do not `pub publish` until asked. P0-4 stays `[~]` until each remaining pin is cited against the registry.
+10. **Left:** P2-5 waits on upstream swift2objc `docComment` (prove the chain, open the issue, keep `_withDocs` until a release carries it). P8-3 release after P8-1 — do not `pub publish` until asked. P0-4 stays open until each remaining pin is cited against the registry.
 
-Steps 1–3 are the current focus. Config loader (P1-1) and the runtime (P0-3) are small and are pulled forward whenever a step needs them.
+Steps 1–9 of this order are done except the leftover items in the table above.
 
-## 6. Phases in detail
+### Phases
 
-Durations assume one experienced engineer; agents run tasks in parallel where files do not overlap. Complexity codes refer to §4.
+Complexity codes refer to the scale above.
 
-### Phase 0 — Skeleton and decision records (3 days) — C2
-
-- P0-4 `[~]` Pin upstream versions in `pubspec.yaml` with caret ranges no wider than one major as each driver lands: `ffigen: ^22.0.0` (done), `jnigen: ^1.0.0`, `swiftgen: ^0.2.0`, `objective_c: ^9.6.0`, `jni: ^1.0.3`, `winmd: ^7.1.1`, `dbus: ^0.7.15`, `pigeon: ^28.0.0`, `hooks: ^2.2.0`, `code_assets: ^2.0.0`, `native_toolchain_c: ^0.19.4`; tooling `args`, `yaml`, `dart_style: ^3.1.0`, `path`; add `mason_logger`, `cli_completion`, `checked_yaml`, `code_builder: ^4.12.0`, `analyzer`, `glob`, `pub_semver`, `crypto` only when a task needs them.
+#### Phase 0 — Skeleton and decision records — C2
 
 Acceptance: `dart pub get` at root resolves (done); CI green on three OSes; `bindsmith --help` prints commands.
 
-### Phase 1 — Config, IR, first vertical slice: C driver (1.5 weeks) — C4
+#### Phase 1 — Config, IR, first vertical slice: C driver — C4
 
 Acceptance: `bindsmith generate --platform linux` on the fixture produces compiling Dart on ubuntu and macOS; golden test passes; config errors are actionable.
 
 Facts to respect: ffigen only parses C and Objective-C; needs libclang (`doctor` must locate it: Xcode CLT on macOS, `libclang-dev` on Linux, LLVM on Windows). YAML config in ffigen is deprecated; do not generate `ffigen.yaml`.
 
-### Phase 2 — Apple: Objective-C and Swift drivers (2 weeks, macOS runner) — C4
-
-- P2-5 `[ ]` **Swift docs in the raw Objective-C binding.** The cause, checked in the pub cache on 2026-09-11:
-  - swift2objc 0.3.0 never reads `docComment` from the symbol graph. The word appears nowhere in `swift2objc-0.3.0/lib/`.
-  - So the `@objc` wrapper it writes has no comments, and neither does the `-Swift.h` that `swiftc` emits from that wrapper.
-  - ffigen therefore falls back to the class name: `/// GreeterWrapper` in `fixtures/lib/generated/greeter_swift/swift.g.dart`.
-  - swiftgen 0.2.0 builds its own `fg.Output` without a `commentType`. That means ffigen's default `CommentType.def()` (doxygen style, full length), which does read `///`, so nothing on the swiftgen side needs changing.
-
-  Only the raw binding is affected: the IR and the facade already take Swift docs from the symbol graph (`_withDocs` in `swift_driver.dart`). The fix belongs upstream. Both local alternatives drive a tool through its output (rule 1): editing swift2objc's output text, or splitting swiftgen's single `generate()` into its three steps so the wrapper can be patched between them.
-  1. **Prove the rest of the chain first.** The P7-1 bridge skips swift2objc (`objcCompatibleSources`) and already carries `///` docs (`GreeterKit.bridge.g.swift`), so it tests `swiftc` → header → ffigen with no swift2objc involved. The committed `swift.g.dart` has no `GreeterBridge` at all, so a grep proves nothing; the check needs a run. Run the round trip in `test/drivers/swift_test.dart` and look at the Dart it generates for `GreeterBridge`. If the bridge's text is missing there too, find where it is lost (`swiftc -emit-objc-header-path`, or ffigen on that header) before going upstream. A swift2objc change only helps if everything after it works.
-  2. **Open the issue** on dart-lang/native, labelled swift2objc, with that evidence. Propose: parse `docComment.lines[].text` in the symbol-graph parser, keep it on the AST declarations, and write it as `///` above each generated wrapper declaration. Offer the PR, and link the issue from this row.
-  3. **When a swift2objc release carries it:**
-     - Bump the pin (P0-4) and cite pub.dev in the commit message.
-     - Regenerate the Swift goldens with `UPDATE_GOLDENS=1` and check the binding carries the Swift text.
-     - Keep `_withDocs`: it only fills docs that are still empty, so it becomes a no-op rather than a conflict.
-     - Remove the Swift caveat from `AGENTS.md` (Style → documentation bullet) and from `docs/platforms.md` (Documentation).
-
-  Done when `swift.g.dart` documents `GreeterWrapper` and its members with the Swift text, and no bindsmith code rewrites upstream output. Until upstream ships, the row stays open with the issue link; nothing local stands in for it.
+#### Phase 2 — Apple: Objective-C and Swift drivers (macOS runner) — C4
 
 Acceptance: fixtures bind and run under `dart test` on macOS; Swift-only members appear in `bindsmith dump` as dropped with reasons; generated podspec passes `pod lib lint --quick` on the example.
 
 Facts: swiftgen 0.2.0 and swift2objc 0.3.0 are experimental — wrap every call in an adapter class so breaking changes touch one file; commit both `.g.dart` and `.m` (roszkowski.dev lesson).
 
-### Phase 3 — Android: JVM driver, Maven resolution, lockfile (2 weeks) — C4
+#### Phase 3 — Android: JVM driver, Maven resolution, lockfile — C4
 
 Facts: jnigen needs the compiled classpath at generation time; jni 1.0.3 / jnigen 1.0.0 renamed the API (`Config → JniGenerator`, `generateJniBindings → generate()`); global refs need `.release()`.
 
-### Phase 4 — Web: `.d.ts` driver (2 weeks) — C5
+#### Phase 4 — Web: `.d.ts` driver — C5
 
 Acceptance: fixtures compile under dart2js and dart2wasm; every unsupported TS construct is a marker, never a silent drop; sidecar has its own tests.
 
 Facts: no public `.d.ts → Dart` generator exists (js_facade_gen archived 2022); dart-lang/web has an unpublished `js_interop_gen` — add a tracking issue to swap the sidecar for it; `package:js`/`dart:html` do not compile to wasm.
 
-### Phase 5 — Windows and Linux specifics (1.5 weeks) — C4/C2
+#### Phase 5 — Windows and Linux specifics — C4/C2
 
 Acceptance: winmd fixture generates and analyzes on Windows; Linux fixture compiles with `pkg-config`-derived flags on ubuntu; D-Bus fixture generates client class.
 
-### Phase 6 — Unified facade, passes, fixups, verify (2 weeks) — C5
+#### Phase 6 — Unified facade, passes, fixups, verify — C5
 
 Acceptance: a fixture configured for all six platforms produces one importable library whose public API is identical across platforms (checked by an `analyzer`-based test that compares public element signatures); markers block `verify` until acknowledged.
 
-### Phase 7 — Slim-binding wrapper generation (2 weeks) — C5
+#### Phase 7 — Slim-binding wrapper generation — C5
 
 Acceptance: `fixtures/swift/Greeter` Swift-only struct method becomes callable from Dart via the bridge; `fixtures/jvm/greeter` `Flow` becomes a `Stream`.
 
-### Phase 8 — Real examples, docs, release (2 weeks) — C4/C3
-
-- P8-1 `[ ]` `examples/`: (1) `avfoundation_audio` — iOS/macOS via ObjC driver; (2) `androidx_biometric` — Android via JVM driver with Maven; (3) `sqlite_desktop` — C driver across Windows/Linux/macOS with `hook/build.dart`; (4) `chartjs_web` — Web via `.d.ts`; (5) one Swift-only SwiftPM package through the wrapper path. Each example is a `package_ffi`-style package with a tiny Flutter app under `example/`.
-- P8-3 `[ ]` Release engineering: `dart pub publish` for `bindsmith` and `bindsmith_runtime`; GitHub Release with `dart compile exe` binaries built natively per OS (cross-compile only targets Linux); Homebrew tap formula; `pana` score target ≥ 140; CHANGELOG; version policy: bindsmith minor bump per upstream generator major. Telemetry: none. Issue templates ask for `bindsmith doctor --json` output.
+#### Phase 8 — Real examples, docs, release — C4/C3
 
 Acceptance: all five examples build in CI (`flutter build` per platform available on the runner); docs site live; packages published.
 
-## 7. Testing strategy
+### Testing strategy
 
 | Layer | Tool | What |
 |---|---|---|
@@ -275,7 +287,7 @@ Acceptance: all five examples build in CI (`flutter build` per platform availabl
 | Determinism | CI `generate --check` | second generation produces no diff |
 | Size | budget report | lines/symbols per platform compared with committed baseline |
 
-## 8. CI matrix
+### CI matrix
 
 | Runner | Platforms exercised | Toolchain setup |
 |---|---|---|
@@ -283,7 +295,7 @@ Acceptance: all five examples build in CI (`flutter build` per platform availabl
 | ubuntu-latest | linux (c, dbus), android (jvm, Maven, `Jni.spawn`), web (node 24, dart2js/wasm) | `libclang-dev`, JDK 17, Android cmdline-tools, node |
 | windows-latest | windows (c, winmd) | LLVM (choco), VS Build Tools, NuGet metadata download |
 
-## 9. Risks and mitigations
+### Risks and mitigations
 
 | Risk | Mitigation |
 |---|---|
@@ -291,10 +303,10 @@ Acceptance: all five examples build in CI (`flutter build` per platform availabl
 | swiftgen instability | wrapper path (Phase 7) is the fallback for anything swiftgen cannot bridge |
 | `.d.ts` semantics | subset + markers; track `js_interop_gen`; never silently drop |
 | Heavy toolchains | `doctor` with exact fix commands; CI images documented; `resolve` caches under `.dart_tool/bindsmith/` |
-| Scope creep across six platforms | phases are independently shippable; publish after step 4 of §5 as `0.x` with C + Web + JVM |
+| Scope creep across six platforms | phases are independently shippable; publish after step 4 of the execution order as `0.x` with C + Web + JVM |
 | Macros and C++ | documented non-goal; shim generator |
 
-## 10. Definition of "best in class" (what reviewers should check at the end)
+### Definition of "best in class" (what reviewers should check at the end)
 
 1. One `bindsmith.yaml` produces bindings for all six platforms and a facade whose public API is identical everywhere.
 2. Every unsupported construct is visible: in `dump`, as a marker in code, and in `verify` output. No silent drops.
@@ -305,7 +317,7 @@ Acceptance: all five examples build in CI (`flutter build` per platform availabl
 7. `doctor` gets a fresh machine from zero to first generation with copy-paste commands.
 8. Docs are generated from the schema; the schema is what the YAML language server validates against.
 
-## 11. References
+### References
 
 - research.md §2 (Dart tool versions), §3 (per-platform recipes), §4 (analogs), §11 (fact-check log)
 - dart-lang/native: ffigen, jnigen, swiftgen, swift2objc READMEs and CHANGELOGs

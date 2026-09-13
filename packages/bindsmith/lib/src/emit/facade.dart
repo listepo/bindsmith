@@ -444,7 +444,13 @@ String _group(_Model model, List<Platform> group, FacadeOptions options) {
   // Marshalling helpers used by the call expressions below. A C type the
   // marshalling did not claim still reaches a signature spelled `ffi.…`, so
   // the prefix in the body is what decides the dart:ffi import.
-  if (body.toString().contains('ffi.')) b.writeln("import 'dart:ffi' as ffi;");
+  final bodyText = body.toString();
+  if (bodyText.contains('ffi.')) {
+    b.writeln("import 'dart:ffi' as ffi;");
+  } else if (bodyText.contains('Pointer<')) {
+    b.writeln("import 'dart:ffi';");
+  }
+
   if (group.contains(Platform.web)) b.writeln("import 'dart:js_interop';");
   b.writeln("import 'package:bindsmith_runtime/bindsmith_runtime.dart';");
   if (ctx.needsFfi) b.writeln("import 'package:ffi/ffi.dart';");
@@ -1423,7 +1429,7 @@ void _docs(
 }
 
 String _str(String s) =>
-    "'${s.replaceAll(r'\', r'\\').replaceAll("'", r"\'").replaceAll('\n', ' ')}'";
+    "'${s.replaceAll(r'\', r'\\').replaceAll("'", r"\'").replaceAll(r'$', r'\$').replaceAll('\n', ' ')}'";
 
 String _format(String source) =>
     DartFormatter(languageVersion: DartFormatter.latestLanguageVersion)
