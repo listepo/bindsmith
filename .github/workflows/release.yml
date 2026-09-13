@@ -26,14 +26,14 @@ jobs:
             asset: bindsmith-windows-x64.exe
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: dart-lang/setup-dart@v1
         with:
           sdk: 3.13.1
       - run: dart pub get
       - name: Compile
         run: dart compile exe packages/bindsmith/bin/bindsmith.dart -o ${{ matrix.asset }}
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: ${{ matrix.asset }}
           path: ${{ matrix.asset }}
@@ -44,8 +44,8 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event_name == 'push'
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v4
+      - uses: actions/checkout@v7
+      - uses: actions/download-artifact@v8
         with:
           path: dist
       - name: Flatten artefacts
@@ -54,7 +54,7 @@ jobs:
           find dist -type f -exec mv {} assets/ \;
           ls -l assets
       - name: GitHub Release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           files: assets/*
           generate_release_notes: true
