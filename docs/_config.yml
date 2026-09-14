@@ -6,8 +6,5 @@ title: bindsmith
 description: One config, six Flutter platforms.
 theme: jekyll-theme-primer
 exclude:
-  # Working material, not documentation: raw agent reports, fact-check logs
-  # and the Russian copies of the research.
+  # Working material, not documentation: raw agent reports and fact-check logs.
   - research-raw/
-  - research.ru.md
-  - report.ru.html
