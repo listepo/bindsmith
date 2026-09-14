@@ -1,0 +1,631 @@
+<title>bindsmith</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --bg:#F3F5F2; --surface:#FFFFFF; --surface-2:#E9EDEA; --ink:#1B2326; --muted:#5C6A6E; --line:#D5DCD9; --line-strong:#B9C4C0;
+  --accent:#137A72; --accent-ink:#0E5F59; --accent-soft:#DCEFEC; --accent-line:#8FC7C0;
+  --warn:#B0661C; --warn-soft:#F6E9D6; --bad:#B0402B; --bad-soft:#F6E0DB; --good:#2E7B4F; --good-soft:#DDEFE3;
+  --code-bg:#EAEEEC; --shadow:0 1px 2px rgba(27,35,38,.06),0 8px 24px rgba(27,35,38,.06);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#121819; --surface:#1A2224; --surface-2:#212B2D; --ink:#E4EBE8; --muted:#9AA9A5; --line:#2A3639; --line-strong:#3B4A4E;
+    --accent:#4FB8AD; --accent-ink:#8FD9D0; --accent-soft:#163533; --accent-line:#2E6B65;
+    --warn:#E0984F; --warn-soft:#3A2A16; --bad:#E27460; --bad-soft:#3E211C; --good:#63C08A; --good-soft:#193226;
+    --code-bg:#0E1415; --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.35);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#121819; --surface:#1A2224; --surface-2:#212B2D; --ink:#E4EBE8; --muted:#9AA9A5; --line:#2A3639; --line-strong:#3B4A4E;
+  --accent:#4FB8AD; --accent-ink:#8FD9D0; --accent-soft:#163533; --accent-line:#2E6B65;
+  --warn:#E0984F; --warn-soft:#3A2A16; --bad:#E27460; --bad-soft:#3E211C; --good:#63C08A; --good-soft:#193226;
+  --code-bg:#0E1415; --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.35);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
+a{color:var(--accent-ink);text-decoration-color:var(--accent-line);text-underline-offset:3px}
+a:hover{text-decoration-color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:2px}
+code,kbd,pre{font-family:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+code{font-size:.9em;background:var(--code-bg);padding:.1em .35em;border-radius:3px}
+pre{margin:0;background:var(--code-bg);border:1px solid var(--line);border-radius:6px;padding:14px 16px;overflow-x:auto;font-size:13px;line-height:1.55}
+pre code{background:none;padding:0;font-size:inherit}
+h1,h2,h3,h4{font-family:"Bricolage Grotesque","IBM Plex Sans",system-ui,sans-serif;font-weight:700;letter-spacing:-.01em;text-wrap:balance;margin:0}
+h1{font-size:clamp(40px,6vw,64px);line-height:1;font-weight:800;letter-spacing:-.03em}
+h2{font-size:30px;line-height:1.15;margin-top:8px}
+h3{font-size:20px;line-height:1.3}
+h4{font-size:16px;line-height:1.35;font-weight:600;font-family:"IBM Plex Sans",system-ui,sans-serif}
+p{margin:0}
+.eyebrow{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent-ink);font-weight:600}
+.muted{color:var(--muted)}
+.num{font-variant-numeric:tabular-nums}
+
+.page{display:grid;grid-template-columns:minmax(0,1fr);gap:0}
+@media (min-width:1100px){
+  .page{grid-template-columns:240px minmax(0,1fr);}
+  .toc{position:sticky;top:0;align-self:start;height:100vh;overflow:auto;padding:36px 20px 36px 28px;border-right:1px solid var(--line)}
+}
+.toc{display:none}
+@media (min-width:1100px){.toc{display:block}}
+.toc .brand{font-family:"Bricolage Grotesque",sans-serif;font-weight:800;font-size:20px;letter-spacing:-.02em;margin-bottom:22px;display:flex;align-items:center;gap:10px}
+.toc .brand i{display:inline-block;width:14px;height:14px;background:var(--accent);border-radius:2px;transform:rotate(45deg)}
+.toc ol{list-style:none;margin:0;padding:0;display:grid;gap:2px}
+.toc a{display:block;padding:6px 8px;border-radius:5px;color:var(--muted);text-decoration:none;font-size:13.5px;line-height:1.35}
+.toc a:hover{background:var(--surface-2);color:var(--ink)}
+.toc a.active{background:var(--accent-soft);color:var(--accent-ink);font-weight:600}
+.toc .group{margin:14px 0 4px;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);padding-left:8px}
+
+main{min-width:0;padding:44px clamp(20px,4vw,64px) 96px}
+.wrap{max-width:900px}
+.prose{max-width:72ch}
+section{padding:40px 0;border-top:1px solid var(--line)}
+section:first-of-type{border-top:0;padding-top:0}
+.sec-head{display:grid;gap:8px;margin-bottom:22px}
+.lede{font-size:18px;line-height:1.5;max-width:68ch}
+
+header.top{display:grid;gap:18px;padding-bottom:40px}
+header.top .meta{display:flex;flex-wrap:wrap;gap:8px 18px;color:var(--muted);font-size:13.5px}
+header.top .meta b{color:var(--ink);font-weight:600}
+.verdict{background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:8px;padding:22px 24px;display:grid;gap:12px;box-shadow:var(--shadow)}
+.verdict p{max-width:72ch}
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.facts div{background:var(--surface);padding:14px 16px;display:grid;gap:4px}
+.facts .k{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.facts .v{font-family:"Bricolage Grotesque",sans-serif;font-weight:700;font-size:22px;line-height:1.1;letter-spacing:-.01em}
+.facts .v small{font-family:"IBM Plex Sans",sans-serif;font-weight:500;font-size:13px;color:var(--muted);letter-spacing:0}
+
+.scroll{overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:14px;line-height:1.45}
+thead th{text-align:left;font-weight:600;font-size:12.5px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);background:var(--surface-2);padding:10px 12px;border-bottom:1px solid var(--line);white-space:nowrap}
+tbody td{padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+tbody tr:last-child td{border-bottom:0}
+td.k{font-weight:600;white-space:nowrap}
+td .sub{display:block;color:var(--muted);font-size:12.5px;margin-top:2px}
+table.tight td,table.tight th{padding:8px 10px}
+.wide{min-width:880px}
+
+.tag{display:inline-block;font-size:11.5px;font-weight:600;letter-spacing:.03em;padding:2px 7px;border-radius:999px;border:1px solid var(--line-strong);color:var(--muted);white-space:nowrap;vertical-align:middle}
+.tag.ok{background:var(--good-soft);color:var(--good);border-color:transparent}
+.tag.exp{background:var(--warn-soft);color:var(--warn);border-color:transparent}
+.tag.gap{background:var(--bad-soft);color:var(--bad);border-color:transparent}
+.tag.acc{background:var(--accent-soft);color:var(--accent-ink);border-color:transparent}
+
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:18px 20px;display:grid;gap:8px;align-content:start}
+.card h3{font-size:17px}
+.card ul{margin:0;padding-left:18px;display:grid;gap:4px}
+.card ul li{font-size:14.5px}
+
+/* pipeline */
+.pipe{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px;align-items:stretch}
+@media (max-width:900px){.pipe{grid-template-columns:1fr}}
+.stage{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:14px 14px 12px;display:grid;gap:8px;align-content:start}
+.stage .st{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent-ink);font-weight:600}
+.stage .nm{font-family:"Bricolage Grotesque",sans-serif;font-weight:700;font-size:17px;line-height:1.15}
+.stage ul{margin:0;padding:0;list-style:none;display:grid;gap:4px}
+.stage li{font-size:12.5px;line-height:1.35;color:var(--muted)}
+.stage li code{font-size:11.5px}
+.stage.ir{background:var(--accent-soft);border-color:var(--accent-line)}
+.stage.ir li{color:var(--ink)}
+@media (min-width:901px){
+  .stage:not(:last-child)::after{content:"";position:absolute;right:-8px;top:50%;width:10px;height:10px;border-top:2px solid var(--line-strong);border-right:2px solid var(--line-strong);transform:translateY(-50%) rotate(45deg)}
+}
+
+/* recipes */
+.recipe{background:var(--surface);border:1px solid var(--line);border-radius:8px;overflow:hidden;margin-top:18px}
+.recipe .rh{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 14px;padding:14px 20px;background:var(--surface-2);border-bottom:1px solid var(--line)}
+.recipe .rh h3{font-size:19px}
+.recipe .rh .path{font-family:"IBM Plex Mono",monospace;font-size:12.5px;color:var(--muted)}
+.recipe dl{display:grid;grid-template-columns:150px minmax(0,1fr);margin:0}
+.recipe dt{padding:12px 20px;border-bottom:1px solid var(--line);font-size:12.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.recipe dd{margin:0;padding:12px 20px 12px 0;border-bottom:1px solid var(--line);font-size:14.5px;min-width:0}
+.recipe dt:last-of-type,.recipe dd:last-of-type{border-bottom:0}
+.recipe dd pre{margin-top:6px}
+.recipe dd ul{margin:0;padding-left:18px;display:grid;gap:3px}
+@media (max-width:640px){.recipe dl{grid-template-columns:1fr}.recipe dt{padding-bottom:0;border-bottom:0}.recipe dd{padding-left:20px}}
+
+/* phases */
+.phases{display:grid;gap:12px;counter-reset:ph}
+.phase{display:grid;grid-template-columns:56px minmax(0,1fr);gap:0 16px;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:16px 18px}
+.phase .n{font-family:"Bricolage Grotesque",sans-serif;font-weight:800;font-size:28px;line-height:1;color:var(--accent);letter-spacing:-.02em}
+.phase .n small{display:block;font-family:"IBM Plex Sans",sans-serif;font-weight:500;font-size:11px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-top:6px}
+.phase h3{font-size:18px;margin-bottom:6px}
+.phase p{font-size:14.5px;max-width:72ch}
+.phase .acc{margin-top:8px;font-size:13.5px;color:var(--muted)}
+.phase .acc b{color:var(--ink);font-weight:600}
+
+.compare td:first-child{font-weight:600}
+.fc td.was{color:var(--muted);text-decoration:line-through;text-decoration-color:var(--bad)}
+.fc td.now{font-weight:500}
+
+.callout{border:1px solid var(--line);border-radius:8px;padding:14px 18px;background:var(--surface);display:grid;gap:6px;font-size:14.5px}
+.callout.warn{border-color:var(--warn);background:var(--warn-soft)}
+.callout b{font-weight:600}
+ul.plain{margin:0;padding-left:20px;display:grid;gap:6px}
+ol.plain{margin:0;padding-left:22px;display:grid;gap:6px}
+footer{margin-top:60px;color:var(--muted);font-size:13px;border-top:1px solid var(--line);padding-top:20px;max-width:72ch}
+</style>
+
+<div class="page">
+<nav class="toc" aria-label="Оглавление">
+  <div class="brand"><i></i>bindsmith</div>
+  <ol>
+    <li><a href="#verdict">Вердикт</a></li>
+    <li><a href="#task">Задача и рамки</a></li>
+    <div class="group">Ландшафт</div>
+    <li><a href="#dart">Что есть в Dart</a></li>
+    <li><a href="#analogs">Аналоги</a></li>
+    <li><a href="#matrix">Сравнительная матрица</a></li>
+    <li><a href="#dynamic">Статика против динамики</a></li>
+    <div class="group">Как это делается</div>
+    <li><a href="#recipes">Рецепты по платформам</a></li>
+    <div class="group">Проект</div>
+    <li><a href="#language">Язык реализации</a></li>
+    <li><a href="#arch">Архитектура</a></li>
+    <li><a href="#config">Конфиг и CLI</a></li>
+    <li><a href="#plan">План по фазам</a></li>
+    <li><a href="#best">Чем будет лучше</a></li>
+    <li><a href="#risks">Риски</a></li>
+    <div class="group">Метод</div>
+    <li><a href="#factcheck">Фактчек</a></li>
+    <li><a href="#sources">Источники</a></li>
+  </ol>
+</nav>
+
+<main>
+<div class="wrap">
+
+<header class="top">
+  <div class="eyebrow">Исследование · 8 сентября 2026</div>
+  <h1>bindsmith</h1>
+  <p class="lede">Как построить консольный генератор биндингов нативных API для шести платформ Flutter — Android, iOS, macOS, Windows, Linux и Web — и что для этого уже сделано в Dart, .NET, NativeScript и Rust-мире.</p>
+  <div class="meta">
+    <span>Метод: <b>8 исследовательских агентов → 5 фактчеков → синтез</b></span>
+    <span>Опровергнуто утверждений: <b class="num">17</b></span>
+    <span>Файлы проекта: <b>~/GitHub/bindsmith/research.md · plan.md</b></span>
+  </div>
+</header>
+
+<section id="verdict">
+  <div class="verdict">
+    <div class="eyebrow">Вердикт</div>
+    <p><b>Писать на Dart, статический кодоген, оркестратор над официальными генераторами.</b> Все кирпичи для отдельных платформ уже существуют и живы: ffigen 22 (C и Objective-C), swiftgen 0.2 (Swift), jnigen 1.0 (Java/Kotlin), package:win32 из Win32Metadata, dart-dbus, dart:js_interop. Не существует ни одного инструмента, который берёт одну декларацию и выдаёт биндинги для всех шести платформ плюс единый Dart-фасад — ближайшее, flutter_rust_bridge, умеет это только для Rust-входа.</p>
+    <p>Ниша bindsmith: один конфиг → драйверы над ffigen/swiftgen/jnigen/winmd/dbus и собственный драйвер <code>.d.ts</code> для Web → единое промежуточное представление → проходы (фильтры, переименования, nullability, async, потоки, фиксапы) → платформенные биндинги, фасад с диспатчем, тонкие нативные обёртки для того, что напрямую не биндится, и lockfile зависимостей. Динамический путь NativeScript отвергнут: свой рантайм, нет tree-shaking, ~3,5× накладных на вызов.</p>
+  </div>
+  <div class="facts" style="margin-top:14px">
+    <div><span class="k">Платформ</span><span class="v num">6</span></div>
+    <div><span class="k">Официальных Dart-генераторов</span><span class="v num">7 <small>по одной платформе каждый</small></span></div>
+    <div><span class="k">Мультиплатформенных оркестраторов</span><span class="v num">0 <small>для нативного входа</small></span></div>
+    <div><span class="k">Опровергнуто фактчеком</span><span class="v num">17 <small>утверждений агентов</small></span></div>
+  </div>
+</section>
+
+<section id="task">
+  <div class="sec-head"><div class="eyebrow">Постановка</div><h2>Задача и рамки</h2></div>
+  <div class="prose" style="display:grid;gap:12px">
+    <p>Нужна программа, которая по описанию нативного API — заголовки C/Objective-C, Swift-модули, JAR/AAR, TypeScript-декларации, <code>.winmd</code>, <code>.gir</code>, D-Bus XML — генерирует Dart-биндинги для каждой платформы Flutter, запускается из командной строки и управляется конфигами. Ориентиры: Mono/Xamarin/.NET MAUI, NativeScript, а также uniffi, flutter_rust_bridge, Gluecodium.</p>
+    <p>Важно разделять два направления интеропа. Первое — <b>native → Dart</b>: Dart вызывает существующий нативный API напрямую (ffigen, swiftgen, jnigen, js_interop). Второе — <b>Dart ↔ native через каналы</b>: описываем интерфейс сообщений и генерируем обе стороны (pigeon). Задача — первое; pigeon остаётся запасным выходом там, где прямой вызов невозможен.</p>
+  </div>
+</section>
+
+<section id="dart">
+  <div class="sec-head"><div class="eyebrow">Ландшафт</div><h2>Что уже есть в Dart и Flutter</h2><p class="lede">Версии и даты проверены по pub.dev API и репозиториям 8 сентября 2026.</p></div>
+  <div class="scroll"><table class="wide">
+    <thead><tr><th>Пакет</th><th>Версия</th><th>Делает</th><th>Конфиг</th><th>Ограничения</th></tr></thead>
+    <tbody>
+      <tr><td class="k">ffigen</td><td>22.0.0<span class="sub">08.09.2026</span></td><td>C и Objective-C заголовки → Dart FFI через libclang</td><td>Dart-скрипт <code>tool/ffigen.dart</code>: <code>FfiGenerator</code>, <code>Input</code>, <code>DartOutput</code>, visitor-API. YAML устарел</td><td>Нет C++; макросы, varargs, SAL, <code>__stdcall</code></td></tr>
+      <tr><td class="k">objective_c</td><td>9.6.0<span class="sub">20.08.2026</span></td><td>Рантайм ObjC: ARC через NativeFinalizer, блоки <code>.listener/.blocking</code>, протоколы</td><td>—</td><td>Только Apple</td></tr>
+      <tr><td class="k">swift2objc · swiftgen</td><td>0.3.0 · 0.2.0<span class="sub">08.09.2026</span></td><td>Swift → ObjC-обёртка → ffigen; выдаёт <code>.g.dart</code> + <code>.m</code></td><td>Dart-класс <code>SwiftGenerator</code></td><td><span class="tag exp">экспериментально</span> только NSObject-совместимые типы</td></tr>
+      <tr><td class="k">jnigen · jni</td><td>1.0.0 · 1.0.3<span class="sub">03.09 · 30.07.2026</span></td><td>Java/Kotlin (байткод, Maven) → Dart через JNI; suspend → Future, nullability из метаданных Kotlin</td><td><code>JniGenerator</code>, <code>Input</code>, <code>DartOutput</code>, <code>generate()</code></td><td>JDK 17–21 и Android SDK при генерации; ручной <code>.release()</code>; перегрузки <code>new$2 → new$12</code> между версиями</td></tr>
+      <tr><td class="k">pigeon</td><td>28.0.0<span class="sub">21.08.2026</span></td><td>Типобезопасные каналы: Kotlin, Java, Swift, ObjC, C++, GObject; <code>@ProxyApi</code></td><td><code>@ConfigurePigeon(PigeonOptions(...))</code></td><td>Нет Web (flutter/flutter#98084 открыт с 2022); одна версия на обеих сторонах</td></tr>
+      <tr><td class="k">win32 · winmd</td><td>6.4.0 · 7.1.1<span class="sub">август 2026</span></td><td>Win32/COM из Microsoft Win32Metadata; winmd — читатель метаданных</td><td>Внутренний генератор с курируемыми списками</td><td>Пользователь биндинги не генерирует</td></tr>
+      <tr><td class="k">dbus (Canonical)</td><td>0.7.15<span class="sub">20.08.2026</span></td><td><code>dart-dbus generate-remote-object</code> / <code>generate-object</code> из introspection XML</td><td>CLI</td><td>Только Linux; LGPL 2.1</td></tr>
+      <tr><td class="k">gir-binding-gen</td><td>community<span class="sub">06.09.2026</span></td><td><code>.gir</code> → Dart</td><td>—</td><td><span class="tag exp">незрелый</span></td></tr>
+      <tr><td class="k">web · web_generator</td><td>внутренний</td><td>package:web генерируется из WebIDL</td><td>—</td><td>Не на pub.dev; <code>.d.ts</code> не поддерживает</td></tr>
+      <tr><td class="k">js_interop_gen</td><td>не опубликован</td><td><code>.d.ts</code> → dart:js_interop (PR 2025 в dart-lang/web)</td><td>—</td><td><span class="tag gap">пробел</span> единственный живой TS→Dart генератор; js_facade_gen архивирован в 2022</td></tr>
+      <tr><td class="k">hooks · code_assets · native_toolchain_c/cmake</td><td>2.2.0 · 2.0.0 · 0.19.4 · 0.3.2</td><td>Build hooks: сборка и бандлинг нативного кода из <code>hook/build.dart</code></td><td>Dart</td><td>По умолчанию в stable с Flutter 3.38 (ноябрь 2025); шаблон <code>package_ffi</code>, <code>plugin_ffi</code> устарел</td></tr>
+    </tbody>
+  </table></div>
+  <div class="grid2" style="margin-top:18px">
+    <div class="card"><h3>Кто чем пользуется</h3><ul>
+      <li>Плагины команды Flutter (webview_flutter, camera, video_player, in_app_purchase, local_auth) — pigeon; path_provider, url_launcher, shared_preferences — рукописные каналы.</li>
+      <li>Команда Dart: cupertino_http — ffigen ObjC; ok_http — jnigen; sqlite3 — ffigen C.</li>
+      <li>HERE SDK — Gluecodium с официальной Dart-целью. Sentry и Nutrient движутся к FFI/JNI-биндингам вместо каналов <span class="tag">не перепроверено</span>.</li>
+      <li>Ни один вендор не генерирует Flutter-обёртки из SDK автоматически.</li>
+    </ul></div>
+    <div class="card"><h3>Что болит у авторов плагинов</h3><ul>
+      <li>Web всегда отдельная реализация — pigeon его не покрывает.</li>
+      <li>jnigen требует собранный classpath: «сначала собери Android».</li>
+      <li>Swift-only SDK без <code>@objc</code> невидимы для ffigen; структуры и генерики Swift не пробрасываются.</li>
+      <li>Корутины, default-параметры, companion-объекты Kotlin требуют фасада.</li>
+      <li>Память и потоки: JNI global refs, main-thread API UIKit, коллбеки, которые собирает GC.</li>
+      <li>Разные конфиги у каждого инструмента; миграция YAML → Dart-скрипты в 2026.</li>
+    </ul></div>
+  </div>
+</section>
+
+<section id="analogs">
+  <div class="sec-head"><div class="eyebrow">Ландшафт</div><h2>Аналоги в других экосистемах</h2><p class="lede">Что у них можно взять: не код, а решения.</p></div>
+  <div class="grid2">
+    <div class="card"><div class="eyebrow">Mono · Xamarin · .NET MAUI</div><h3>Ручной IDL, генератор, фиксапы, slim binding</h3><ul>
+      <li><b>bgen</b> (iOS/macOS): ApiDefinition.cs с <code>[BaseType]</code>, <code>[Export]</code>, <code>[NullAllowed]</code>, <code>[Wrap]</code>; все Apple SDK привязаны так вручную. RFC на Roslyn-генератор открыт с 2024, работ нет.</li>
+      <li><b>Objective Sharpie</b>: dotnet global tool <code>Sharpie.Bind.Tool</code>, только macOS, libclang. Атрибут <code>[Verify]</code> намеренно ломает компиляцию, пока разработчик не проверит место. Лучший UX принудительного ревью.</li>
+      <li><b>.NET for Android</b>: class-parse (байткод + метаданные Kotlin) → api.xml → generator; фиксапы <code>Metadata.xml</code> на XPath (<code>remove-node</code>, <code>attr</code>, <code>add-node</code>); <code>&lt;AndroidMavenLibrary&gt;</code> в .NET 9 тянет Maven и верифицирует зависимости.</li>
+      <li><b>Native Library Interop</b>: официальный совет — не биндить SDK целиком, а написать тонкую Swift/Kotlin-обёртку и биндить её (шаблон в CommunityToolkit/Maui.NativeLibraryInterop).</li>
+      <li><b>CsWin32</b>: pull-модель — <code>NativeMethods.txt</code> перечисляет нужные API, source generator берёт их из <code>.winmd</code>. CppSharp 1.2, ClangSharp 21.1.8 — C/C++ через libclang с конвейером passes.</li>
+    </ul></div>
+    <div class="card"><div class="eyebrow">NativeScript</div><h3>Динамический полюс</h3><ul>
+      <li>Метаданные всего SDK генерируются при сборке: iOS — C++/libclang генератор → бинарный <code>metadata-&lt;arch&gt;.bin</code>; Android — ASM/BCEL → tree-streams.</li>
+      <li>Рантайм (V8 на iOS с версии 7.0, 2020) диспатчит вызовы через libffi/objc_msgSend и JNI-рефлексию. Покрытие 100% без кодогена под библиотеку.</li>
+      <li>Фильтрация — <code>native-api-usage.json</code> (whitelist/blacklist); типы для IDE — <code>ns typings ios|android</code>; пакеты типов 15 и 48 МБ.</li>
+      <li>Цена: рантайм и метаданные в бинаре, нет tree-shaking, ≈3,5× накладных на вызов по собственному бенчмарку NativeScript. Для Flutter с AOT на iOS путь закрыт. Берём идею whitelist-использования API.</li>
+      <li>Родня: dart_native (Alibaba) — заброшен с декабря 2022; PyObjC, Pyjnius, JNA, koffi.</li>
+    </ul></div>
+    <div class="card"><div class="eyebrow">Rust и IDL</div><h3>Единая модель и шаблоны</h3><ul>
+      <li><b>uniffi-rs 0.32</b>: Rust → Kotlin/Swift/Python/Ruby; сторонние Go, C#, React Native и Dart (Uniffi-Dart 0.2.1, активен). ComponentInterface + Askama-шаблоны + checksum'ы совместимости.</li>
+      <li><b>flutter_rust_bridge 2.13</b>: единственный зрелый «одна декларация → 6 платформ», но вход только Rust; <code>flutter_rust_bridge.yaml</code>, cargokit или native assets.</li>
+      <li><b>Gluecodium 14.1</b> (HERE): LIME IDL → C++, Java, Kotlin, Swift, Dart. Djinni мёртв (релиз 2023), SWIG и wit-bindgen без Dart.</li>
+      <li><b>objc2 header-translator</b>: <code>translation-config.toml</code> на фреймворк — skipped, availability по ОС, safety-флаги. Образец декларативных фиксапов.</li>
+      <li><b>gtk-rs gir</b>: <code>Gir.toml</code>, два слоя sys и safe. <b>windows-bindgen 0.100</b>: <code>--filter</code> как pull-модель из winmd.</li>
+    </ul></div>
+    <div class="card"><div class="eyebrow">Kotlin · Swift · Java · JS</div><h3>Уроки маппинга</h3><ul>
+      <li>Kotlin cinterop <code>.def</code>; Swift export экспериментален; SKIE 0.10 чинит suspend/Flow на Swift-стороне; karakum — <code>.d.ts</code> → Kotlin через TypeScript Compiler API.</li>
+      <li>swift-java 0.6: режимы FFM (JDK 25+) и JNI (Android). jextract: dump-then-curate — <code>--dump-includes</code>, отредактировать, <code>--config</code>.</li>
+      <li>React Native codegen по TS-спекам; Nitro/nitrogen; Expo Modules DSL. Agora Terra: cppast + libclang → AST → TS-рендереры, YAML-конфиг.</li>
+      <li>Общее: async у каждого свой (suspend/Flow, Swift async, Promise → Future/Stream); nullability из аннотаций; генерики стираются; документация теряется почти у всех; snapshot-тесты и компиляционная матрица — стандарт.</li>
+    </ul></div>
+  </div>
+</section>
+
+<section id="matrix">
+  <div class="sec-head"><div class="eyebrow">Сравнение</div><h2>Сравнительная матрица</h2></div>
+  <div class="scroll"><table class="wide compare tight">
+    <thead><tr><th>Инструмент</th><th>Подход</th><th>Вход</th><th>Цели</th><th>Конфиг</th><th>Фиксапы</th><th>Ревью</th><th>Зависимости</th><th>Статус</th></tr></thead>
+    <tbody>
+      <tr><td>bgen + Sharpie</td><td>статический, ручной IDL на C#</td><td>ObjC .h</td><td>C# iOS/macOS</td><td>C#-атрибуты</td><td>в ApiDefinition</td><td><code>[Verify]</code></td><td>вручную; NLI-шаблон</td><td>зрелый</td></tr>
+      <tr><td>.NET for Android</td><td>статический из байткода</td><td>JAR/AAR</td><td>C# Android</td><td>MSBuild + Metadata.xml</td><td>XPath</td><td>—</td><td>AndroidMavenLibrary + верификация</td><td>зрелый</td></tr>
+      <tr><td>CsWin32</td><td>source generator, pull</td><td>.winmd</td><td>C# Windows</td><td>NativeMethods.txt</td><td>JSON</td><td>—</td><td>NuGet</td><td>зрелый</td></tr>
+      <tr><td>NativeScript</td><td>динамический рантайм</td><td>SDK целиком</td><td>JS/TS iOS, Android</td><td>native-api-usage.json</td><td>—</td><td>—</td><td>CocoaPods/Gradle</td><td>зрелый</td></tr>
+      <tr><td>uniffi-rs</td><td>статический из Rust</td><td>Rust</td><td>Kotlin, Swift, Py, Ruby, +Dart</td><td>uniffi.toml</td><td>custom_types</td><td>—</td><td>cargo</td><td>зрелый</td></tr>
+      <tr><td>flutter_rust_bridge</td><td>статический из Rust</td><td>Rust</td><td>Dart × 6</td><td>YAML</td><td>атрибуты</td><td>—</td><td>cargokit / native assets</td><td>зрелый</td></tr>
+      <tr><td>Gluecodium</td><td>статический из IDL</td><td>LIME</td><td>C++, Java, Kotlin, Swift, Dart</td><td>CLI</td><td>в IDL</td><td>—</td><td>—</td><td>зрелый</td></tr>
+      <tr><td>objc2 header-translator</td><td>статический из SDK</td><td>Apple .h</td><td>Rust</td><td>translation-config.toml</td><td>декларативные</td><td>—</td><td>—</td><td>зрелый</td></tr>
+      <tr><td>ffigen · jnigen · swiftgen · pigeon</td><td>статический, по платформе</td><td>.h / .class / Swift / Dart IDL</td><td>Dart</td><td>Dart-скрипты</td><td>visitor, include</td><td>—</td><td>jnigen: Maven</td><td>стабильно / эксп.</td></tr>
+      <tr style="background:var(--accent-soft)"><td>bindsmith</td><td>статический оркестратор + единый IR</td><td>.h, Swift, JAR, .d.ts, .winmd, .gir, D-Bus</td><td>Dart × 6 + фасад + обёртки</td><td>YAML + JSON Schema, Dart-эскейп</td><td>декларативные + visitor</td><td>verify-маркеры</td><td>Maven, SwiftPM, npm, NuGet, pkg-config + lockfile</td><td>план</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="dynamic">
+  <div class="sec-head"><div class="eyebrow">Развилка</div><h2>Статический кодоген против динамического моста</h2></div>
+  <div class="scroll"><table class="tight">
+    <thead><tr><th>Критерий</th><th>Статический (ffigen, jnigen, bgen)</th><th>Динамический (NativeScript)</th></tr></thead>
+    <tbody>
+      <tr><td class="k">Покрытие API</td><td>только описанное в конфиге</td><td>100% сразу</td></tr>
+      <tr><td class="k">Типобезопасность</td><td>полная, dart analyze</td><td>типы только для IDE</td></tr>
+      <tr><td class="k">Размер приложения</td><td>минимальный, tree-shaking</td><td>+метаданные, +рантайм</td></tr>
+      <tr><td class="k">Вызов</td><td>прямой FFI</td><td>≈3,5× медленнее нативного</td></tr>
+      <tr><td class="k">AOT и iOS</td><td>естественно</td><td>нужен интерпретатор, на iOS невозможен</td></tr>
+      <tr><td class="k">Поддержка</td><td>генератор × платформы</td><td>рантайм × платформы + метаданные</td></tr>
+    </tbody>
+  </table></div>
+  <p class="prose" style="margin-top:14px">Решение: статический кодоген. Из динамического мира берём pull-модель (список используемых API) и генерацию типов из метаданных.</p>
+</section>
+
+<section id="recipes">
+  <div class="sec-head"><div class="eyebrow">Как это делается</div><h2>Как генерируют interop нативного API на каждой платформе</h2><p class="lede">Единая схема: вход → генератор и конфиг → команды → рантайм → сборка → подводные камни. Сниппеты схематичны: имена классов взяты из changelog'ов ffigen 22 и jnigen 1.0, точные сигнатуры — в API-docs пакетов.</p></div>
+
+  <div class="recipe">
+    <div class="rh"><h3>Android</h3><span class="tag ok">стабильно</span><span class="path">jnigen 1.0.0 · jni 1.0.3</span></div>
+    <dl>
+      <dt>Вход</dt><dd><code>.class</code>, JAR/AAR (в том числе из Maven) или Java-исходники. Kotlin только скомпилированный; его метаданные дают nullability и <code>suspend</code>.</dd>
+      <dt>Конфиг</dt><dd><code>tool/jnigen.dart</code>; YAML остался как legacy.<pre><code>import 'package:jnigen/jnigen.dart';
+
+void main() => JniGenerator(
+      input: Input(
+        classes: ['androidx.biometric.BiometricPrompt'],
+        // maven-зависимости, android_sdk_config(add_gradle_deps), source_path…
+      ),
+      output: DartOutput(path: Uri.directory('lib/src/android/')),
+    ).generate();</code></pre></dd>
+      <dt>Команды</dt><dd><code>dart run tool/jnigen.dart</code>. Для плагина с Android-примером jnigen сам вызывает Gradle, чтобы получить classpath.</dd>
+      <dt>Рантайм</dt><dd><code>package:jni</code>: JObject, JString, JList/JMap, <code>Jni.spawn()</code> для десктопной JVM, интерфейсы реализуются из Dart через <code>implement()</code>, глобальные ссылки освобождаются <code>.release()</code>.</dd>
+      <dt>Сборка</dt><dd><code>ffiPlugin: true</code>, Gradle-зависимости, R8/ProGuard keep-правила для классов, вызываемых из Dart; JDK 17–21.</dd>
+      <dt>Камни</dt><dd><ul><li>Нумерованные суффиксы перегрузок меняются между версиями генератора.</li><li>Корутины, default-параметры, companion-объекты требуют Kotlin-фасада.</li><li>Коллбек-объект нужно держать в Dart-ссылке, иначе его соберёт GC.</li></ul></dd>
+    </dl>
+  </div>
+
+  <div class="recipe">
+    <div class="rh"><h3>iOS и macOS</h3><span class="tag ok">ObjC стабильно</span><span class="tag exp">Swift экспериментально</span><span class="path">ffigen 22 · objective_c 9.6 · swiftgen 0.2</span></div>
+    <dl>
+      <dt>Вход</dt><dd>Objective-C: заголовки фреймворков (системных, из xcframework или pod). Swift: модуль; swiftgen сам делает swift2objc → <code>swiftc -emit-objc-header</code> → ffigen.</dd>
+      <dt>Конфиг</dt><dd><code>tool/ffigen.dart</code> для ObjC, <code>tool/swiftgen.dart</code> с <code>SwiftGenerator(target:, inputs:, include:, output:, ffigen:)</code> для Swift.<pre><code>import 'package:ffigen/ffigen.dart';
+
+void main() => FfiGenerator(
+      input: Input(entryPoints: [Uri.file('src/wrapper.h')] /*, objc, compilerOpts */),
+      output: DartOutput(path: Uri.file('lib/src/ios/av.dart')),
+      // include-фильтры интерфейсов/протоколов/категорий, visitor для переименований
+    ).generate();</code></pre></dd>
+      <dt>Команды</dt><dd><code>dart run tool/ffigen.dart</code>, <code>dart run tool/swiftgen.dart</code>. Коммитить и <code>.g.dart</code>, и <code>.m</code>: последний должен попадать в <code>Classes/**</code> podspec'а.</dd>
+      <dt>Рантайм</dt><dd><code>package:objective_c</code>: ARC через NativeFinalizer, блоки <code>.fromFunction</code> / <code>.listener</code> / <code>.blocking</code>, протоколы через <code>$Builder.implementAsListener</code>; <code>package:ffi</code>.</dd>
+      <dt>Сборка</dt><dd>podspec <code>s.frameworks = 'AVFoundation'</code> или SwiftPM <code>linkerSettings: [.linkedFramework(...)]</code>; <code>ffiPlugin: true</code> для ios и macos.</dd>
+      <dt>Камни</dt><dd><ul><li>Видны только <code>@objc</code>/NSObject-совместимые Swift-API; структуры и генерики не пробрасываются.</li><li>Блоки с чужого потока — только <code>.listener</code>/<code>.blocking</code>; UIKit и AppKit — main thread.</li><li>Без include-фильтров ffigen тянет миллионы строк транзитивных фреймворков; макросы не переносятся.</li></ul></dd>
+    </dl>
+  </div>
+
+  <div class="recipe">
+    <div class="rh"><h3>Windows</h3><span class="tag ok">стабильно</span><span class="path">ffigen 22 · win32 6.4 · winmd 7.1 · native_toolchain_c</span></div>
+    <dl>
+      <dt>Вход</dt><dd>C-заголовки свои или из Windows SDK (<code>Windows Kits\10\Include\…\um|shared</code>). Для Win32/COM — <code>.winmd</code> из NuGet Microsoft.Windows.SDK.Win32Metadata.</dd>
+      <dt>Генератор</dt><dd>ffigen с <code>compilerOpts: ['-I…']</code>. Win32 — готовый <code>package:win32</code>, самим не регенерировать; для кастомного среза — <code>package:winmd</code> как читатель метаданных. C++ SDK — <code>extern "C"</code> шим, собираемый из <code>hook/build.dart</code>.</dd>
+      <dt>Рантайм</dt><dd><code>package:ffi</code>, <code>package:win32</code> (COM vtables, calloc/free).</dd>
+      <dt>Сборка</dt><dd><pre><code>// hook/build.dart
+import 'package:hooks/hooks.dart';
+import 'package:native_toolchain_c/native_toolchain_c.dart';
+
+void main(List&lt;String&gt; args) => build(args, (input, output) async {
+      await CBuilder.library(
+        name: 'sdk_shim', assetName: 'sdk_shim.dart', sources: ['src/shim.c'],
+      ).run(input: input, output: output);
+    });</code></pre>Каналы — pigeon C++ (<code>cppHeaderOut</code>, <code>cppSourceOut</code>).</dd>
+      <dt>Камни</dt><dd><ul><li>libclang нужен ffigen и на Windows.</li><li>SAL-аннотации и <code>__stdcall</code>; MSVC-редистрибутивы при дистрибуции.</li><li>pigeon C++ с багами forward-declaration (flutter/flutter#128330).</li></ul></dd>
+    </dl>
+  </div>
+
+  <div class="recipe">
+    <div class="rh"><h3>Linux</h3><span class="tag ok">C и D-Bus стабильно</span><span class="tag exp">.gir незрелый</span><span class="path">ffigen 22 · dbus 0.7.15 · gir-binding-gen</span></div>
+    <dl>
+      <dt>Вход</dt><dd>C-заголовки с include-путями из <code>pkg-config --cflags gtk+-3.0</code>; D-Bus introspection XML; <code>.gir</code>.</dd>
+      <dt>Генератор</dt><dd>ffigen (так Canonical делает glib.dart и stdlibc.dart); <code>dart-dbus generate-remote-object iface.xml -o lib/x.dart</code> для клиента, <code>generate-object</code> для сервера; gir-binding-gen от сообщества.</dd>
+      <dt>Рантайм</dt><dd><code>package:ffi</code>, <code>package:dbus</code>.</dd>
+      <dt>Сборка</dt><dd><code>hook/build.dart</code> + <code>ffiPlugin: true</code>; каналы — pigeon GObject. Embedder Flutter Linux — GTK3, миграция на GTK4 стоит с 2021.</dd>
+      <dt>Камни</dt><dd><ul><li>Макросы <code>G_OBJECT()</code>-кастов и varargs <code>g_object_new</code> ffigen не переносит.</li><li>Версии glibc на целевых дистрибутивах.</li><li>Код dart-dbus черновой, требует доводки.</li></ul></dd>
+    </dl>
+  </div>
+
+  <div class="recipe">
+    <div class="rh"><h3>Web</h3><span class="tag ok">js_interop стабильно</span><span class="tag gap">генерации из .d.ts нет</span><span class="path">dart:js_interop · package:web</span></div>
+    <dl>
+      <dt>Вход</dt><dd>Браузерные API — WebIDL, уже сгенерированы в <code>package:web</code>. JS-библиотеки — <code>.d.ts</code> из npm или ручные декларации.</dd>
+      <dt>Генератор</dt><dd>Для приложений — ручные extension types. Автоматика из <code>.d.ts</code> — только неопубликованный js_interop_gen в dart-lang/web; js_facade_gen архивирован в 2022.<pre><code>import 'dart:js_interop';
+
+extension type Chart(JSObject _) implements JSObject {
+  external Chart(JSObject context, JSObject options);
+  external JSPromise&lt;JSAny?&gt; update();
+  external void destroy();
+}
+
+Future&lt;void&gt; refresh(Chart c) => c.update().toDart;</code></pre></dd>
+      <dt>Рантайм</dt><dd><code>dart:js_interop</code> (<code>JSPromise.toDart</code>, <code>.toJS</code>, JSFunction), <code>package:web</code>.</dd>
+      <dt>Сборка</dt><dd><code>&lt;script&gt;</code> в <code>web/index.html</code> или загрузка в flutter_bootstrap.js; плагин — <code>pluginClass</code> и <code>fileName</code> в блоке <code>web</code>.</dd>
+      <dt>Камни</dt><dd><ul><li>Структурная типизация TS против номинальных extension types.</li><li>Коллбеки держать (<code>.toJS</code>), иначе GC.</li><li><code>dart:html</code> и <code>package:js</code> не собираются dart2wasm.</li></ul></dd>
+    </dl>
+  </div>
+
+  <div class="recipe">
+    <div class="rh"><h3>Упаковка и каналы</h3><span class="tag ok">стабильно</span><span class="path">package_ffi · federated plugin · pigeon 28</span></div>
+    <dl>
+      <dt>Шаблон</dt><dd><code>flutter create --template=package_ffi &lt;name&gt;</code> (Flutter ≥ 3.38): <code>lib/</code>, <code>src/</code>, <code>hook/build.dart</code>; в dev_dependencies — hooks, code_assets, native_toolchain_c.</dd>
+      <dt>Federated</dt><dd>App-facing пакет с <code>default_package:</code> на платформу; реализации с <code>implements:</code>; для FFI-реализаций <code>ffiPlugin: true</code>.</dd>
+      <dt>Pigeon</dt><dd><code>dart run pigeon --input pigeons/messages.dart</code>; <code>@HostApi</code>, <code>@FlutterApi</code>, <code>@ProxyApi</code>; <code>@async</code> → Kotlin suspend и Swift async throws. Одна версия pigeon на обеих сторонах; публичные API на pigeon не рекомендуются.</dd>
+    </dl>
+  </div>
+</section>
+
+<section id="language">
+  <div class="sec-head"><div class="eyebrow">Проект</div><h2>Язык реализации</h2></div>
+  <div class="scroll"><table class="tight wide">
+    <thead><tr><th>Критерий</th><th>Dart</th><th>Rust</th><th>Kotlin/JVM</th><th>TypeScript/Node</th><th>C#</th></tr></thead>
+    <tbody>
+      <tr><td class="k">Официальные генераторы как библиотеки</td><td>напрямую: FfiGenerator, JniGenerator, SwiftGenerator, Pigeon.runWithOptions, winmd</td><td>subprocess</td><td>subprocess</td><td>subprocess</td><td>subprocess</td></tr>
+      <tr><td class="k">Эмиссия Dart</td><td>code_builder 4.12, dart_style 3.1, analyzer 14.3</td><td>нет</td><td>нет</td><td>нет</td><td>нет</td></tr>
+      <tr><td class="k">Дистрибуция для Flutter-разработчиков</td><td>dart pub global activate, dart run, dart compile exe</td><td>cargo/бинарь</td><td>JVM</td><td>npm</td><td>dotnet tool</td></tr>
+      <tr><td class="k">Парсинг .d.ts</td><td>node-сайдкар</td><td>swc/oxc без семантики типов</td><td>karakum-подход</td><td>TypeScript Compiler API</td><td>нет</td></tr>
+      <tr><td class="k">Кто будет контрибьютить</td><td>Flutter-сообщество</td><td>узко</td><td>узко</td><td>широко, но чужое для Flutter</td><td>узко</td></tr>
+    </tbody>
+  </table></div>
+  <p class="prose" style="margin-top:14px"><b>Решение: Dart</b> для ядра, CLI и всех драйверов. Для <code>.d.ts</code> — узкий сайдкар на TypeScript Compiler API, вызываемый драйвером web; заменяется на js_interop_gen из dart-lang/web, когда тот опубликуют. Второго языка в ядре нет.</p>
+</section>
+
+<section id="arch">
+  <div class="sec-head"><div class="eyebrow">Проект</div><h2>Архитектура</h2><p class="lede">Оркестратор: тонкие драйверы над официальными генераторами, единое промежуточное представление, проходы, эмиттеры, верификация.</p></div>
+  <div class="pipe">
+    <div class="stage"><div class="st">Вход</div><div class="nm">Конфиг и источники</div><ul><li><code>bindsmith.yaml</code> + JSON Schema</li><li><code>tool/bindsmith.dart</code> эскейп</li><li>.h · Swift · JAR/AAR · .d.ts · .winmd · .gir · D-Bus XML</li><li>Maven, SwiftPM, npm, NuGet, pkg-config → <code>bindsmith.lock</code></li></ul></div>
+    <div class="stage"><div class="st">Драйверы</div><div class="nm">Над официальными API</div><ul><li>c, objc — ffigen</li><li>swift — swiftgen</li><li>jvm — jnigen</li><li>web — TS-сайдкар → js_interop</li><li>winmd — package:winmd</li><li>dbus — dart-dbus</li></ul></div>
+    <div class="stage ir"><div class="st">Ядро</div><div class="nm">Единый IR</div><ul><li>типы, члены, параметры</li><li>nullability, async, threading</li><li>availability, docs</li><li>маркеры: verify, dropped</li></ul></div>
+    <div class="stage"><div class="st">Проходы</div><div class="nm">Чистые функции над IR</div><ul><li>include/exclude (pull)</li><li>rename, nullability</li><li>async → Future/Stream</li><li>threading → listener</li><li>availability, docs</li><li>fixups DSL, verify, бюджет</li></ul></div>
+    <div class="stage"><div class="st">Эмиттеры</div><div class="nm">Артефакты</div><ul><li>платформенные <code>.g.dart</code></li><li>фасад с conditional imports</li><li>Swift <code>@objc</code> и Kotlin обёртки</li><li><code>hook/build.dart</code>, podspec, Gradle, index.html</li></ul></div>
+    <div class="stage"><div class="st">Верификация</div><div class="nm">Пока не зелёное — не готово</div><ul><li>dart analyze</li><li>компиляционная матрица macOS / Linux / Windows</li><li>golden-тесты</li><li>verify-маркеры блокируют</li><li>lockfile и <code>--check</code></li></ul></div>
+  </div>
+  <div class="grid2" style="margin-top:18px">
+    <div class="card"><h3>Что заимствуем и откуда</h3><ul>
+      <li>Pull-модель списков API — CsWin32 NativeMethods.txt, windows-bindgen <code>--filter</code>, NativeScript native-api-usage.json.</li>
+      <li>Dump-then-curate — jextract <code>--dump-includes</code> → <code>bindsmith dump</code>.</li>
+      <li>Декларативные фиксапы — objc2 translation-config.toml, Xamarin Metadata.xml, gtk-rs Gir.toml.</li>
+      <li>Маркеры ревью, ломающие сборку — Objective Sharpie <code>[Verify]</code>.</li>
+      <li>Slim binding как артефакт — MAUI Native Library Interop, но генерируемый.</li>
+      <li>Разрешение зависимостей с верификацией — AndroidMavenLibrary; lockfile — cargo/pub.</li>
+    </ul></div>
+    <div class="card"><h3>Чего не делаем (YAGNI)</h3><ul>
+      <li>Свой рантайм или динамический диспатч.</li>
+      <li>Собственный парсер C++ — вместо него <code>extern "C"</code> шим и тонкая обёртка.</li>
+      <li>Поддержка макросов препроцессора.</li>
+      <li>GUI, обязательные AI-зависимости, собственный форматтер и анализатор.</li>
+    </ul></div>
+  </div>
+</section>
+
+<section id="config">
+  <div class="sec-head"><div class="eyebrow">Проект</div><h2>Конфиг и CLI</h2></div>
+  <div class="grid2">
+    <div style="min-width:0"><h4 style="margin-bottom:8px">bindsmith.yaml</h4><pre><code># yaml-language-server: $schema=…/bindsmith.schema.json
+name: my_sdk
+output: lib/src/generated
+facade:
+  library: lib/my_sdk.dart
+  unsupported: throw          # throw | stub | omit
+
+platforms:
+  android:
+    driver: jvm
+    deps: { maven: [com.example:sdk-android:2.3.1] }
+    include: { classes: [com.example.sdk.Client] }
+    kotlin: { suspend: future, flow: stream }
+  ios:
+    driver: swift
+    deps: { swiftpm: [{ url: https://github.com/example/sdk-ios, from: 2.3.0 }] }
+    include: { types: [Client, ClientDelegate] }
+    wrapper: auto             # @objc-обёртка для Swift-only членов
+  macos: { inherit: ios }
+  windows:
+    driver: c
+    headers: [third_party/sdk/include/sdk.h]
+    include: { functions: ["sdk_*"], structs: ["sdk_*"] }
+    build: { hook: native_toolchain_c, sources: [src/shim.c] }
+  linux: { inherit: windows }
+  web:
+    driver: dts
+    deps: { npm: ["@example/sdk@2.3.1"] }
+    include: { exports: [Client, ClientOptions] }
+
+fixups:
+  - match: { platform: android, symbol: "Client#connect$2" }
+    rename: connectWithTimeout
+  - match: { symbol: "Client.*Legacy*" }
+    hide: true
+  - match: { platform: ios, symbol: Client.onEvent }
+    threading: main
+
+verify:
+  markers: error
+  compile: [android, ios, macos, windows, linux, web]
+  size_budget: { lines: 40000 }</code></pre></div>
+    <div class="scroll"><table class="tight">
+      <thead><tr><th>Команда</th><th>Делает</th></tr></thead>
+      <tbody>
+        <tr><td class="k">init</td><td>Пишет конфиг с примерами, добавляет dev-зависимости</td></tr>
+        <tr><td class="k">doctor</td><td>Проверяет libclang, Xcode и swiftc, JDK 17–21 и Android SDK, VS Build Tools, node, pkg-config; печатает команды для починки</td></tr>
+        <tr><td class="k">resolve</td><td>Скачивает Maven/SwiftPM/npm/NuGet-входы, пишет <code>bindsmith.lock</code> с sha256</td></tr>
+        <tr><td class="k">dump</td><td>Печатает все видимые символы в синтаксисе include-списка</td></tr>
+        <tr><td class="k">generate</td><td>Драйверы → IR → проходы → эмиттеры; <code>--check</code> для CI</td></tr>
+        <tr><td class="k">verify</td><td>dart analyze, неснятые маркеры, компиляционная матрица, бюджет размера</td></tr>
+        <tr><td class="k">diff</td><td>После бампа генератора или SDK: что переименовано, удалено, добавлено</td></tr>
+        <tr><td class="k">watch · explain</td><td>Перегенерация по изменению; как символ был отображён и какие фиксапы сработали</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+</section>
+
+<section id="plan">
+  <div class="sec-head"><div class="eyebrow">Проект</div><h2>План по фазам</h2><p class="lede">Подробности, критерии приёмки и упстрим-факты каждой фазы — в <code>plan.md</code>. Оценки для одного опытного инженера; агенты могут параллелить фазы 2–5.</p></div>
+  <div class="phases">
+    <div class="phase"><div class="n">0<small>3 дня</small></div><div><h3>Скелет и решения</h3><p>Pub workspace: пакеты <code>bindsmith</code> (CLI, драйверы, IR, проходы, эмиттеры) и <code>bindsmith_runtime</code> (аннотация verify, диспатч, ошибки). CI на трёх ОС. Пять ADR: язык, статика, формат конфига, драйверы над библиотеками, pull-модель. Пиннинг апстрима одной мажорной версией.</p><p class="acc"><b>Готово, когда:</b> CI зелёный на macOS, Ubuntu, Windows; <code>bindsmith --help</code> печатает команды.</p></div></div>
+    <div class="phase"><div class="n">1<small>1,5 недели</small></div><div><h3>Конфиг, IR, первый срез — драйвер C</h3><p>Типизированный конфиг с JSON Schema и понятными ошибками; модель IR; интерфейс драйвера; драйвер C над ffigen через FfiGenerator и visitor-API; эмиттер с <code>hook/build.dart</code>; команды init, doctor, generate, dump; golden-тесты на фикстуре.</p><p class="acc"><b>Готово, когда:</b> фикстура <code>fixtures/c/geometry</code> генерируется и компилируется на Ubuntu и macOS.</p></div></div>
+    <div class="phase"><div class="n">2<small>2 недели</small></div><div><h3>Apple: Objective-C и Swift</h3><p>ObjC-драйвер: completion handlers → Future, блоки с чужого потока → listener, фиксап threading. Swift-драйвер через SwiftGenerator с адаптером под нестабильный API; Swift-only члены фиксируются как dropped-маркеры. Эмиссия podspec и SwiftPM.</p><p class="acc"><b>Готово, когда:</b> фикстуры ObjC и Swift проходят dart test на macOS; podspec проходит lint.</p></div></div>
+    <div class="phase"><div class="n">3<small>2 недели</small></div><div><h3>Android: jnigen, Maven, lockfile</h3><p>Резолвер Maven с транзитивными POM и sha256 в lockfile; JVM-драйвер над JniGenerator; keep-правила R8, Gradle-сниппет; фикстура Kotlin с перегрузками, интерфейсом, suspend, Flow, default-параметрами; тесты через Jni.spawn на десктопной JVM.</p><p class="acc"><b>Готово, когда:</b> повторная генерация с lockfile работает офлайн; diff ловит перенумерацию перегрузок.</p></div></div>
+    <div class="phase"><div class="n">4<small>2 недели</small></div><div><h3>Web: драйвер .d.ts</h3><p>Сайдкар на TypeScript Compiler API выдаёт JSON деклараций; драйвер переводит его в IR; эмиттер выпускает extension types с <code>@JS</code>, JSPromise → Future в фасаде. Всё неподдерживаемое — маркер, никогда не молчаливый пропуск. Проверка dart2js и dart2wasm.</p><p class="acc"><b>Готово, когда:</b> фикстуры nanoid, uuid и подмножество chart.js компилируются в JS и Wasm.</p></div></div>
+    <div class="phase"><div class="n">5<small>1,5 недели</small></div><div><h3>Windows и Linux</h3><p>winmd-драйвер с pull-списком: если символ уже есть в package:win32, фасад реэкспортирует его, генерируются только пробелы. Linux: pkg-config для драйвера C, D-Bus-драйвер, маркеры для макросов GLib. Шаблоны hook/build.dart для C и CMake, шим для C++.</p><p class="acc"><b>Готово, когда:</b> фикстуры генерируются и анализируются на windows-latest и ubuntu-latest.</p></div></div>
+    <div class="phase"><div class="n">6<small>2 недели</small></div><div><h3>Фасад, проходы, фиксапы, verify</h3><p>Все проходы как чистые функции с unit-тестами; фасад с conditional imports и рантайм-диспатчем; аннотация verify блокирует <code>bindsmith verify</code> до снятия или подтверждения в конфиге; команды explain, diff, watch, generate --check.</p><p class="acc"><b>Готово, когда:</b> фикстура на шесть платформ даёт одну библиотеку с идентичным публичным API (проверка через analyzer).</p></div></div>
+    <div class="phase"><div class="n">7<small>2 недели</small></div><div><h3>Генерация тонких обёрток</h3><p>Из dropped-маркеров: Swift <code>@objc</code>-мост для структур, генериков и async; Kotlin-мост для Flow, default-параметров и sealed; C++ шим <code>extern "C"</code>. Обёртки коммитятся и редактируются в размеченных регионах, затем прогоняются через обычные драйверы.</p><p class="acc"><b>Готово, когда:</b> Swift-only метод фикстуры вызывается из Dart; Flow становится Stream.</p></div></div>
+    <div class="phase"><div class="n">8<small>2 недели</small></div><div><h3>Реальные примеры, документация, релиз</h3><p>Пять примеров: AVFoundation, androidx.biometric, sqlite на десктопе, chart.js на Web, Swift-only пакет через обёртку. Документация из JSON Schema. Публикация на pub.dev, бинарники на GitHub Releases (кросс-компиляция dart compile exe — только в Linux, поэтому сборка на каждой ОС), Homebrew tap, pana ≥ 140.</p><p class="acc"><b>Готово, когда:</b> все примеры собираются в CI; пакеты опубликованы; сайт документации живой.</p></div></div>
+  </div>
+</section>
+
+<section id="best">
+  <div class="sec-head"><div class="eyebrow">Проект</div><h2>Чем bindsmith будет лучше существующего</h2></div>
+  <ol class="plain prose">
+    <li><b>Одна декларация → шесть платформ и единый фасад.</b> Сегодня это делает только flutter_rust_bridge, и только для Rust-входа.</li>
+    <li><b>Паритет Web.</b> <code>.d.ts</code> → dart:js_interop — публичного инструмента нет с 2022 года; issue про Web в pigeon открыт четыре года.</li>
+    <li><b>Pull-модель, декларативные фиксапы и verify-маркеры</b> — синтез CsWin32, objc2 и Sharpie; ни у одного Dart-инструмента этого нет.</li>
+    <li><b>Slim binding как генерируемый артефакт</b>, а не совет из документации.</li>
+    <li><b>Зависимости и lockfile</b> — генерация воспроизводима на CI без «сначала собери Android».</li>
+    <li><b>Устойчивость к апстриму</b> — пиннинг, адаптеры, контрактные тесты, <code>diff</code> после бампов.</li>
+    <li><b>Перенос документации и availability</b> в dartdoc и рантайм-проверки.</li>
+    <li><b>Бюджет размера</b> сгенерированного кода с отчётом, что можно исключить.</li>
+  </ol>
+</section>
+
+<section id="risks">
+  <div class="sec-head"><div class="eyebrow">Проект</div><h2>Риски</h2></div>
+  <div class="scroll"><table class="tight">
+    <thead><tr><th>Риск</th><th>Вероятность</th><th>Митигация</th></tr></thead>
+    <tbody>
+      <tr><td class="k">Breaking changes апстрима</td><td>высокая</td><td>ffigen 22 переписал API, jnigen 1.0 переименовал классы, swiftgen 0.x. Адаптер на драйвер, контрактные тесты, пин одной мажорной версией, <code>diff</code> для пользователей.</td></tr>
+      <tr><td class="k">swiftgen и swift2objc экспериментальны</td><td>высокая</td><td>Путь обёрток (фаза 7) — запасной для всего, что swiftgen не пробрасывает.</td></tr>
+      <tr><td class="k">Семантика .d.ts</td><td>средняя</td><td>Подмножество плюс маркеры; следить за js_interop_gen; ничего не терять молча.</td></tr>
+      <tr><td class="k">Тяжёлые тулчейны</td><td>высокая</td><td><code>doctor</code> с точными командами; задокументированные образы CI; кэш в <code>.dart_tool/bindsmith</code>.</td></tr>
+      <tr><td class="k">Шесть платформ одной командой</td><td>высокая</td><td>Фазы независимо поставляемы: публикация 0.x после фазы 3 только с C, ObjC и JVM.</td></tr>
+      <tr><td class="k">Макросы и C++</td><td>средняя</td><td>Задокументированное «нет»; генератор шимов.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="factcheck">
+  <div class="sec-head"><div class="eyebrow">Метод</div><h2>Фактчек</h2><p class="lede">Восемь агентов собирали факты по измерениям, пять агентов адверсариально проверяли их по первоисточникам: pub.dev API, crates.io, npm, GitHub API, официальная документация. Ниже — что пришлось исправить.</p></div>
+  <div class="scroll"><table class="fc tight">
+    <thead><tr><th>Было в отчёте агента</th><th>Стало после проверки</th></tr></thead>
+    <tbody>
+      <tr><td class="was">jni 1.0.0</td><td class="now">jni 1.0.3 (30.07.2026); jnigen 1.0.0 (03.09.2026)</td></tr>
+      <tr><td class="was">swift2objc нет на pub.dev</td><td class="now">swift2objc 0.3.0 и swiftgen 0.2.0 опубликованы 08.09.2026</td></tr>
+      <tr><td class="was">web_generator на pub.dev, поддерживает .d.ts</td><td class="now">внутренний инструмент dart-lang/web, только WebIDL; .d.ts — отдельный неопубликованный js_interop_gen</td></tr>
+      <tr><td class="was">flutter_rust_bridge 1.8.2</td><td class="now">2.13.0 (23.08.2026), 2.14.0-beta.1</td></tr>
+      <tr><td class="was">uniffi 0.31.0, январь 2026</td><td class="now">0.32.0 (30.06.2026)</td></tr>
+      <tr><td class="was">windows-bindgen 0.66 в мае 2026 с флагом --minimal</td><td class="now">0.66 — январь 2026; актуальная 0.100.0; флаг не подтверждён</td></tr>
+      <tr><td class="was">NativeScript перешёл на V8 для iOS в 9.0 (2025)</td><td class="now">в 7.0 (2020)</td></tr>
+      <tr><td class="was">фильтрация метаданных через .mdg-файлы</td><td class="now">native-api-usage.json</td></tr>
+      <tr><td class="was">накладные NativeScript 1,5–2×</td><td class="now">≈3,5× по собственному бенчмарку NativeScript</td></tr>
+      <tr><td class="was">dart_native поддерживается</td><td class="now">последний релиз декабрь 2022</td></tr>
+      <tr><td class="was">Objective Sharpie — закрытая утилита</td><td class="now">dotnet global tool Sharpie.Bind.Tool; исходники не публичны</td></tr>
+      <tr><td class="was">Djinni поддерживается, есть Dart</td><td class="now">релиз 1.4.1 (2023), только C++, Java, ObjC</td></tr>
+      <tr><td class="was">шаблон plugin_ffi</td><td class="now">устарел; актуален package_ffi с Flutter 3.38</td></tr>
+      <tr><td class="was">dart compile exe кросс-компилирует</td><td class="now">только в Linux-цели</td></tr>
+      <tr><td class="was">YAML — стандарт конфигов ffigen и jnigen</td><td class="now">Dart-скрипты; YAML legacy</td></tr>
+      <tr><td class="was">native assets stable в Flutter 3.38, сентябрь 2024</td><td class="now">Flutter 3.38 — ноябрь 2025; build hooks включены по умолчанию</td></tr>
+      <tr><td class="was">Roslyn-генератор rgen в разработке</td><td class="now">RFC dotnet/macios#21308 открыт, работ нет</td></tr>
+    </tbody>
+  </table></div>
+  <div class="callout" style="margin-top:14px"><b>Не перепроверено</b><span>Статус Kotlin Swift export на 2.4.x; Nitro после переезда репозитория; данные по Sentry, Nutrient и Mapbox; флаг jextract --dump-includes; использование Terra в Agora Flutter SDK. В research.md такие места помечены.</span></div>
+</section>
+
+<section id="sources">
+  <div class="sec-head"><div class="eyebrow">Метод</div><h2>Источники</h2></div>
+  <ul class="plain prose">
+    <li>pub.dev API и changelog'и: ffigen, objective_c, swift2objc, swiftgen, jnigen, jni, pigeon, win32, winmd, dbus, hooks, code_assets, native_toolchain_c, native_toolchain_cmake, web, flutter_rust_bridge, dart_native, code_builder, dart_style, analyzer, build_runner.</li>
+    <li>dart-lang/native (README и CHANGELOG ffigen, jnigen, swiftgen, swift2objc); dart.dev/interop; dart.dev/tools/hooks; dart.dev/tools/dart-compile; dart.dev/tools/pub/workspaces.</li>
+    <li>docs.flutter.dev: developing-packages, release notes 3.35 и 3.38, breaking-changes.</li>
+    <li>dart-lang/web (web_generator, PR #549 и #554); dart-lang/http (cupertino_http, ok_http); halildurmus/win32; canonical/dbus.dart; llamadonica/dart-gobject-bindings.</li>
+    <li>learn.microsoft.com: Objective Sharpie, AndroidMavenLibrary, CallConvSwift, MAUI Native Library Interop; dotnet/macios#21308; dotnet/runtimelab SwiftBindings; mono/CppSharp; NuGet ClangSharpPInvokeGenerator и CsWin32; microsoft/win32metadata.</li>
+    <li>docs.nativescript.org (metadata, generate-typings); blog.nativescript.org (V8 beta 2020, perf-metrics part 1); NativeScript/ios-metadata-generator и android-metadata-generator.</li>
+    <li>crates.io: uniffi, windows-bindgen, objc2; Uniffi-Dart/uniffi-dart; heremaps/gluecodium; cross-language-cpp/djinni-generator; swig.org/compat.html; bytecodealliance/wit-bindgen; madsmtm/objc2 header-translator.</li>
+    <li>JetBrains/kotlin; touchlab/skie; npm karakum и react-native; swiftlang/swift-java; openjdk/jextract; AgoraIO-Extensions/terra.</li>
+    <li>roszkowski.dev/2026/swiftgen-jnigen/ (18 мая 2026); flutter/flutter#98084.</li>
+  </ul>
+  <footer>Отчёт подготовлен 8 сентября 2026. Сырые отчёты агентов и журналы фактчека — в <code>docs/research-raw/</code> проекта bindsmith.</footer>
+</section>
+
+</div>
+</main>
+</div>
+
+<script>
+(function(){
+  var links = Array.prototype.slice.call(document.querySelectorAll('.toc a'));
+  var map = {};
+  links.forEach(function(a){ var id = a.getAttribute('href').slice(1); var el = document.getElementById(id); if (el) map[id] = a; });
+  if (!('IntersectionObserver' in window)) return;
+  var current = null;
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if (e.isIntersecting) {
+        var a = map[e.target.id]; if (!a) return;
+        if (current) current.classList.remove('active');
+        a.classList.add('active'); current = a;
+      }
+    });
+  }, { rootMargin: '-10% 0px -70% 0px', threshold: 0 });
+  Object.keys(map).forEach(function(id){ io.observe(document.getElementById(id)); });
+})();
+</script>

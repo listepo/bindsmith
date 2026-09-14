@@ -2,7 +2,7 @@
 https://github.com/listepo/bindsmith
 One bindsmith.yaml, six Flutter platforms. Generates Dart bindings for native APIs by driving official generators (ffigen, swiftgen, jnigen, winmd, dart-dbus) plus a TypeScript .d.ts driver, unified IR, review markers, one cross-platform facade.
 
-| # | Status | Priority | Complexity | Readiness | Agent |
+| # | Статус | Приоритет | Сложность | Готовность | Агент |
 | --- | --- | --- | --- | --- | --- |
 | P0-4 | in progress | P2 | 1 | 90% | Cursor / composer-2.5 |
 | P2-5 | in progress | P2 | 3 | 0% | Cursor / grok 4.6 |

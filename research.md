@@ -1,6 +1,6 @@
 # bindsmith — research: a native-API bindings generator for every Flutter platform
 
-Date: 2026-09-08. Method: 8 parallel research agents (Haiku) over dimensions D1–D8 → 5 adversarial fact-check agents (FC-1…FC-4) → synthesis (Fable). Raw reports live in `docs/research-raw/`. Claims the fact-check could not confirm are marked `[~]`; corrected ones `[✗→✓]`; unmarked claims were confirmed against a primary source.
+Date: 2026-09-08. Method: 8 parallel research agents (Haiku) over dimensions D1–D8 → 5 adversarial fact-check agents (FC-1…FC-4) → synthesis (Fable). Raw reports live in `docs/research-raw/`. A Russian copy of this document is `docs/research.ru.md`. Claims the fact-check could not confirm are marked `[~]`; corrected ones `[✗→✓]`; unmarked claims were confirmed against a primary source.
 
 ---
 
