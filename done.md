@@ -54,6 +54,7 @@ What is built, moved out of `plan.md` as each task finished. `plan.md` carries o
 | P5-4 | D-Bus driver wrapping `dart-dbus generate-remote-object` | C2 | P1-4 |
 | P2-3 | Apple glue emitter: podspec / SwiftPM snippets (`.m` under sources, frameworks) | C2 | P2-2 |
 | P7-4 | `wrapper: auto|off|only`; editable generated regions | C2 | P7-1 |
+| P0-6 | CI quick wins: format drift, D-Bus emit formatting, revert-job `.github/` guard | C1 | — |
 
 ## Implementation notes
 
@@ -62,6 +63,7 @@ What is built, moved out of `plan.md` as each task finished. `plan.md` carries o
 - **P0-1** Workspace, both packages, fixtures package, CI (`.github/workflows/ci.yml`: macos-latest, ubuntu-latest, windows-latest; `dart format --set-exit-if-changed`, `dart analyze --fatal-infos`, `dart test`, fixtures analyze).
 - **P0-2** ADR-001 host language, ADR-002 static codegen, ADR-003 config format, ADR-004 drivers over official libraries, ADR-005 pull model. One paragraph each, in `docs/adr/`.
 - **P0-3** `bindsmith_runtime`: `@BindsmithVerify(String reason)`, `BindsmithUnsupported` error, `BindsmithPlatform` enum, `bindsmithPlatform` getter (conditional import).
+- **P0-6** CI quick wins (run 34783089205). `dart format` on the 3 files the gate flagged (`config/schema.dart`, `test/drivers/header_docs_test.dart`, `fixtures/lib/generated/dbus/greeter.g.dart` — all whitespace-only drift under the Dart 3.13 formatter). `DbusDriver.load` now formats the emitted binding with `DartFormatter` (`dart_style` was already a main dependency): upstream `dart-dbus` codegen is string-built and not format-clean, so the committed fixture could never match what the driver writes and every test run re-dirtied it; the golden expectation's spurious extra `'\n'` (which `UPDATE_GOLDENS=1` had baked into the fixture as its trailing blank line) is dropped, so `dart test` leaves a format-clean tree (rule 5). The `revert-on-failure` job skips pushes touching `.github/` (least privilege — no `workflows: write` granted) plus a missing-base guard. Verified: `dart format --set-exit-if-changed` clean (114 files, 0 changed), `dbus_test` 5/5, runtime 3/3, sidecar node tests pass, header_docs + config 53/53, `dart analyze --fatal-infos fixtures` clean, `tests/release_artefacts.sh` exit 0. Residual pre-existing red, out of scope here: `dart analyze --fatal-infos` at root reports 14 issues on main (6 errors + 1 warning in `examples/`, e.g. undefined plugin classes in integration tests; 6 warnings/infos in `packages/`), and 28 `test:core` failures (config-loader validation drift in layout/glue/verify tests, swift bridge golden drift, npm/nuget resolve tests needing network) — follow-up tasks for the creator.
 
 ### Phase 1 — Config, IR, first vertical slice: C driver (1.5 weeks) — C4
 

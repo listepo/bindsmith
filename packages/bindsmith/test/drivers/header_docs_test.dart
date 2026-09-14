@@ -11,17 +11,20 @@ void main() {
   ).readAsStringSync();
 
   group('commentAbove', () {
-    test('collects contiguous comment lines directly above the declaration', () {
-      const source = '''
+    test(
+      'collects contiguous comment lines directly above the declaration',
+      () {
+        const source = '''
 /// kept
 /// still kept
 #define FOO 1
 ''';
-      expect(
-        commentAbove(source, RegExp(r'#\s*define\s+FOO\b')),
-        'kept\nstill kept',
-      );
-    });
+        expect(
+          commentAbove(source, RegExp(r'#\s*define\s+FOO\b')),
+          'kept\nstill kept',
+        );
+      },
+    );
 
     test('returns null when a blank line sits above the declaration', () {
       const source = '''
@@ -29,10 +32,7 @@ void main() {
 
 #define FOO 1
 ''';
-      expect(
-        commentAbove(source, RegExp(r'#\s*define\s+FOO\b')),
-        isNull,
-      );
+      expect(commentAbove(source, RegExp(r'#\s*define\s+FOO\b')), isNull);
     });
 
     test('reads a trailing // comment on the same line', () {

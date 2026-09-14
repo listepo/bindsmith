@@ -58,4 +58,3 @@ class ComExampleGreeter extends DBusRemoteObject {
     return result.returnValues[0].asString();
   }
 }
-

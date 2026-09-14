@@ -21,6 +21,7 @@ library;
 
 import 'dart:io';
 
+import 'package:dart_style/dart_style.dart';
 import 'package:dbus/code_generator.dart';
 import 'package:dbus/dbus.dart';
 import 'package:path/path.dart' as p;
@@ -64,7 +65,13 @@ final class DbusDriver {
 
     final out = File(p.join(workingDirectory, output));
     out.parent.createSync(recursive: true);
-    out.writeAsStringSync(_emitBinding(preamble, bodies));
+    // Upstream codegen is string-built and not format-clean; format before
+    // writing so the committed fixture passes `dart format --set-exit-if-changed`
+    // and a test run never re-dirties it (rule 5).
+    final formatted = DartFormatter(
+      languageVersion: DartFormatter.latestLanguageVersion,
+    ).format(_emitBinding(preamble, bodies));
+    out.writeAsStringSync(formatted);
     return decls;
   }
 }
