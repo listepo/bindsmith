@@ -157,8 +157,7 @@ final _platform = {
     },
     'wrapper': {
       'type': 'string',
-      'description':
-          'Generate a native bridge for members the driver cannot carry across.',
+      'description': 'Generate a native bridge for members the driver cannot carry across.',
       'enum': ['auto', 'off', 'only'],
     },
     'build': {

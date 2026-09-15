@@ -86,7 +86,10 @@ void main() {
   });
 
   test('generated binding golden', () {
-    expectGolden(_generated, '$binding\n');
+    // The driver writes format-clean output, so the committed fixture must
+    // equal it byte for byte — no extra newline, or UPDATE_GOLDENS would
+    // write a file that fails `dart format --set-exit-if-changed`.
+    expectGolden(_generated, binding);
   });
 
   test('generation is deterministic', () async {
