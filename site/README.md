@@ -46,7 +46,7 @@ Project Pages base URL: `https://listepo.github.io/bindsmith/`
 3. Tweak layout in **`web/styles/landing.css`** — avoid heavy Dart styling.
 4. Screenshots for the PR still belong under **`docs/assets/landing-v1/`** (not auto-generated here).
 
-Light/dark: CSS variables follow `prefers-color-scheme`, or set `data-theme="light"|"dark"` on `<html>`.
+Light/dark: FOUC-safe toggle cycles **system → light → dark** (`localStorage["bindsmith-theme"]`), sets `data-theme` on `<html>`. CSS tokens honor light, dark, and system (`prefers-color-scheme`). Boot script in `lib/main.server.dart`; logic in `web/js/theme.js`.
 
 ## Deploy
 
