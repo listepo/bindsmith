@@ -92,13 +92,12 @@ Nothing is bound that was not asked for, and nothing asked for disappears quietl
 - `AGENTS.md` — how to work in this repository; read it before changing anything.
 - `docs/adr/` — decisions already made. `docs/research-raw/` — raw agent reports and fact-check logs.
 
+
 GitHub Releases ship a `dart compile exe` binary per OS. Homebrew is a formula
 (`scripts/formula.sh`) in `listepo/homebrew-tap`. Packages are not published to
 pub.dev until the creator says so.
 
 ## Development
-
-See [`CONTRIBUTING.md`](CONTRIBUTING.md) for the short contributor checklist.
 
 ```bash
 mise trust && mise install

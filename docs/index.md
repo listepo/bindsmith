@@ -16,10 +16,8 @@ what none of them cover.
 - **[Upgrading](upgrading.md)** — what happens when an upstream generator
   releases a new major.
 
-Decisions already made are in [`docs/adr/`](adr/). Background research is in
-`research.md`; raw evidence lives under `docs/research-raw/`.
-
-Contributors: see [`CONTRIBUTING.md`](../CONTRIBUTING.md).
+Decisions already made are in [`docs/adr/`](adr/); the research behind them is
+in `research.md`, with the raw evidence under `docs/research-raw/`.
 
 ## What it is not
 
