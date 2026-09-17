@@ -2,113 +2,87 @@
 
 ## Overview
 
-**bindsmith** generates Flutter bindings from one YAML to six platforms. The brand metaphor is a **Dart forge**: six platform pips converge into a birdless geometric chevron / bind node on a Material tile — bindings forged, not anvils hammered.
+**bindsmith** generates Flutter bindings from one YAML to six platforms. The brand mark is a **Material FAB + YAML braces** monogram on an ink M3 rounded-square tile — bindings forged from a manifest, not glass chrome or a Dart chevron.
 
-Visual direction: **Material 3 (Google) + Flutter/Dart cues + nerd**. Tonal surface ladder, 12–16px radii, filled/tonal buttons, subtle elevation (shadows or tonal layers), state layers. Primary brand copper `#C87941` stays locked; Flutter/Dart azure (`#0175C2` / `#13B9FD`) is secondary only — chips, badges, one logo pip. Nerd layer: IBM Plex Mono labels, YAML/CLI cards, platform chips, hairlines.
+Visual direction: **Material 3 first** (tonal palette, dynamic-color feel from copper seed, Filled / Tonal / Outlined buttons, AppBar + NavigationBar density, M3 elevation, 12–28 radius scale, state layers, surface-container ladder). Copper `#C87941` is the seed / primary. Flutter/Dart azure is **secondary only**. Theme cycle **system → light → dark** via `bindsmith-theme` must keep working.
 
-Theme cycle **system → light → dark** via `bindsmith-theme` must keep working. Reduced-transparency / no-backdrop fallbacks may remain where useful; glass is **not** the primary look.
+## Material 3 color roles
 
-Identity: copper forge heat on ink `#1A1C1F` Material tiles; azure as a Flutter wink, never the hero accent.
+Seed: copper `#C87941`. Full role map (see `tokens.css`):
 
-## Colors
+| Role | Light | Dark | Use |
+|------|-------|------|-----|
+| primary | `#C87941` | `#E8A05C` | Filled CTA, FAB, brand |
+| on-primary | `#FFFFFF` | `#1A1C1F` | Text/icons on primary |
+| primary-container | `#F5E6D4` | `#2A2218` | Tonal buttons, soft wash |
+| on-primary-container | `#5C3318` | `#F5E6D4` | Text on primary-container |
+| secondary | `#0175C2` | `#13B9FD` | Flutter badge / azure cue |
+| on-secondary | `#FFFFFF` | `#003554` | On azure |
+| secondary-container | `#E3F2FD` | `#0D2A3A` | Flutter/Dart chips |
+| tertiary | `#A35F2E` | `#E8A05C` | Warm forge accent |
+| surface | `#F7F4EF` | `#121416` | Page |
+| surface-bright | `#FFFBFF` | `#1A1C1F` | AppBar / elevated |
+| surface-container-low | `#F0EBE4` | `#1A1C1F` | Cards low |
+| surface-container | `#E8E1D8` | `#22252A` | Cards |
+| surface-container-high | `#DED5CA` | `#2A2E34` | Hover / high |
+| surface-container-highest | `#D4CBC0` | `#353A42` | Highest tonal |
+| on-surface | `#1A1C1F` | `#EDE8E1` | Body text |
+| on-surface-variant | `#5C564E` | `#A39B90` | Muted |
+| outline | `#CAC3B8` | `#3E444E` | Borders |
+| outline-variant | `#DDD6CC` | `#2C3038` | Hairlines |
+| error | `#B5403A` | `#E07068` | Errors |
 
-### Brand / accents
-
-| Token | Hex | Use |
-|-------|-----|-----|
-| accent | `#C87941` | Primary CTA / brand (copper) |
-| accent-hover | `#B06835` | Hover |
-| accent-muted | `#E8A05C` | Soft copper |
-| accent-soft | `#F5E6D4` | Tonal copper wash (light) |
-| flutter | `#0175C2` | Flutter badge / secondary |
-| dart | `#13B9FD` | Dart chip / logo pip |
-| ink | `#1A1C1F` | Logo tile / primary ink |
-
-### Light (Material tonal ladder)
-
-| Token | Hex | Use |
-|-------|-----|-----|
-| bg | `#F7F4EF` | Page / surface |
-| bg-elevated | `#FFFBFF` | AppBar / elevated surface |
-| surface-1 | `#F0EBE4` | Surface container low |
-| surface-2 | `#E8E1D8` | Surface container |
-| surface-3 | `#DED5CA` | Surface container high |
-| border | `#CAC3B8` | Outline |
-| border-hairline | `#DDD6CC` | Outline variant |
-| fg | `#1A1C1F` | On-surface |
-| fg-muted | `#5C564E` | On-surface variant |
-| fg-subtle | `#8A8278` | Hint / caption |
-| code-bg | `#1A1C1F` | Code blocks |
-| code-fg | `#F0C078` | Code highlight |
-
-### Dark (Material tonal ladder)
-
-| Token | Hex | Use |
-|-------|-----|-----|
-| bg | `#121416` | Page |
-| bg-elevated | `#1A1C1F` | AppBar / elevated |
-| surface-1 | `#22252A` | Container low |
-| surface-2 | `#2A2E34` | Container |
-| surface-3 | `#353A42` | Container high |
-| border | `#3E444E` | Outline |
-| border-hairline | `#2C3038` | Outline variant |
-| fg | `#EDE8E1` | On-surface |
-| fg-muted | `#A39B90` | On-surface variant |
-| fg-subtle | `#6E675E` | Hint |
-| accent | `#E8A05C` | Primary CTA (dark) |
-| accent-hover | `#F0C078` | Hover |
-| accent-muted | `#C87941` | Soft copper |
-| accent-soft | `#2A2218` | Tonal copper wash |
-| code-bg | `#0C0D0F` | Code |
-| code-fg | `#F0C078` | Highlight |
+Legacy `--bs-accent*` / `--bs-surface-*` aliases map onto these roles.
 
 ## Typography
 
-- **Sans (body / Material UI):** Roboto (webfont) with IBM Plex Sans / system-ui fallback
-- **Mono (nerd labels, chips, CLI, YAML headers):** IBM Plex Mono (fallback JetBrains Mono, ui-monospace)
+- **Sans:** Roboto (webfont) + IBM Plex Sans / system-ui
+- **Mono:** IBM Plex Mono (CLI, chips, labels)
 - Scale: 12 / 14 / 16 / 20 / 28 / 40 — display tracking −0.02em
-- Weights: 400 body, 500 labels / buttons, 600 section titles
+- Weights: 400 body, 500 labels / buttons, 600 titles
 
 ## Layout & shape
 
-- Max content width: 960px landing, 720px prose
-- Grid: 8px base; card padding 16px; section gaps 48–64px
-- Radii: **12px** controls, **16px** cards / logo tile (Material 3)
-- Elevation: tonal layering first; soft shadow (`elev-1` / `elev-2`) for AppBar and cards
-- State layers: hover/press via surface step or translucent accent wash
+- Max width: 960px landing, 720px prose
+- Grid: 8px base; card padding 16–20px; section gaps 48–64px
+- **Radius scale:** 12 (controls) / 16 (md) / 20 (cards) / 28 (hero tiles / sheets)
+- **Elevation:** elev-1 AppBar & cards, elev-2 code cards / FAB feel, elev-3 hero mark
+- **State layers:** hover/press via `--bs-state-hover` / `--bs-state-press` (not glass)
 
 ## Components
 
-- **Filled button:** copper fill, on-primary white/ink, 12px radius, mono or Roboto medium label
-- **Tonal button:** accent-soft / surface-2 fill, accent fg, no heavy border
-- **Outlined / ghost:** outline variant + on-surface muted
-- **Cards:** surface elevated or container, 16px radius, elev-1; platform cards may use tonal fill
-- **Chips:** tonal copper or azure (Flutter/Dart badges only); mono 12px
-- **Code / YAML cards:** dark slate block; mono header with hairline; CLI prompt in copper
-- **AppBar:** sticky tonal elevated surface, 1px outline-variant bottom, subtle elev-1 (not glass-first)
-- **Theme toggle:** cycles system → light → dark (`bindsmith-theme`)
+- **Filled button:** primary fill, on-primary, radius 12, elev-1
+- **Tonal button:** primary-container, on-primary-container / primary fg
+- **Outlined button:** outline + on-surface, transparent fill, state-layer hover
+- **Cards:** surface-container-low → high on hover; radius 20; elev-1
+- **Chips:** tonal primary or secondary-container; stadium
+- **AppBar:** sticky surface-bright, outline-variant bottom, elev-1, compact density (~48–56px)
+- **NavigationBar (mobile):** surface-container, 3–4 destinations, active primary indicator
+- **Theme toggle:** system → light → dark (`bindsmith-theme`)
 
 ## Logo
 
-Material ink tile + six platform pips (one azure) converging into a **Dart-like chevron bind node** in copper. No Flutter bird, no anvil plate. Works at 16px favicon and 64px tile.
+**NEW mark (do not reuse chevron/pips):** Material ink rounded-square tile + copper **FAB** circle + white **YAML braces** `{ }` monogram + bind dot. No Flutter bird, no Dart logo, no anvil. Works at 16px favicon and 64px hero.
 
 ## Mini landing wire
 
-1. Material AppBar: mark + wordmark + nav + theme
-2. Hero: mark, pitch, Flutter/Dart tonal badges, filled + tonal CTAs
-3. Platforms: six M3 cards / tonal chips
-4. Generate CLI card + YAML snippet card
-5. Features: tonal Material cards (nerd mono eyebrows)
-6. Footer: Listepo / bindsmith
+1. M3 AppBar: mark + wordmark + nav + theme
+2. Hero: mark, pitch, Flutter/Dart/M3 badges, Filled + Tonal + Outlined CTAs
+3. Platforms: six surface-container cards
+4. Generate CLI + YAML cards
+5. Features: tonal cards
+6. Mobile NavigationBar (compact)
+7. Footer
 
 ## Do / Don't
 
 **Do**
-- Lead with Material tonal surfaces and copper CTAs
-- Keep azure as secondary Flutter/Dart cue only
-- Prefer mono for CLI/YAML/platform nerd labels
+- Lead with M3 tonal surfaces and copper primary
+- Map every color to an M3 role in `tokens.css`
+- Keep azure secondary only
 
 **Don't**
-- Don’t make glass the primary lock (fallback OK)
-- Don’t use teal/mint (ketch) or cyan-as-primary (rtok)
-- Don’t copy the Flutter logo bird or use purple AI gradients
+- Don’t lead with glass / nerd-forge chrome
+- Don’t iterate the old chevron + pip arc mark
+- Don’t copy Flutter bird or Dart logo
+- Don’t use teal (ketch) or cyan-as-primary (rtok)

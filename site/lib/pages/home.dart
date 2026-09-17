@@ -1,8 +1,8 @@
 import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
 
-/// Material 3 + Flutter/Dart + nerd landing.
-/// Sections: AppBar, hero, platforms, CLI, YAML, features, footer.
+/// Material 3 landing — copper seed, FAB+braces mark, tonal surfaces.
+/// Sections: AppBar, hero, platforms, CLI, YAML, features, NavigationBar, footer.
 class Home extends StatelessComponent {
   const Home({super.key});
 
@@ -23,7 +23,7 @@ class Home extends StatelessComponent {
     ),
     (
       '02',
-      'six forges',
+      'six targets',
       'Android, iOS, Web, Windows, macOS, Linux bindings from the same source of truth.',
     ),
     (
@@ -33,8 +33,8 @@ class Home extends StatelessComponent {
     ),
     (
       '04',
-      'flutter native',
-      'Built for Flutter/Dart plugin authors — azure badges optional, copper brand locked.',
+      'material native',
+      'Built for Flutter/Dart plugin authors — M3 tonal UI, copper primary, azure secondary.',
     ),
   ];
 
@@ -75,6 +75,7 @@ platforms:
       _sample(),
       _features(),
       _footer(),
+      _navBar(),
     ]);
   }
 
@@ -120,17 +121,12 @@ platforms:
           classes: 'hero-mark',
           src: 'images/logo.svg',
           alt: 'bindsmith',
-          width: 64,
-          height: 64,
+          width: 72,
+          height: 72,
         ),
-        img(
-          classes: 'hero-wordmark',
-          src: 'images/logo-wordmark.svg',
-          alt: 'bindsmith',
-          height: 28,
-        ),
+        p(classes: 'hero-wordmark-text', [.text('bindsmith')]),
         div(classes: 'hero-meta', [
-          span(classes: 'status-chip', [.text('forge ready')]),
+          span(classes: 'status-chip', [.text('m3 ready')]),
           span(classes: 'badge badge-flutter', [.text('Flutter')]),
           span(classes: 'badge badge-dart', [.text('Dart')]),
           span(classes: 'badge badge-m3', [.text('Material 3')]),
@@ -140,7 +136,7 @@ platforms:
         ]),
         p(classes: 'hero-sub', [
           .text(
-            'Forge Flutter bindings from a single manifest — Material clarity, nerd CLI density, copper brand.',
+            'Generate Flutter bindings from a single manifest — Material 3 tonal surfaces, copper primary, nerd CLI density.',
           ),
         ]),
         div(classes: 'cta-row', [
@@ -150,6 +146,11 @@ platforms:
             [.text('Get started')],
           ),
           a(classes: 'cta cta-tonal', href: '#cli', [.text('See the CLI')]),
+          a(
+            classes: 'cta cta-outlined',
+            href: '#platforms',
+            [.text('Platforms')],
+          ),
         ]),
       ]),
     ]);
@@ -160,7 +161,7 @@ platforms:
       div(classes: 'wrap wrap-wide', [
         p(classes: 'section-label', [.text('Platforms')]),
         p(classes: 'section-lead', [
-          .text('Six targets. One forge. Tonal Material cards with mono labels.'),
+          .text('Six targets. One manifest. Surface-container cards with M3 density.'),
         ]),
         div(classes: 'platform-grid', [
           for (final (name, slug) in platforms)
@@ -223,11 +224,38 @@ platforms:
     ]);
   }
 
+  Component _navBar() {
+    return nav(
+      classes: 'm3-nav-bar',
+      attributes: {'aria-label': 'Mobile'},
+      [
+        div(classes: 'm3-nav-bar-inner', [
+          a(classes: 'm3-nav-item is-active', href: './', attributes: {'aria-current': 'page'}, [
+            span(classes: 'm3-nav-icon', [.text('⌂')]),
+            span([.text('Home')]),
+          ]),
+          a(classes: 'm3-nav-item', href: '#platforms', [
+            span(classes: 'm3-nav-icon', [.text('▦')]),
+            span([.text('Targets')]),
+          ]),
+          a(classes: 'm3-nav-item', href: '#cli', [
+            span(classes: 'm3-nav-icon', [.text('>_')]),
+            span([.text('CLI')]),
+          ]),
+          a(classes: 'm3-nav-item', href: '#features', [
+            span(classes: 'm3-nav-icon', [.text('✦')]),
+            span([.text('More')]),
+          ]),
+        ]),
+      ],
+    );
+  }
+
   Component _footer() {
     return footer(classes: 'footer', [
       div(classes: 'wrap footer-inner', [
         div(classes: 'footer-brand', [
-          img(src: 'images/logo.svg', alt: '', width: 24, height: 24),
+          img(src: 'images/logo.svg', alt: '', width: 28, height: 28),
           span([.text('Listepo / bindsmith')]),
         ]),
         nav(classes: 'footer-links', [

@@ -1,120 +1,263 @@
-/* bindsmith — Material 3 tonal ladder + copper brand (+ Flutter azure secondary) */
+/* bindsmith — Material 3 color roles (copper seed) + legacy --bs-* aliases */
+
 :root,
 [data-theme="light"] {
   color-scheme: light;
-  --bs-bg: #F7F4EF;
-  --bs-bg-elevated: #FFFBFF;
-  --bs-surface-1: #F0EBE4;
-  --bs-surface-2: #E8E1D8;
-  --bs-surface-3: #DED5CA;
-  --bs-border: #CAC3B8;
-  --bs-border-hairline: #DDD6CC;
-  --bs-fg: #1A1C1F;
-  --bs-fg-muted: #5C564E;
-  --bs-fg-subtle: #8A8278;
-  --bs-accent: #C87941;
-  --bs-accent-hover: #B06835;
-  --bs-accent-muted: #E8A05C;
-  --bs-accent-soft: #F5E6D4;
-  --bs-on-accent: #FFFFFF;
-  --bs-flutter: #0175C2;
+
+  /* Seed / brand */
+  --bs-seed: #C87941;
+  --bs-ink: #1A1C1F;
+
+  /* M3 primary */
+  --bs-primary: #C87941;
+  --bs-on-primary: #FFFFFF;
+  --bs-primary-container: #F5E6D4;
+  --bs-on-primary-container: #5C3318;
+  --bs-primary-hover: #B06835;
+  --bs-primary-muted: #E8A05C;
+
+  /* M3 secondary (Flutter/Dart azure — secondary only) */
+  --bs-secondary: #0175C2;
+  --bs-on-secondary: #FFFFFF;
+  --bs-secondary-container: #E3F2FD;
+  --bs-on-secondary-container: #003554;
   --bs-dart: #13B9FD;
-  --bs-flutter-soft: #E3F2FD;
+
+  /* M3 tertiary (warm forge amber) */
+  --bs-tertiary: #A35F2E;
+  --bs-on-tertiary: #FFFFFF;
+  --bs-tertiary-container: #FFE0C2;
+  --bs-on-tertiary-container: #3E1E08;
+
+  /* M3 surface ladder */
+  --bs-surface: #F7F4EF;
+  --bs-surface-dim: #DED5CA;
+  --bs-surface-bright: #FFFBFF;
+  --bs-surface-container-lowest: #FFFFFF;
+  --bs-surface-container-low: #F0EBE4;
+  --bs-surface-container: #E8E1D8;
+  --bs-surface-container-high: #DED5CA;
+  --bs-surface-container-highest: #D4CBC0;
+  --bs-on-surface: #1A1C1F;
+  --bs-on-surface-variant: #5C564E;
+  --bs-inverse-surface: #2F3134;
+  --bs-inverse-on-surface: #F0EBE4;
+
+  /* M3 outline / error */
+  --bs-outline: #CAC3B8;
+  --bs-outline-variant: #DDD6CC;
+  --bs-error: #B5403A;
+  --bs-on-error: #FFFFFF;
+  --bs-error-container: #F9DEDC;
+  --bs-on-error-container: #410E0B;
+
+  /* Semantic aliases (landing) */
+  --bs-bg: var(--bs-surface);
+  --bs-bg-elevated: var(--bs-surface-bright);
+  --bs-surface-1: var(--bs-surface-container-low);
+  --bs-surface-2: var(--bs-surface-container);
+  --bs-surface-3: var(--bs-surface-container-high);
+  --bs-border: var(--bs-outline);
+  --bs-border-hairline: var(--bs-outline-variant);
+  --bs-fg: var(--bs-on-surface);
+  --bs-fg-muted: var(--bs-on-surface-variant);
+  --bs-fg-subtle: #8A8278;
+  --bs-accent: var(--bs-primary);
+  --bs-accent-hover: var(--bs-primary-hover);
+  --bs-accent-muted: var(--bs-primary-muted);
+  --bs-accent-soft: var(--bs-primary-container);
+  --bs-on-accent: var(--bs-on-primary);
+  --bs-flutter: var(--bs-secondary);
+  --bs-flutter-soft: var(--bs-secondary-container);
   --bs-success: #3D7A4A;
-  --bs-warning: #C87941;
-  --bs-danger: #B5403A;
-  --bs-info: #0175C2;
+  --bs-warning: var(--bs-primary);
+  --bs-danger: var(--bs-error);
+  --bs-info: var(--bs-secondary);
   --bs-code-bg: #1A1C1F;
   --bs-code-fg: #F0C078;
+
+  /* Elevation / state / shape (M3) */
   --bs-shadow: 0 1px 2px rgba(26, 28, 31, 0.06), 0 2px 6px rgba(26, 28, 31, 0.04);
-  --bs-focus-ring: 0 0 0 3px rgba(200, 121, 65, 0.35);
-  --bs-glass-fill: rgba(255, 251, 255, 0.88);
-  --bs-glass-border: rgba(221, 214, 204, 0.95);
   --bs-elev-1: 0 1px 2px rgba(26, 28, 31, 0.05), 0 1px 3px rgba(26, 28, 31, 0.08);
   --bs-elev-2: 0 2px 6px rgba(26, 28, 31, 0.06), 0 4px 12px rgba(26, 28, 31, 0.05);
-  --bs-accent-glow: 0 0 0 3px var(--bs-accent-soft);
-  --bs-state-hover: rgba(26, 28, 31, 0.06);
-  --bs-state-press: rgba(26, 28, 31, 0.10);
+  --bs-elev-3: 0 4px 8px rgba(26, 28, 31, 0.08), 0 8px 20px rgba(26, 28, 31, 0.06);
+  --bs-focus-ring: 0 0 0 3px rgba(200, 121, 65, 0.35);
+  --bs-state-hover: rgba(26, 28, 31, 0.08);
+  --bs-state-press: rgba(26, 28, 31, 0.12);
+  --bs-state-focus: rgba(200, 121, 65, 0.16);
+  --bs-accent-glow: 0 0 0 3px var(--bs-primary-container);
+
+  /* Radius scale 12–28 */
+  --bs-radius-sm: 12px;
   --bs-radius: 12px;
-  --bs-radius-lg: 16px;
+  --bs-radius-md: 16px;
+  --bs-radius-lg: 20px;
+  --bs-radius-xl: 28px;
+  --bs-radius-full: 999px;
+
   --bs-font-mono: "IBM Plex Mono", "JetBrains Mono", ui-monospace, monospace;
   --bs-font-sans: "Roboto", "IBM Plex Sans", system-ui, -apple-system, sans-serif;
+
+  /* legacy glass keys → tonal (kept so old CSS won't break) */
+  --bs-glass-fill: var(--bs-surface-bright);
+  --bs-glass-border: var(--bs-outline-variant);
 }
 
 [data-theme="dark"] {
   color-scheme: dark;
-  --bs-bg: #121416;
-  --bs-bg-elevated: #1A1C1F;
-  --bs-surface-1: #22252A;
-  --bs-surface-2: #2A2E34;
-  --bs-surface-3: #353A42;
-  --bs-border: #3E444E;
-  --bs-border-hairline: #2C3038;
-  --bs-fg: #EDE8E1;
-  --bs-fg-muted: #A39B90;
-  --bs-fg-subtle: #6E675E;
-  --bs-accent: #E8A05C;
-  --bs-accent-hover: #F0C078;
-  --bs-accent-muted: #C87941;
-  --bs-accent-soft: #2A2218;
-  --bs-on-accent: #1A1C1F;
-  --bs-flutter: #13B9FD;
+
+  --bs-seed: #C87941;
+  --bs-ink: #1A1C1F;
+
+  --bs-primary: #E8A05C;
+  --bs-on-primary: #1A1C1F;
+  --bs-primary-container: #2A2218;
+  --bs-on-primary-container: #F5E6D4;
+  --bs-primary-hover: #F0C078;
+  --bs-primary-muted: #C87941;
+
+  --bs-secondary: #13B9FD;
+  --bs-on-secondary: #003554;
+  --bs-secondary-container: #0D2A3A;
+  --bs-on-secondary-container: #E3F2FD;
   --bs-dart: #13B9FD;
-  --bs-flutter-soft: #0D2A3A;
+
+  --bs-tertiary: #E8A05C;
+  --bs-on-tertiary: #1A1C1F;
+  --bs-tertiary-container: #3E2A18;
+  --bs-on-tertiary-container: #FFE0C2;
+
+  --bs-surface: #121416;
+  --bs-surface-dim: #0C0D0F;
+  --bs-surface-bright: #1A1C1F;
+  --bs-surface-container-lowest: #0C0D0F;
+  --bs-surface-container-low: #1A1C1F;
+  --bs-surface-container: #22252A;
+  --bs-surface-container-high: #2A2E34;
+  --bs-surface-container-highest: #353A42;
+  --bs-on-surface: #EDE8E1;
+  --bs-on-surface-variant: #A39B90;
+  --bs-inverse-surface: #EDE8E1;
+  --bs-inverse-on-surface: #1A1C1F;
+
+  --bs-outline: #3E444E;
+  --bs-outline-variant: #2C3038;
+  --bs-error: #E07068;
+  --bs-on-error: #1A1C1F;
+  --bs-error-container: #3D1513;
+  --bs-on-error-container: #F9DEDC;
+
+  --bs-bg: var(--bs-surface);
+  --bs-bg-elevated: var(--bs-surface-bright);
+  --bs-surface-1: var(--bs-surface-container);
+  --bs-surface-2: var(--bs-surface-container-high);
+  --bs-surface-3: var(--bs-surface-container-highest);
+  --bs-border: var(--bs-outline);
+  --bs-border-hairline: var(--bs-outline-variant);
+  --bs-fg: var(--bs-on-surface);
+  --bs-fg-muted: var(--bs-on-surface-variant);
+  --bs-fg-subtle: #6E675E;
+  --bs-accent: var(--bs-primary);
+  --bs-accent-hover: var(--bs-primary-hover);
+  --bs-accent-muted: var(--bs-primary-muted);
+  --bs-accent-soft: var(--bs-primary-container);
+  --bs-on-accent: var(--bs-on-primary);
+  --bs-flutter: var(--bs-secondary);
+  --bs-flutter-soft: var(--bs-secondary-container);
   --bs-success: #6BBF7A;
-  --bs-warning: #E8A05C;
-  --bs-danger: #E07068;
-  --bs-info: #13B9FD;
+  --bs-warning: var(--bs-primary);
+  --bs-danger: var(--bs-error);
+  --bs-info: var(--bs-secondary);
   --bs-code-bg: #0C0D0F;
   --bs-code-fg: #F0C078;
+
   --bs-shadow: 0 1px 2px rgba(0, 0, 0, 0.35), 0 2px 8px rgba(0, 0, 0, 0.28);
-  --bs-focus-ring: 0 0 0 3px rgba(232, 160, 92, 0.4);
-  --bs-glass-fill: rgba(26, 28, 31, 0.88);
-  --bs-glass-border: rgba(44, 48, 56, 0.95);
   --bs-elev-1: 0 1px 2px rgba(0, 0, 0, 0.4), 0 1px 3px rgba(0, 0, 0, 0.3);
   --bs-elev-2: 0 2px 8px rgba(0, 0, 0, 0.45), 0 4px 14px rgba(0, 0, 0, 0.35);
-  --bs-accent-glow: 0 0 0 3px var(--bs-accent-soft);
-  --bs-state-hover: rgba(237, 232, 225, 0.06);
-  --bs-state-press: rgba(237, 232, 225, 0.10);
+  --bs-elev-3: 0 4px 12px rgba(0, 0, 0, 0.5), 0 10px 24px rgba(0, 0, 0, 0.4);
+  --bs-focus-ring: 0 0 0 3px rgba(232, 160, 92, 0.4);
+  --bs-state-hover: rgba(237, 232, 225, 0.08);
+  --bs-state-press: rgba(237, 232, 225, 0.12);
+  --bs-state-focus: rgba(232, 160, 92, 0.2);
+  --bs-accent-glow: 0 0 0 3px var(--bs-primary-container);
+
+  --bs-glass-fill: var(--bs-surface-bright);
+  --bs-glass-border: var(--bs-outline-variant);
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]):not([data-theme="dark"]),
   [data-theme="system"] {
     color-scheme: dark;
-    --bs-bg: #121416;
-    --bs-bg-elevated: #1A1C1F;
-    --bs-surface-1: #22252A;
-    --bs-surface-2: #2A2E34;
-    --bs-surface-3: #353A42;
-    --bs-border: #3E444E;
-    --bs-border-hairline: #2C3038;
-    --bs-fg: #EDE8E1;
-    --bs-fg-muted: #A39B90;
-    --bs-fg-subtle: #6E675E;
-    --bs-accent: #E8A05C;
-    --bs-accent-hover: #F0C078;
-    --bs-accent-muted: #C87941;
-    --bs-accent-soft: #2A2218;
-    --bs-on-accent: #1A1C1F;
-    --bs-flutter: #13B9FD;
+    --bs-seed: #C87941;
+    --bs-ink: #1A1C1F;
+    --bs-primary: #E8A05C;
+    --bs-on-primary: #1A1C1F;
+    --bs-primary-container: #2A2218;
+    --bs-on-primary-container: #F5E6D4;
+    --bs-primary-hover: #F0C078;
+    --bs-primary-muted: #C87941;
+    --bs-secondary: #13B9FD;
+    --bs-on-secondary: #003554;
+    --bs-secondary-container: #0D2A3A;
+    --bs-on-secondary-container: #E3F2FD;
     --bs-dart: #13B9FD;
-    --bs-flutter-soft: #0D2A3A;
+    --bs-tertiary: #E8A05C;
+    --bs-on-tertiary: #1A1C1F;
+    --bs-tertiary-container: #3E2A18;
+    --bs-on-tertiary-container: #FFE0C2;
+    --bs-surface: #121416;
+    --bs-surface-dim: #0C0D0F;
+    --bs-surface-bright: #1A1C1F;
+    --bs-surface-container-lowest: #0C0D0F;
+    --bs-surface-container-low: #1A1C1F;
+    --bs-surface-container: #22252A;
+    --bs-surface-container-high: #2A2E34;
+    --bs-surface-container-highest: #353A42;
+    --bs-on-surface: #EDE8E1;
+    --bs-on-surface-variant: #A39B90;
+    --bs-inverse-surface: #EDE8E1;
+    --bs-inverse-on-surface: #1A1C1F;
+    --bs-outline: #3E444E;
+    --bs-outline-variant: #2C3038;
+    --bs-error: #E07068;
+    --bs-on-error: #1A1C1F;
+    --bs-error-container: #3D1513;
+    --bs-on-error-container: #F9DEDC;
+    --bs-bg: var(--bs-surface);
+    --bs-bg-elevated: var(--bs-surface-bright);
+    --bs-surface-1: var(--bs-surface-container);
+    --bs-surface-2: var(--bs-surface-container-high);
+    --bs-surface-3: var(--bs-surface-container-highest);
+    --bs-border: var(--bs-outline);
+    --bs-border-hairline: var(--bs-outline-variant);
+    --bs-fg: var(--bs-on-surface);
+    --bs-fg-muted: var(--bs-on-surface-variant);
+    --bs-fg-subtle: #6E675E;
+    --bs-accent: var(--bs-primary);
+    --bs-accent-hover: var(--bs-primary-hover);
+    --bs-accent-muted: var(--bs-primary-muted);
+    --bs-accent-soft: var(--bs-primary-container);
+    --bs-on-accent: var(--bs-on-primary);
+    --bs-flutter: var(--bs-secondary);
+    --bs-flutter-soft: var(--bs-secondary-container);
     --bs-success: #6BBF7A;
-    --bs-warning: #E8A05C;
-    --bs-danger: #E07068;
-    --bs-info: #13B9FD;
+    --bs-warning: var(--bs-primary);
+    --bs-danger: var(--bs-error);
+    --bs-info: var(--bs-secondary);
     --bs-code-bg: #0C0D0F;
     --bs-code-fg: #F0C078;
     --bs-shadow: 0 1px 2px rgba(0, 0, 0, 0.35), 0 2px 8px rgba(0, 0, 0, 0.28);
-    --bs-focus-ring: 0 0 0 3px rgba(232, 160, 92, 0.4);
-    --bs-glass-fill: rgba(26, 28, 31, 0.88);
-    --bs-glass-border: rgba(44, 48, 56, 0.95);
     --bs-elev-1: 0 1px 2px rgba(0, 0, 0, 0.4), 0 1px 3px rgba(0, 0, 0, 0.3);
     --bs-elev-2: 0 2px 8px rgba(0, 0, 0, 0.45), 0 4px 14px rgba(0, 0, 0, 0.35);
-    --bs-accent-glow: 0 0 0 3px var(--bs-accent-soft);
-    --bs-state-hover: rgba(237, 232, 225, 0.06);
-    --bs-state-press: rgba(237, 232, 225, 0.10);
+    --bs-elev-3: 0 4px 12px rgba(0, 0, 0, 0.5), 0 10px 24px rgba(0, 0, 0, 0.4);
+    --bs-focus-ring: 0 0 0 3px rgba(232, 160, 92, 0.4);
+    --bs-state-hover: rgba(237, 232, 225, 0.08);
+    --bs-state-press: rgba(237, 232, 225, 0.12);
+    --bs-state-focus: rgba(232, 160, 92, 0.2);
+    --bs-accent-glow: 0 0 0 3px var(--bs-primary-container);
+    --bs-glass-fill: var(--bs-surface-bright);
+    --bs-glass-border: var(--bs-outline-variant);
   }
 }
 
@@ -122,38 +265,74 @@
   :root:not([data-theme="light"]):not([data-theme="dark"]),
   [data-theme="system"] {
     color-scheme: light;
-    --bs-bg: #F7F4EF;
-    --bs-bg-elevated: #FFFBFF;
-    --bs-surface-1: #F0EBE4;
-    --bs-surface-2: #E8E1D8;
-    --bs-surface-3: #DED5CA;
-    --bs-border: #CAC3B8;
-    --bs-border-hairline: #DDD6CC;
-    --bs-fg: #1A1C1F;
-    --bs-fg-muted: #5C564E;
-    --bs-fg-subtle: #8A8278;
-    --bs-accent: #C87941;
-    --bs-accent-hover: #B06835;
-    --bs-accent-muted: #E8A05C;
-    --bs-accent-soft: #F5E6D4;
-    --bs-on-accent: #FFFFFF;
-    --bs-flutter: #0175C2;
+    --bs-seed: #C87941;
+    --bs-ink: #1A1C1F;
+    --bs-primary: #C87941;
+    --bs-on-primary: #FFFFFF;
+    --bs-primary-container: #F5E6D4;
+    --bs-on-primary-container: #5C3318;
+    --bs-primary-hover: #B06835;
+    --bs-primary-muted: #E8A05C;
+    --bs-secondary: #0175C2;
+    --bs-on-secondary: #FFFFFF;
+    --bs-secondary-container: #E3F2FD;
+    --bs-on-secondary-container: #003554;
     --bs-dart: #13B9FD;
-    --bs-flutter-soft: #E3F2FD;
+    --bs-tertiary: #A35F2E;
+    --bs-on-tertiary: #FFFFFF;
+    --bs-tertiary-container: #FFE0C2;
+    --bs-on-tertiary-container: #3E1E08;
+    --bs-surface: #F7F4EF;
+    --bs-surface-dim: #DED5CA;
+    --bs-surface-bright: #FFFBFF;
+    --bs-surface-container-lowest: #FFFFFF;
+    --bs-surface-container-low: #F0EBE4;
+    --bs-surface-container: #E8E1D8;
+    --bs-surface-container-high: #DED5CA;
+    --bs-surface-container-highest: #D4CBC0;
+    --bs-on-surface: #1A1C1F;
+    --bs-on-surface-variant: #5C564E;
+    --bs-inverse-surface: #2F3134;
+    --bs-inverse-on-surface: #F0EBE4;
+    --bs-outline: #CAC3B8;
+    --bs-outline-variant: #DDD6CC;
+    --bs-error: #B5403A;
+    --bs-on-error: #FFFFFF;
+    --bs-error-container: #F9DEDC;
+    --bs-on-error-container: #410E0B;
+    --bs-bg: var(--bs-surface);
+    --bs-bg-elevated: var(--bs-surface-bright);
+    --bs-surface-1: var(--bs-surface-container-low);
+    --bs-surface-2: var(--bs-surface-container);
+    --bs-surface-3: var(--bs-surface-container-high);
+    --bs-border: var(--bs-outline);
+    --bs-border-hairline: var(--bs-outline-variant);
+    --bs-fg: var(--bs-on-surface);
+    --bs-fg-muted: var(--bs-on-surface-variant);
+    --bs-fg-subtle: #8A8278;
+    --bs-accent: var(--bs-primary);
+    --bs-accent-hover: var(--bs-primary-hover);
+    --bs-accent-muted: var(--bs-primary-muted);
+    --bs-accent-soft: var(--bs-primary-container);
+    --bs-on-accent: var(--bs-on-primary);
+    --bs-flutter: var(--bs-secondary);
+    --bs-flutter-soft: var(--bs-secondary-container);
     --bs-success: #3D7A4A;
-    --bs-warning: #C87941;
-    --bs-danger: #B5403A;
-    --bs-info: #0175C2;
+    --bs-warning: var(--bs-primary);
+    --bs-danger: var(--bs-error);
+    --bs-info: var(--bs-secondary);
     --bs-code-bg: #1A1C1F;
     --bs-code-fg: #F0C078;
     --bs-shadow: 0 1px 2px rgba(26, 28, 31, 0.06), 0 2px 6px rgba(26, 28, 31, 0.04);
-    --bs-focus-ring: 0 0 0 3px rgba(200, 121, 65, 0.35);
-    --bs-glass-fill: rgba(255, 251, 255, 0.88);
-    --bs-glass-border: rgba(221, 214, 204, 0.95);
     --bs-elev-1: 0 1px 2px rgba(26, 28, 31, 0.05), 0 1px 3px rgba(26, 28, 31, 0.08);
     --bs-elev-2: 0 2px 6px rgba(26, 28, 31, 0.06), 0 4px 12px rgba(26, 28, 31, 0.05);
-    --bs-accent-glow: 0 0 0 3px var(--bs-accent-soft);
-    --bs-state-hover: rgba(26, 28, 31, 0.06);
-    --bs-state-press: rgba(26, 28, 31, 0.10);
+    --bs-elev-3: 0 4px 8px rgba(26, 28, 31, 0.08), 0 8px 20px rgba(26, 28, 31, 0.06);
+    --bs-focus-ring: 0 0 0 3px rgba(200, 121, 65, 0.35);
+    --bs-state-hover: rgba(26, 28, 31, 0.08);
+    --bs-state-press: rgba(26, 28, 31, 0.12);
+    --bs-state-focus: rgba(200, 121, 65, 0.16);
+    --bs-accent-glow: 0 0 0 3px var(--bs-primary-container);
+    --bs-glass-fill: var(--bs-surface-bright);
+    --bs-glass-border: var(--bs-outline-variant);
   }
 }

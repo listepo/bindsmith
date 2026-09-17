@@ -1,20 +1,33 @@
-# bindsmith landing v1 screenshots + icons
+# bindsmith landing v1 — screenshots + icons
 
-Restyled for **Material 3 + Flutter/Dart + nerd**. Captured from local Jaspr static build (`site/build/jaspr`) via Chrome CDP.
+Restyled for **Material 3 first** (copper seed, full M3 roles, FAB+YAML braces mark).
+Captured from local Jaspr static build (`site/build/jaspr`) via Chrome CDP.
 Desktop ~1440×900; mobile ~390×844 @2x.
 
+## Screens
 | File | Theme | Notes |
 |------|-------|-------|
 | `home-light.png` / `home-dark.png` | light/dark | desktop hero + platforms |
 | `home-mobile-light.png` / `home-mobile-dark.png` | light/dark | ~390×844 |
-| `mobile-light.png` / `mobile-dark.png` | light/dark | mobile viewport |
+| `mobile-light.png` / `mobile-dark.png` | light/dark | mobile viewport (+ NavigationBar) |
 | `features-light.png` / `features-dark.png` | light/dark | `#features` cards |
 | `platforms-light.png` / `platforms-dark.png` | light/dark | `#platforms` grid |
-| `cli-light.png` / `cli-dark.png` | light/dark | `#cli` terminal + YAML |
-| `yaml-light.png` / `yaml-dark.png` | light/dark | same CLI section (YAML card) |
-| `logo.png` / `icon-logo.png` | — | Material tile + 6 pips → dart chevron |
-| `logo-wordmark.png` / `icon-wordmark.png` | — | mark + wordmark |
-| `favicon.png` / `icon-favicon.png` | — | 32/64 favicon |
+| `cli-light.png` / `cli-dark.png` | light/dark | `#cli` terminal |
+| `yaml-light.png` / `yaml-dark.png` | light/dark | YAML card |
+| `appbar-detail-light.png` / `appbar-detail-dark.png` | light/dark | AppBar + hero crop |
+| `cards-detail-light.png` / `cards-detail-dark.png` | light/dark | platform cards crop |
+
+## Brand icons
+| File | Notes |
+|------|-------|
+| `logo.png` / `icon-logo.png` | FAB + YAML braces on ink M3 tile |
+| `logo-wordmark.png` / `icon-wordmark.png` | mark + wordmark |
+| `favicon.png` / `icon-favicon.png` | compact mark |
+
+## UI icon set (M3 outlined)
+`icon-ui-generate.png`, `icon-ui-platforms.png`, `icon-ui-verify.png`, `icon-ui-doctor.png`, `icon-ui-yaml.png`, `icon-ui-flutter.png`
+SVG sources: `icons/*.svg`
 
 Theme storage key: `bindsmith-theme` (system → light → dark).
 Brand SSOT: `docs/brand/` (`DESIGN.md`, `tokens.css`, SVGs).
+Logo concept: **(A) Material FAB + YAML braces** monogram — not the prior chevron/pips mark.
