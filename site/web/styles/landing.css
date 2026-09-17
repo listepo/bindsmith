@@ -55,8 +55,9 @@ a:hover {
   display: flex;
   align-items: center;
   border-bottom: 1px solid var(--bs-outline-variant);
-  background: var(--bs-surface-bright);
-  box-shadow: var(--bs-elev-1);
+  background: color-mix(in srgb, var(--bs-surface-bright) 92%, transparent);
+  backdrop-filter: blur(8px);
+  box-shadow: none;
 }
 
 .top-inner {
@@ -204,11 +205,11 @@ a:hover {
 }
 
 .hero.hero-terminal {
-  min-height: min(72vh, 640px);
+  min-height: min(68vh, 600px);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 72px 0 64px;
+  padding: 64px 0 56px;
   background: #121416;
 }
 
@@ -223,10 +224,10 @@ a:hover {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center 35%;
+  object-position: center 28%;
   display: block;
-  opacity: 0.72;
-  filter: saturate(0.95) contrast(1.05);
+  opacity: 0.78;
+  filter: saturate(1) contrast(1.08);
 }
 
 .hero-scrim {
@@ -234,31 +235,34 @@ a:hover {
   inset: 0;
   background:
     linear-gradient(180deg,
-      color-mix(in srgb, var(--bs-surface) 78%, transparent) 0%,
-      color-mix(in srgb, var(--bs-surface) 55%, transparent) 42%,
-      color-mix(in srgb, var(--bs-surface) 88%, transparent) 100%),
-    radial-gradient(ellipse 70% 55% at 50% 40%,
-      color-mix(in srgb, var(--bs-surface) 35%, transparent),
-      transparent 70%);
+      color-mix(in srgb, var(--bs-surface) 82%, transparent) 0%,
+      color-mix(in srgb, var(--bs-surface) 48%, transparent) 38%,
+      color-mix(in srgb, var(--bs-surface) 72%, transparent) 62%,
+      color-mix(in srgb, var(--bs-surface) 92%, transparent) 100%),
+    radial-gradient(ellipse 65% 50% at 50% 42%,
+      color-mix(in srgb, var(--bs-surface) 42%, transparent),
+      transparent 72%);
 }
 
 html[data-theme="dark"] .hero-scrim,
 html:not([data-theme="light"]) .hero-scrim {
   background:
     linear-gradient(180deg,
-      rgba(18, 20, 22, 0.82) 0%,
-      rgba(18, 20, 22, 0.55) 40%,
-      rgba(18, 20, 22, 0.88) 100%),
-    radial-gradient(ellipse 70% 55% at 50% 40%, rgba(18, 20, 22, 0.25), transparent 70%);
+      rgba(18, 20, 22, 0.88) 0%,
+      rgba(18, 20, 22, 0.48) 36%,
+      rgba(18, 20, 22, 0.62) 58%,
+      rgba(18, 20, 22, 0.92) 100%),
+    radial-gradient(ellipse 65% 50% at 50% 42%, rgba(18, 20, 22, 0.28), transparent 72%);
 }
 
 html[data-theme="light"] .hero-scrim {
   background:
     linear-gradient(180deg,
-      rgba(247, 244, 239, 0.88) 0%,
-      rgba(247, 244, 239, 0.62) 40%,
-      rgba(247, 244, 239, 0.92) 100%),
-    radial-gradient(ellipse 70% 55% at 50% 40%, rgba(247, 244, 239, 0.3), transparent 70%);
+      rgba(247, 244, 239, 0.92) 0%,
+      rgba(247, 244, 239, 0.58) 36%,
+      rgba(247, 244, 239, 0.72) 58%,
+      rgba(247, 244, 239, 0.95) 100%),
+    radial-gradient(ellipse 65% 50% at 50% 42%, rgba(247, 244, 239, 0.38), transparent 72%);
 }
 
 .hero-content {
@@ -811,7 +815,38 @@ html[data-theme="light"] .hero-scrim {
   }
 
   .hero {
-    padding: 40px 0 28px;
+    padding: 32px 0 24px;
+  }
+
+  .hero.hero-terminal {
+    min-height: min(58vh, 480px);
+    padding: 40px 0 32px;
+    align-items: flex-start;
+  }
+
+  .hero-terminal-img {
+    object-position: center 18%;
+    opacity: 0.55;
+  }
+
+  .hero-mark {
+    width: 56px;
+    height: 56px;
+    margin-bottom: 12px;
+  }
+
+  .hero-wordmark-text {
+    margin-bottom: 12px;
+    font-size: 1.35rem;
+  }
+
+  .hero-pitch {
+    font-size: 1.5rem;
+  }
+
+  .cta-row {
+    margin-top: 1.25rem;
+    gap: 0.5rem;
   }
 
   .platform-grid,
@@ -828,10 +863,30 @@ html[data-theme="light"] .hero-scrim {
   .top.m3-appbar,
   .m3-nav-bar {
     background: var(--bs-surface-bright);
+    backdrop-filter: none;
   }
 
   .hero {
     background: var(--bs-surface);
+  }
+
+  .hero-terminal-img {
+    opacity: 0.35;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .m3-nav-indicator {
+    transition: none;
   }
 }
 
@@ -881,7 +936,7 @@ html[data-theme="light"] .hero-scrim {
   color: var(--bs-primary);
   border-color: transparent;
   box-shadow: none;
-  min-height: 2.5rem;
+  min-height: 40px;
   padding: 0.5rem 0.85rem;
 }
 .cta-text:hover {
@@ -949,8 +1004,8 @@ html[data-theme="light"] .hero-scrim {
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
-  min-height: 32px;
-  padding: 0.25rem 0.85rem;
+  min-height: 40px;
+  padding: 0.35rem 0.9rem;
   border-radius: var(--bs-radius-full);
   border: 1px solid var(--bs-outline);
   background: var(--bs-surface-container-low);
@@ -1103,14 +1158,47 @@ html[data-theme="light"] .hero-scrim {
 }
 .hero .cta-text {
   color: var(--bs-on-surface);
-  background: color-mix(in srgb, var(--bs-surface) 35%, transparent);
+  background: color-mix(in srgb, var(--bs-surface) 55%, transparent);
   border-color: transparent;
+  min-height: 40px;
 }
 .hero .cta-text:hover {
-  background: color-mix(in srgb, var(--bs-surface) 55%, transparent);
+  background: color-mix(in srgb, var(--bs-surface) 75%, transparent);
   color: var(--bs-primary);
 }
 .btn-showcase {
   justify-content: center;
   gap: 1rem;
+}
+
+
+/* —— Polish: focus + hairlines —— */
+.m3-filter-chip:focus-visible,
+.m3-icon-btn:focus-visible,
+.m3-text-btn:focus-visible,
+.brand:focus-visible,
+.nav a:focus-visible {
+  box-shadow: var(--bs-focus-ring);
+  outline: none;
+}
+
+.platform-card,
+.feature-card,
+.code-card,
+.m3-card {
+  border-radius: var(--bs-radius-lg, 20px);
+}
+
+.platform-card {
+  border: 1px solid var(--bs-outline-variant);
+}
+
+.m3-card-outlined {
+  border: 1px solid var(--bs-outline);
+  box-shadow: none;
+}
+
+.m3-avatar {
+  width: 40px;
+  height: 40px;
 }

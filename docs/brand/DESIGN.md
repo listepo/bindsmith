@@ -2,9 +2,9 @@
 
 ## Overview
 
-**bindsmith** generates Flutter bindings from one YAML to six platforms. The brand mark is a **flat Swiss army knife** (multi-tool) on an ink rounded-square tile in copper/ink — metaphor: one multi-tool for multi-platform bindings. Not a B monogram, not FAB+braces, not chevron/pips, not a Flutter/Dart logo.
+**bindsmith** generates Flutter bindings from one YAML to six platforms. The brand mark is a **flat Swiss army knife** (multi-tool) on an ink rounded-square tile in copper `#C87941` / amber `#E8A05C` on ink `#1A1C1F` — metaphor: one multi-tool for multi-platform bindings. Geometry is tight (even tool widths, optical balance) so the mark stays readable at 16px favicon and 64px tile. Not a B monogram, not FAB+braces, not chevron/pips, not a Flutter/Dart logo.
 
-Visual direction: **Material 3 first** (full color roles, calm actions — **one Filled primary + Text secondary**, denser AppBar with avatar/actions, FilterChips, outlined Card variant, NavigationBar pill indicator, snackbar tip strip, surface-container ladder, radius 12/16/28, state layers). Hero sits on a **terminal generate** screenshot/scrim. Copper `#C87941` is the seed / primary. Flutter/Dart azure is **secondary only**. Theme cycle **system → light → dark** via `bindsmith-theme` must keep working.
+Visual direction: **Material 3 first** (tonal surfaces, calm actions — **exactly one Filled primary + one Text secondary**, calm AppBar over hero, FilterChips, outlined Card variant, NavigationBar pill, snackbar tip, surface-container ladder, 4/8pt rhythm, radius 12/16/28). Hero sits on a **terminal `bindsmith generate`** card (mono grid, status line, copper success ticks) with a light/dark scrim for AA contrast. Copper is the seed / primary. Flutter/Dart azure is **secondary only**. Theme cycle **system → light → dark** via `bindsmith-theme` must keep working.
 
 ## Material 3 color roles
 
@@ -65,14 +65,14 @@ Legacy `--bs-accent*` / `--bs-surface-*` aliases map onto these roles.
 
 ## Logo
 
-**NEW mark (do not reuse B monogram, FAB+braces, or chevron/pips):** Flat **Swiss army knife / multi-tool** — geometric handle + blade + bit tools around a pivot rivet, 2–3 flat copper/ink fills, **no gradients / skeuomorph / photo realism**. Metaphor: multi-tool = multi-platform bindings. No Flutter bird, no Dart logo, no anvil. Works at 16px favicon and 64px hero.
+**Locked mark (do not reinvent):** Flat **Swiss army knife / multi-tool** — geometric handle + blade + bit/side tools around a pivot rivet, even stroke weights, 2–3 flat copper/amber fills on ink, **no gradients / skeuomorph / photo realism**. Metaphor: multi-tool = multi-platform bindings. Sync `logo.svg` / favicon / wordmark / PNGs. No Flutter bird, no Dart logo, no anvil.
 
 ## Mini landing wire
 
 1. Dense M3 AppBar: mark + wordmark + nav + icon + theme + avatar
 2. Optional snackbar tip strip
-3. Hero: terminal generate background + scrim, mark, pitch, badges, **Filled + Text** CTAs
-4. Actions detail (Filled + Text only)
+3. Hero: terminal generate backdrop (`hero-terminal.{png,svg}`) + scrim, mark, pitch, badges, **one Filled + one Text** CTAs only
+4. Actions detail (Filled + Text only — no Tonal/Outlined stack)
 5. Platforms: FilterChips + six cards (one outlined)
 6. Generate CLI + YAML cards
 7. Features + surface-container ladder
