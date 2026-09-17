@@ -1,0 +1,77 @@
+name: site
+
+# Build on PRs that touch the site; only main publishes.
+on:
+  push:
+    branches: [main]
+    paths:
+      - "site/**"
+      - "docs/brand/**"
+      - ".github/workflows/pages.yml"
+  pull_request:
+    paths:
+      - "site/**"
+      - "docs/brand/**"
+      - ".github/workflows/pages.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: dart-lang/setup-dart@v1
+        with:
+          sdk: stable
+
+      - name: Activate jaspr_cli
+        run: dart pub global activate jaspr_cli
+
+      - name: Resolve site dependencies
+        working-directory: site
+        run: dart pub get
+
+      - name: Build static site
+        working-directory: site
+        run: jaspr build
+
+      - name: Check build output
+        run: |
+          cd site/build/jaspr
+          test -s index.html || { echo "missing index.html" >&2; exit 1; }
+          grep -q 'One YAML' index.html
+          grep -q 'bindsmith' index.html
+          test -f styles/tokens.css
+          test -f styles/landing.css
+          test -f images/logo.svg
+          test -f favicon.svg
+          # Project Pages subpath
+          grep -qE 'base[^>]+href="/bindsmith/"' index.html
+          echo "site ok: $(find . -name '*.html' | wc -l) html file(s)"
+
+      - uses: actions/upload-pages-artifact@v5
+        if: github.event_name != 'pull_request'
+        with:
+          path: site/build/jaspr
+
+  deploy:
+    needs: build
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v5

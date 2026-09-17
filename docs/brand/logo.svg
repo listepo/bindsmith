@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="bindsmith">
+  <rect width="64" height="64" rx="12" fill="#1A1C1F"/>
+  <!-- anvil base / forge plate -->
+  <rect x="14" y="40" width="36" height="6" rx="1.5" fill="#C87941"/>
+  <rect x="22" y="46" width="20" height="4" rx="1" fill="#A35F2E"/>
+  <!-- binding wires: six platform strands converging -->
+  <path d="M18 18 L32 36" stroke="#E8A05C" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+  <path d="M24 14 L32 36" stroke="#D4894A" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+  <path d="M32 12 L32 36" stroke="#E8A05C" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+  <path d="M40 14 L32 36" stroke="#D4894A" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+  <path d="M46 18 L32 36" stroke="#E8A05C" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+  <path d="M50 24 L32 36" stroke="#B87333" stroke-width="2" stroke-linecap="round" fill="none"/>
+  <!-- bind node -->
+  <circle cx="32" cy="36" r="4" fill="#F0C078"/>
+  <circle cx="32" cy="36" r="2" fill="#1A1C1F"/>
+</svg>

@@ -1,0 +1,82 @@
+/* bindsmith — copper / amber + ink slate */
+:root,
+[data-theme="light"] {
+  --bs-bg: #F7F4EF;
+  --bs-bg-elevated: #FFFFFF;
+  --bs-surface-1: #EFEAE3;
+  --bs-surface-2: #E4DDD3;
+  --bs-surface-3: #D6CCC0;
+  --bs-border: #C9BDB0;
+  --bs-border-hairline: #DDD4C9;
+  --bs-fg: #1A1C1F;
+  --bs-fg-muted: #5C564E;
+  --bs-fg-subtle: #8A8278;
+  --bs-accent: #C87941;
+  --bs-accent-hover: #B06835;
+  --bs-accent-muted: #E8A05C;
+  --bs-accent-soft: #F5E6D4;
+  --bs-success: #3D7A4A;
+  --bs-warning: #C87941;
+  --bs-danger: #B5403A;
+  --bs-info: #4A6B8A;
+  --bs-code-bg: #1A1C1F;
+  --bs-code-fg: #F0C078;
+  --bs-shadow: 0 1px 2px rgba(26, 28, 31, 0.06), 0 4px 12px rgba(26, 28, 31, 0.04);
+  --bs-radius: 8px;
+  --bs-radius-lg: 12px;
+  --bs-font-mono: "IBM Plex Mono", "JetBrains Mono", ui-monospace, monospace;
+  --bs-font-sans: "IBM Plex Sans", system-ui, -apple-system, sans-serif;
+}
+
+[data-theme="dark"] {
+  --bs-bg: #121416;
+  --bs-bg-elevated: #1A1C1F;
+  --bs-surface-1: #22252A;
+  --bs-surface-2: #2A2E34;
+  --bs-surface-3: #353A42;
+  --bs-border: #3E444E;
+  --bs-border-hairline: #2C3038;
+  --bs-fg: #EDE8E1;
+  --bs-fg-muted: #A39B90;
+  --bs-fg-subtle: #6E675E;
+  --bs-accent: #E8A05C;
+  --bs-accent-hover: #F0C078;
+  --bs-accent-muted: #C87941;
+  --bs-accent-soft: #2A2218;
+  --bs-success: #6BBF7A;
+  --bs-warning: #E8A05C;
+  --bs-danger: #E07068;
+  --bs-info: #7A9BB8;
+  --bs-code-bg: #0C0D0F;
+  --bs-code-fg: #F0C078;
+  --bs-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 4px 16px rgba(0, 0, 0, 0.25);
+}
+
+
+/* System preference when no explicit data-theme is set */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+  --bs-bg: #121416;
+  --bs-bg-elevated: #1A1C1F;
+  --bs-surface-1: #22252A;
+  --bs-surface-2: #2A2E34;
+  --bs-surface-3: #353A42;
+  --bs-border: #3E444E;
+  --bs-border-hairline: #2C3038;
+  --bs-fg: #EDE8E1;
+  --bs-fg-muted: #A39B90;
+  --bs-fg-subtle: #6E675E;
+  --bs-accent: #E8A05C;
+  --bs-accent-hover: #F0C078;
+  --bs-accent-muted: #C87941;
+  --bs-accent-soft: #2A2218;
+  --bs-success: #6BBF7A;
+  --bs-warning: #E8A05C;
+  --bs-danger: #E07068;
+  --bs-info: #7A9BB8;
+  --bs-code-bg: #0C0D0F;
+  --bs-code-fg: #F0C078;
+  --bs-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 4px 16px rgba(0, 0, 0, 0.25);
+
+  }
+}
