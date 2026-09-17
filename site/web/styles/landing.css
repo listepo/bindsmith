@@ -41,10 +41,15 @@ a:hover {
   padding: 0 24px;
 }
 
-/* Top bar */
+/* Top bar — glass */
 .top {
-  border-bottom: 1px solid var(--bs-border-hairline);
-  background: var(--bs-bg-elevated);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  border-bottom: 1px solid var(--bs-glass-border);
+  background: var(--bs-glass-fill);
+  backdrop-filter: blur(14px) saturate(1.2);
+  -webkit-backdrop-filter: blur(14px) saturate(1.2);
 }
 
 .top-inner {
@@ -257,7 +262,9 @@ a:hover {
 }
 
 .section-label {
+  position: relative;
   margin: 0 0 16px;
+  padding-bottom: 10px;
   font-family: var(--bs-font-mono);
   font-size: 12px;
   font-weight: 500;
@@ -265,6 +272,17 @@ a:hover {
   text-transform: uppercase;
   color: var(--bs-fg-subtle);
   text-align: center;
+}
+.section-label::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 0;
+  width: min(12rem, 40%);
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--bs-accent), transparent);
+  opacity: 0.55;
 }
 
 .chip-row {
@@ -279,12 +297,15 @@ a:hover {
   align-items: center;
   padding: 6px 12px;
   border-radius: 999px;
-  background: var(--bs-accent-soft);
+  background: var(--bs-glass-fill);
   color: var(--bs-accent);
   font-family: var(--bs-font-mono);
   font-size: 12px;
   font-weight: 500;
-  border: 1px solid var(--bs-border-hairline);
+  border: 1px solid var(--bs-glass-border);
+  backdrop-filter: blur(10px) saturate(1.15);
+  -webkit-backdrop-filter: blur(10px) saturate(1.15);
+  box-shadow: var(--bs-elev-1);
 }
 
 /* Sample / CLI cards */
@@ -394,5 +415,57 @@ a:hover {
 
   .hero {
     padding: 48px 0 32px;
+  }
+}
+
+
+/* status chip + glass fallbacks */
+.hero-meta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+  margin: 0 0 1rem;
+}
+
+.status-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: var(--bs-font-mono);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  line-height: 1;
+  padding: 0.28rem 0.55rem 0.28rem 0.4rem;
+  border-radius: 999px;
+  background: var(--bs-accent-soft);
+  border: 1px solid var(--bs-border-hairline);
+  color: var(--bs-accent);
+}
+.status-chip::before {
+  content: "";
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 50%;
+  background: var(--bs-accent);
+  box-shadow: var(--bs-accent-glow);
+}
+
+
+@media (prefers-reduced-transparency: reduce) {
+  .top,
+  .chip {
+    background: var(--bs-bg-elevated);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .top,
+  .chip {
+    background: var(--bs-bg-elevated);
   }
 }

@@ -24,6 +24,11 @@
   --bs-code-fg: #F0C078;
   --bs-shadow: 0 1px 2px rgba(26, 28, 31, 0.06), 0 4px 12px rgba(26, 28, 31, 0.04);
   --bs-focus-ring: 0 0 0 3px rgba(200, 121, 65, 0.4);
+  --bs-glass-fill: rgba(255, 255, 255, 0.72);
+  --bs-glass-border: rgba(221, 212, 201, 0.9);
+  --bs-elev-1: 0 1px 2px rgba(26, 28, 31, 0.04), 0 1px 3px rgba(26, 28, 31, 0.06);
+  --bs-elev-2: 0 4px 12px rgba(26, 28, 31, 0.06), 0 1px 3px rgba(26, 28, 31, 0.04);
+  --bs-accent-glow: 0 0 0 3px var(--bs-accent-soft), 0 0 18px rgba(200, 121, 65, 0.25);
   --bs-radius: 8px;
   --bs-radius-lg: 12px;
   --bs-font-mono: "IBM Plex Mono", "JetBrains Mono", ui-monospace, monospace;
@@ -54,6 +59,11 @@
   --bs-code-fg: #F0C078;
   --bs-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 4px 16px rgba(0, 0, 0, 0.25);
   --bs-focus-ring: 0 0 0 3px rgba(232, 160, 92, 0.45);
+  --bs-glass-fill: rgba(26, 28, 31, 0.72);
+  --bs-glass-border: rgba(44, 48, 56, 0.9);
+  --bs-elev-1: 0 1px 2px rgba(0, 0, 0, 0.35), 0 1px 3px rgba(0, 0, 0, 0.25);
+  --bs-elev-2: 0 4px 14px rgba(0, 0, 0, 0.4), 0 1px 3px rgba(0, 0, 0, 0.3);
+  --bs-accent-glow: 0 0 0 3px var(--bs-accent-soft), 0 0 20px rgba(232, 160, 92, 0.3);
 }
 
 /* System preference when data-theme is "system" or unset (before FOUC boot). */
@@ -83,6 +93,11 @@
     --bs-code-fg: #F0C078;
     --bs-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 4px 16px rgba(0, 0, 0, 0.25);
     --bs-focus-ring: 0 0 0 3px rgba(232, 160, 92, 0.45);
+  --bs-glass-fill: rgba(26, 28, 31, 0.72);
+  --bs-glass-border: rgba(44, 48, 56, 0.9);
+  --bs-elev-1: 0 1px 2px rgba(0, 0, 0, 0.35), 0 1px 3px rgba(0, 0, 0, 0.25);
+  --bs-elev-2: 0 4px 14px rgba(0, 0, 0, 0.4), 0 1px 3px rgba(0, 0, 0, 0.3);
+  --bs-accent-glow: 0 0 0 3px var(--bs-accent-soft), 0 0 20px rgba(232, 160, 92, 0.3);
   }
 }
 
@@ -112,5 +127,10 @@
     --bs-code-fg: #F0C078;
     --bs-shadow: 0 1px 2px rgba(26, 28, 31, 0.06), 0 4px 12px rgba(26, 28, 31, 0.04);
     --bs-focus-ring: 0 0 0 3px rgba(200, 121, 65, 0.4);
+  --bs-glass-fill: rgba(255, 255, 255, 0.72);
+  --bs-glass-border: rgba(221, 212, 201, 0.9);
+  --bs-elev-1: 0 1px 2px rgba(26, 28, 31, 0.04), 0 1px 3px rgba(26, 28, 31, 0.06);
+  --bs-elev-2: 0 4px 12px rgba(26, 28, 31, 0.06), 0 1px 3px rgba(26, 28, 31, 0.04);
+  --bs-accent-glow: 0 0 0 3px var(--bs-accent-soft), 0 0 18px rgba(200, 121, 65, 0.25);
   }
 }

@@ -104,6 +104,9 @@ platforms:
           alt: 'bindsmith',
           height: 28,
         ),
+        div(classes: 'hero-meta', [
+          span(classes: 'status-chip', [.text('forge ready')]),
+        ]),
         h1(classes: 'hero-pitch', [
           .text('One YAML. Six platforms.'),
         ]),
