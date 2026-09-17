@@ -194,10 +194,76 @@ a:hover {
 
 /* —— Hero —— */
 .hero {
+  position: relative;
   padding: 64px 0 48px;
   text-align: center;
+  overflow: hidden;
+  isolation: isolate;
   background:
     radial-gradient(ellipse 80% 50% at 50% 0%, var(--bs-primary-container), transparent 70%);
+}
+
+.hero.hero-terminal {
+  min-height: min(72vh, 640px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 72px 0 64px;
+  background: #121416;
+}
+
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.hero-terminal-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 35%;
+  display: block;
+  opacity: 0.72;
+  filter: saturate(0.95) contrast(1.05);
+}
+
+.hero-scrim {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg,
+      color-mix(in srgb, var(--bs-surface) 78%, transparent) 0%,
+      color-mix(in srgb, var(--bs-surface) 55%, transparent) 42%,
+      color-mix(in srgb, var(--bs-surface) 88%, transparent) 100%),
+    radial-gradient(ellipse 70% 55% at 50% 40%,
+      color-mix(in srgb, var(--bs-surface) 35%, transparent),
+      transparent 70%);
+}
+
+html[data-theme="dark"] .hero-scrim,
+html:not([data-theme="light"]) .hero-scrim {
+  background:
+    linear-gradient(180deg,
+      rgba(18, 20, 22, 0.82) 0%,
+      rgba(18, 20, 22, 0.55) 40%,
+      rgba(18, 20, 22, 0.88) 100%),
+    radial-gradient(ellipse 70% 55% at 50% 40%, rgba(18, 20, 22, 0.25), transparent 70%);
+}
+
+html[data-theme="light"] .hero-scrim {
+  background:
+    linear-gradient(180deg,
+      rgba(247, 244, 239, 0.88) 0%,
+      rgba(247, 244, 239, 0.62) 40%,
+      rgba(247, 244, 239, 0.92) 100%),
+    radial-gradient(ellipse 70% 55% at 50% 40%, rgba(247, 244, 239, 0.3), transparent 70%);
+}
+
+.hero-content {
+  position: relative;
+  z-index: 1;
 }
 
 .hero-mark {
@@ -288,6 +354,7 @@ a:hover {
   letter-spacing: -0.02em;
   line-height: 1.18;
   color: var(--bs-on-surface);
+  text-shadow: 0 1px 0 color-mix(in srgb, var(--bs-surface) 55%, transparent);
 }
 
 .hero-sub {
@@ -295,13 +362,15 @@ a:hover {
   max-width: 36rem;
   font-size: 16px;
   color: var(--bs-on-surface-variant);
+  text-shadow: 0 1px 0 color-mix(in srgb, var(--bs-surface) 45%, transparent);
 }
 
 .cta-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.65rem;
+  gap: 0.5rem 1rem;
   justify-content: center;
+  align-items: center;
   margin-top: 1.85rem;
 }
 
@@ -1025,4 +1094,23 @@ a:hover {
   .surface-ladder-row {
     grid-template-columns: 1fr 1fr;
   }
+}
+
+
+/* —— Hero terminal overlays —— */
+.hero .cta-filled {
+  box-shadow: var(--bs-elev-2);
+}
+.hero .cta-text {
+  color: var(--bs-on-surface);
+  background: color-mix(in srgb, var(--bs-surface) 35%, transparent);
+  border-color: transparent;
+}
+.hero .cta-text:hover {
+  background: color-mix(in srgb, var(--bs-surface) 55%, transparent);
+  color: var(--bs-primary);
+}
+.btn-showcase {
+  justify-content: center;
+  gap: 1rem;
 }

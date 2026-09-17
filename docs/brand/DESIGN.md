@@ -2,9 +2,9 @@
 
 ## Overview
 
-**bindsmith** generates Flutter bindings from one YAML to six platforms. The brand mark is a **Material 3 “B” monogram** built from a **stadium + circles** on an ink rounded-square tile with tonal copper — not FAB+braces, not chevron/pips, not a Flutter/Dart logo.
+**bindsmith** generates Flutter bindings from one YAML to six platforms. The brand mark is a **flat Swiss army knife** (multi-tool) on an ink rounded-square tile in copper/ink — metaphor: one multi-tool for multi-platform bindings. Not a B monogram, not FAB+braces, not chevron/pips, not a Flutter/Dart logo.
 
-Visual direction: **Material 3 first** (full color roles, Filled / Tonal / Outlined / Text buttons, denser AppBar with avatar/actions, FilterChips, outlined Card variant, NavigationBar pill indicator, snackbar tip strip, surface-container ladder, radius 12/16/28, state layers). Copper `#C87941` is the seed / primary. Flutter/Dart azure is **secondary only**. Theme cycle **system → light → dark** via `bindsmith-theme` must keep working.
+Visual direction: **Material 3 first** (full color roles, calm actions — **one Filled primary + Text secondary**, denser AppBar with avatar/actions, FilterChips, outlined Card variant, NavigationBar pill indicator, snackbar tip strip, surface-container ladder, radius 12/16/28, state layers). Hero sits on a **terminal generate** screenshot/scrim. Copper `#C87941` is the seed / primary. Flutter/Dart azure is **secondary only**. Theme cycle **system → light → dark** via `bindsmith-theme` must keep working.
 
 ## Material 3 color roles
 
@@ -53,10 +53,9 @@ Legacy `--bs-accent*` / `--bs-surface-*` aliases map onto these roles.
 
 ## Components
 
-- **FilledButton:** primary fill, on-primary, radius 12, elev-1
-- **FilledTonalButton:** primary-container, on-primary-container
-- **OutlinedButton:** outline + primary fg, transparent fill
-- **TextButton:** primary fg, no border, state-layer hover
+- **FilledButton:** primary fill, on-primary, radius 12, elev-1 — **default primary CTA**
+- **TextButton:** primary/on-surface fg, no border, state-layer hover — **default secondary**
+- Tonal / Outlined exist in tokens but are **not stacked** in hero chrome (keep CTAs calm)
 - **FilterChip:** stadium; selected → secondary-container + check
 - **Card:** surface-container-low; **outlined** variant → surface + outline, no elev
 - **Snackbar tip:** inverse-surface strip under AppBar (optional)
@@ -66,14 +65,14 @@ Legacy `--bs-accent*` / `--bs-surface-*` aliases map onto these roles.
 
 ## Logo
 
-**NEW mark (do not reuse FAB+braces or chevron/pips):** Ink M3 rounded-square tile + tonal copper **B** built from a vertical **stadium** stem and two **circles** (bowls). No Flutter bird, no Dart logo, no anvil. Works at 16px favicon and 64px hero.
+**NEW mark (do not reuse B monogram, FAB+braces, or chevron/pips):** Flat **Swiss army knife / multi-tool** — geometric handle + blade + bit tools around a pivot rivet, 2–3 flat copper/ink fills, **no gradients / skeuomorph / photo realism**. Metaphor: multi-tool = multi-platform bindings. No Flutter bird, no Dart logo, no anvil. Works at 16px favicon and 64px hero.
 
 ## Mini landing wire
 
 1. Dense M3 AppBar: mark + wordmark + nav + icon + theme + avatar
 2. Optional snackbar tip strip
-3. Hero: mark, pitch, badges, Filled + Tonal + Outlined + Text CTAs
-4. Buttons detail showcase
+3. Hero: terminal generate background + scrim, mark, pitch, badges, **Filled + Text** CTAs
+4. Actions detail (Filled + Text only)
 5. Platforms: FilterChips + six cards (one outlined)
 6. Generate CLI + YAML cards
 7. Features + surface-container ladder
@@ -89,6 +88,7 @@ Legacy `--bs-accent*` / `--bs-surface-*` aliases map onto these roles.
 
 **Don't**
 - Don’t lead with glass / nerd-forge chrome
-- Don’t reuse FAB+`{ }` braces or chevron/pips marks
+- Don’t reuse B monogram, FAB+`{ }` braces, or chevron/pips marks
+- Don’t crowd CTAs with Tonal/Outlined stacks — prefer Filled + Text
 - Don’t copy Flutter bird or Dart logo
 - Don’t use teal (ketch) or cyan-as-primary (rtok)

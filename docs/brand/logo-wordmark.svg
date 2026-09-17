@@ -1,12 +1,11 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 64" role="img" aria-label="bindsmith">
   <rect width="64" height="64" rx="16" fill="#1A1C1F"/>
-  <rect x="8" y="8" width="48" height="48" rx="14" fill="#2A2218"/>
-  <rect x="16" y="14" width="12" height="36" rx="6" fill="#C87941"/>
-  <circle cx="36" cy="24" r="10" fill="#C87941"/>
-  <circle cx="36" cy="24" r="4.75" fill="#1A1C1F"/>
-  <circle cx="38" cy="42" r="12" fill="#E8A05C"/>
-  <circle cx="38" cy="42" r="5.5" fill="#1A1C1F"/>
-  <rect x="22" y="20" width="6" height="8" fill="#C87941"/>
-  <rect x="22" y="36" width="8" height="12" fill="#E8A05C"/>
+  <rect x="24" y="26" width="14" height="30" rx="7" fill="#C87941"/>
+  <path d="M31 28 L49 10 L54 15 L36 33 Z" fill="#E8A05C"/>
+  <path d="M31 26 L34 8 L40 9.5 L37 27 Z" fill="#C87941"/>
+  <rect x="33.2" y="4" width="3.2" height="5" rx="0.8" fill="#E8A05C"/>
+  <path d="M36 40 L54 36 L55.5 41 L37.5 45 Z" fill="#E8A05C"/>
+  <circle cx="31" cy="36" r="6" fill="#E8A05C"/>
+  <circle cx="31" cy="36" r="2.6" fill="#1A1C1F"/>
   <text x="80" y="42" font-family="Roboto, IBM Plex Sans, system-ui, sans-serif" font-size="28" font-weight="500" fill="#1A1C1F" letter-spacing="0.02em">bindsmith</text>
 </svg>

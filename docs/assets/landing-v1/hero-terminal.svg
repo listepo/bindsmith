@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 900" role="img" aria-label="bindsmith generate terminal">
+  <defs>
+    <linearGradient id="desk" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0C0D0F"/>
+      <stop offset="100%" stop-color="#1A1C1F"/>
+    </linearGradient>
+    <filter id="soft" x="-5%" y="-5%" width="110%" height="110%">
+      <feGaussianBlur stdDeviation="0.6"/>
+    </filter>
+  </defs>
+  <rect width="1440" height="900" fill="url(#desk)"/>
+  <!-- subtle grid -->
+  <g stroke="#2A2E34" stroke-width="1" opacity="0.35">
+    <path d="M0 180 H1440 M0 360 H1440 M0 540 H1440 M0 720 H1440"/>
+    <path d="M240 0 V900 M480 0 V900 M720 0 V900 M960 0 V900 M1200 0 V900"/>
+  </g>
+  <!-- Terminal window -->
+  <g transform="translate(220 140)">
+    <rect width="1000" height="620" rx="18" fill="#0C0D0F" stroke="#3E444E" stroke-width="2"/>
+    <rect width="1000" height="44" rx="18" fill="#22252A"/>
+    <rect y="26" width="1000" height="18" fill="#22252A"/>
+    <!-- traffic lights -->
+    <circle cx="28" cy="22" r="7" fill="#B5403A"/>
+    <circle cx="52" cy="22" r="7" fill="#C87941"/>
+    <circle cx="76" cy="22" r="7" fill="#3D8B6E"/>
+    <text x="500" y="28" text-anchor="middle" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="14" fill="#A39B90">bindsmith — generate</text>
+    <!-- terminal body -->
+    <rect x="2" y="44" width="996" height="574" fill="#121416"/>
+    <g font-family="IBM Plex Mono, ui-monospace, monospace" font-size="28" fill="#EDE8E1">
+      <text x="48" y="110"><tspan fill="#C87941">$</tspan> bindsmith generate</text>
+      <text x="48" y="170"><tspan fill="#13B9FD">→</tspan> ios <tspan fill="#A39B90">(swiftgen)</tspan> <tspan fill="#A39B90">…</tspan> <tspan fill="#3D8B6E">ok</tspan></text>
+      <text x="48" y="230"><tspan fill="#13B9FD">→</tspan> android <tspan fill="#A39B90">(jnigen)</tspan> <tspan fill="#A39B90">…</tspan> <tspan fill="#3D8B6E">ok</tspan></text>
+      <text x="48" y="290"><tspan fill="#13B9FD">→</tspan> macos <tspan fill="#A39B90">…</tspan> <tspan fill="#3D8B6E">ok</tspan></text>
+      <text x="48" y="350"><tspan fill="#13B9FD">→</tspan> windows <tspan fill="#A39B90">…</tspan> <tspan fill="#3D8B6E">ok</tspan></text>
+      <text x="48" y="410"><tspan fill="#13B9FD">→</tspan> linux <tspan fill="#A39B90">…</tspan> <tspan fill="#3D8B6E">ok</tspan></text>
+      <text x="48" y="470"><tspan fill="#13B9FD">→</tspan> web <tspan fill="#A39B90">(.d.ts)</tspan> <tspan fill="#A39B90">…</tspan> <tspan fill="#3D8B6E">ok</tspan></text>
+      <text x="48" y="540"><tspan fill="#3D8B6E">✓</tspan> facade + hook/build.dart</text>
+      <text x="48" y="600" fill="#C87941">█</text>
+    </g>
+  </g>
+</svg>

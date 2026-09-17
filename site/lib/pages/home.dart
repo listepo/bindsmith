@@ -1,7 +1,7 @@
 import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
 
-/// Material 3 landing v3 — B monogram (stadium+circle), denser M3 chrome.
+/// Material 3 landing — Swiss army knife mark, terminal hero, calm CTAs.
 class Home extends StatelessComponent {
   const Home({super.key});
 
@@ -33,7 +33,7 @@ class Home extends StatelessComponent {
     (
       '04',
       'material native',
-      'Built for Flutter/Dart plugin authors — M3 tonal UI, copper primary, azure secondary.',
+      'Built for Flutter/Dart plugin authors — M3 tonal UI, copper primary, calm actions.',
     ),
   ];
 
@@ -93,7 +93,6 @@ platforms:
             a(href: 'https://github.com/listepo/bindsmith', [.text('GitHub')]),
             a(href: '#platforms', [.text('Platforms')]),
             a(href: '#cli', [.text('CLI')]),
-            a(href: '#buttons', [.text('Buttons')]),
             a(href: '#features', [.text('Features')]),
           ]),
           a(
@@ -140,10 +139,10 @@ platforms:
       [
         div(classes: 'wrap wrap-wide m3-snackbar-inner', [
           span(classes: 'm3-snackbar-msg', [
-            .text('Tip: cycle theme system → light → dark. Copper seed, full M3 roles.'),
+            .text('Tip: cycle theme system → light → dark. One YAML → six platforms.'),
           ]),
-          a(classes: 'm3-text-btn m3-snackbar-action', href: '#buttons', [
-            .text('See buttons'),
+          a(classes: 'm3-text-btn m3-snackbar-action', href: '#cli', [
+            .text('See CLI'),
           ]),
         ]),
       ],
@@ -151,8 +150,18 @@ platforms:
   }
 
   Component _hero() {
-    return header(classes: 'hero', [
-      div(classes: 'wrap', [
+    return header(classes: 'hero hero-terminal', [
+      div(classes: 'hero-bg', attributes: {'aria-hidden': 'true'}, [
+        img(
+          classes: 'hero-terminal-img',
+          src: 'images/hero-terminal.png',
+          alt: '',
+          width: 1440,
+          height: 900,
+        ),
+        div(classes: 'hero-scrim', []),
+      ]),
+      div(classes: 'wrap hero-content', [
         img(
           classes: 'hero-mark',
           src: 'images/logo.svg',
@@ -172,7 +181,7 @@ platforms:
         ]),
         p(classes: 'hero-sub', [
           .text(
-            'Generate Flutter bindings from a single manifest — Material 3 tonal surfaces, copper primary, FilterChips, Filled / Tonal / Outlined / Text buttons.',
+            'Generate Flutter bindings from a single manifest — multi-tool for Android, iOS, Web, Windows, macOS, and Linux.',
           ),
         ]),
         div(classes: 'cta-row', id: 'hero-ctas', [
@@ -181,17 +190,7 @@ platforms:
             href: 'https://github.com/listepo/bindsmith',
             [.text('Get started')],
           ),
-          a(classes: 'cta cta-tonal', href: '#cli', [.text('See the CLI')]),
-          a(
-            classes: 'cta cta-outlined',
-            href: '#platforms',
-            [.text('Platforms')],
-          ),
-          a(
-            classes: 'cta cta-text',
-            href: 'https://github.com/listepo/bindsmith#readme',
-            [.text('Docs')],
-          ),
+          a(classes: 'cta cta-text', href: '#cli', [.text('See the CLI')]),
         ]),
       ]),
     ]);
@@ -200,15 +199,13 @@ platforms:
   Component _buttonsDetail() {
     return section(classes: 'buttons-detail', id: 'buttons', [
       div(classes: 'wrap', [
-        p(classes: 'section-label', [.text('Buttons')]),
+        p(classes: 'section-label', [.text('Actions')]),
         p(classes: 'section-lead', [
-          .text('FilledButton · FilledTonalButton · OutlinedButton · TextButton'),
+          .text('One primary Filled button + a calm Text secondary.'),
         ]),
         div(classes: 'btn-showcase m3-card m3-card-outlined', [
-          a(classes: 'cta cta-filled', href: '#cli', [.text('Filled')]),
-          a(classes: 'cta cta-tonal', href: '#cli', [.text('Tonal')]),
-          a(classes: 'cta cta-outlined', href: '#cli', [.text('Outlined')]),
-          a(classes: 'cta cta-text', href: '#cli', [.text('Text')]),
+          a(classes: 'cta cta-filled', href: '#cli', [.text('Generate')]),
+          a(classes: 'cta cta-text', href: '#platforms', [.text('Platforms')]),
         ]),
       ]),
     ]);
