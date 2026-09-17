@@ -1,18 +1,41 @@
 import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
 
-/// Minimal landing matching docs/brand/DESIGN.md wire:
-/// top bar + theme → hero → platform chips → CLI/YAML → footer.
+/// Material 3 + Flutter/Dart + nerd landing.
+/// Sections: AppBar, hero, platforms, CLI, YAML, features, footer.
 class Home extends StatelessComponent {
   const Home({super.key});
 
   static const platforms = [
-    'Android',
-    'iOS',
-    'Web',
-    'Windows',
-    'macOS',
-    'Linux',
+    ('Android', 'android'),
+    ('iOS', 'ios'),
+    ('Web', 'web'),
+    ('Windows', 'windows'),
+    ('macOS', 'macos'),
+    ('Linux', 'linux'),
+  ];
+
+  static const features = [
+    (
+      '01',
+      'one yaml',
+      'Declare platforms once in a single manifest — no per-target boilerplate sprawl.',
+    ),
+    (
+      '02',
+      'six forges',
+      'Android, iOS, Web, Windows, macOS, Linux bindings from the same source of truth.',
+    ),
+    (
+      '03',
+      'cli first',
+      'Nerd-friendly generate flow: `bindsmith generate` and ship. Mono logs, clear exits.',
+    ),
+    (
+      '04',
+      'flutter native',
+      'Built for Flutter/Dart plugin authors — azure badges optional, copper brand locked.',
+    ),
   ];
 
   static const yamlSample = r'''# bindsmith.yaml
@@ -46,16 +69,17 @@ platforms:
   @override
   Component build(BuildContext context) {
     return div(classes: 'page', [
-      _top(),
+      _appBar(),
       _hero(),
       _platforms(),
       _sample(),
+      _features(),
       _footer(),
     ]);
   }
 
-  Component _top() {
-    return header(classes: 'top', [
+  Component _appBar() {
+    return header(classes: 'top m3-appbar', [
       div(classes: 'wrap top-inner', [
         a(classes: 'brand', href: './', [
           img(src: 'images/logo.svg', alt: '', width: 32, height: 32),
@@ -66,6 +90,7 @@ platforms:
             a(href: 'https://github.com/listepo/bindsmith', [.text('GitHub')]),
             a(href: '#platforms', [.text('Platforms')]),
             a(href: '#cli', [.text('CLI')]),
+            a(href: '#features', [.text('Features')]),
           ]),
           button(
             [
@@ -106,22 +131,25 @@ platforms:
         ),
         div(classes: 'hero-meta', [
           span(classes: 'status-chip', [.text('forge ready')]),
+          span(classes: 'badge badge-flutter', [.text('Flutter')]),
+          span(classes: 'badge badge-dart', [.text('Dart')]),
+          span(classes: 'badge badge-m3', [.text('Material 3')]),
         ]),
         h1(classes: 'hero-pitch', [
           .text('One YAML. Six platforms.'),
         ]),
         p(classes: 'hero-sub', [
           .text(
-            'Generate Flutter bindings from a single manifest — forge once, ship everywhere.',
+            'Forge Flutter bindings from a single manifest — Material clarity, nerd CLI density, copper brand.',
           ),
         ]),
         div(classes: 'cta-row', [
           a(
-            classes: 'cta',
+            classes: 'cta cta-filled',
             href: 'https://github.com/listepo/bindsmith',
-            [.text('forge')],
+            [.text('Get started')],
           ),
-          a(classes: 'ghost', href: '#cli', [.text('see the CLI')]),
+          a(classes: 'cta cta-tonal', href: '#cli', [.text('See the CLI')]),
         ]),
       ]),
     ]);
@@ -129,11 +157,18 @@ platforms:
 
   Component _platforms() {
     return section(classes: 'platforms', id: 'platforms', [
-      div(classes: 'wrap', [
+      div(classes: 'wrap wrap-wide', [
         p(classes: 'section-label', [.text('Platforms')]),
-        div(classes: 'chip-row', [
-          for (final name in platforms)
-            span(classes: 'chip', [.text(name)]),
+        p(classes: 'section-lead', [
+          .text('Six targets. One forge. Tonal Material cards with mono labels.'),
+        ]),
+        div(classes: 'platform-grid', [
+          for (final (name, slug) in platforms)
+            div(classes: 'platform-card m3-card', [
+              span(classes: 'platform-pip', attributes: {'data-platform': slug}, []),
+              span(classes: 'platform-name', [.text(name)]),
+              span(classes: 'platform-slug', [.text(slug)]),
+            ]),
         ]),
       ]),
     ]);
@@ -142,8 +177,11 @@ platforms:
   Component _sample() {
     return section(classes: 'sample', id: 'cli', [
       div(classes: 'wrap card-stack', [
-        p(classes: 'section-label', [.text('From YAML to bindings')]),
-        div(classes: 'code-card', [
+        p(classes: 'section-label', [.text('Generate')]),
+        p(classes: 'section-lead', [
+          .text('CLI first — then the YAML that drives every platform bind.'),
+        ]),
+        div(classes: 'code-card m3-card', id: 'cli-card', [
           div(classes: 'code-card-header', [
             span([.text('terminal')]),
             span(classes: 'tag', [.text('CLI')]),
@@ -152,17 +190,34 @@ platforms:
             code([
               RawText(
                 '<span class="prompt">\$</span> bindsmith generate\n'
-                '<span class="dim"># → platform bindings from one YAML</span>\n',
+                '<span class="dim"># → platform bindings from one YAML</span>\n'
+                '<span class="ok">✓</span> android  ios  web  windows  macos  linux\n',
               ),
             ]),
           ]),
         ]),
-        div(classes: 'code-card', [
+        div(classes: 'code-card m3-card', id: 'yaml', [
           div(classes: 'code-card-header', [
             span([.text('bindsmith.yaml')]),
             span(classes: 'tag', [.text('manifest')]),
           ]),
           pre([code([.text(yamlSample)])]),
+        ]),
+      ]),
+    ]);
+  }
+
+  Component _features() {
+    return section(classes: 'features', id: 'features', [
+      div(classes: 'wrap wrap-wide', [
+        p(classes: 'section-label', [.text('Features')]),
+        div(classes: 'feature-grid', [
+          for (final (num, title, body) in features)
+            div(classes: 'feature-card m3-card', [
+              span(classes: 'feature-num', [.text(num)]),
+              h3(classes: 'feature-title', [.text(title)]),
+              p(classes: 'feature-body', [.text(body)]),
+            ]),
         ]),
       ]),
     ]);

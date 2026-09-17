@@ -1,16 +1,23 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="bindsmith">
-  <rect width="64" height="64" rx="12" fill="#1A1C1F"/>
-  <!-- anvil base / forge plate -->
-  <rect x="14" y="40" width="36" height="6" rx="1.5" fill="#C87941"/>
-  <rect x="22" y="46" width="20" height="4" rx="1" fill="#A35F2E"/>
-  <!-- binding wires: six platform strands converging -->
-  <path d="M18 18 L32 36" stroke="#E8A05C" stroke-width="2.2" stroke-linecap="round" fill="none"/>
-  <path d="M24 14 L32 36" stroke="#D4894A" stroke-width="2.2" stroke-linecap="round" fill="none"/>
-  <path d="M32 12 L32 36" stroke="#E8A05C" stroke-width="2.2" stroke-linecap="round" fill="none"/>
-  <path d="M40 14 L32 36" stroke="#D4894A" stroke-width="2.2" stroke-linecap="round" fill="none"/>
-  <path d="M46 18 L32 36" stroke="#E8A05C" stroke-width="2.2" stroke-linecap="round" fill="none"/>
-  <path d="M50 24 L32 36" stroke="#B87333" stroke-width="2" stroke-linecap="round" fill="none"/>
-  <!-- bind node -->
-  <circle cx="32" cy="36" r="4" fill="#F0C078"/>
-  <circle cx="32" cy="36" r="2" fill="#1A1C1F"/>
+  <!-- Material tile -->
+  <rect width="64" height="64" rx="14" fill="#1A1C1F"/>
+  <!-- Six platform pips (arc) — one azure Flutter cue -->
+  <circle cx="12" cy="22" r="2.4" fill="#C87941"/>
+  <circle cx="20" cy="14" r="2.4" fill="#E8A05C"/>
+  <circle cx="32" cy="10" r="2.6" fill="#13B9FD"/>
+  <circle cx="44" cy="14" r="2.4" fill="#E8A05C"/>
+  <circle cx="52" cy="22" r="2.4" fill="#C87941"/>
+  <circle cx="56" cy="32" r="2.2" fill="#A35F2E"/>
+  <!-- Converging copper strands into bind node -->
+  <path d="M12 22 L30 40" stroke="#C87941" stroke-width="1.8" stroke-linecap="round" fill="none" opacity="0.9"/>
+  <path d="M20 14 L30 40" stroke="#E8A05C" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+  <path d="M32 10 L32 36" stroke="#13B9FD" stroke-width="1.6" stroke-linecap="round" fill="none" opacity="0.85"/>
+  <path d="M44 14 L34 40" stroke="#E8A05C" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+  <path d="M52 22 L34 40" stroke="#C87941" stroke-width="1.8" stroke-linecap="round" fill="none" opacity="0.9"/>
+  <path d="M56 32 L36 42" stroke="#A35F2E" stroke-width="1.6" stroke-linecap="round" fill="none" opacity="0.85"/>
+  <!-- Dart-like chevron / bind node (birdless geometric) -->
+  <path d="M24 36 L32 48 L40 36 L32 40 Z" fill="#C87941"/>
+  <path d="M28 34 L32 40 L36 34" stroke="#F0C078" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  <circle cx="32" cy="40" r="2.2" fill="#1A1C1F"/>
+  <circle cx="32" cy="40" r="1.1" fill="#F0C078"/>
 </svg>

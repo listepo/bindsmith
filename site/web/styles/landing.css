@@ -1,4 +1,4 @@
-/* Minimal landing layout — CSS-first so design can iterate without Dart churn. */
+/* bindsmith landing — Material 3 tonal + Flutter/Dart cues + nerd mono */
 
 *,
 *::before,
@@ -41,15 +41,18 @@ a:hover {
   padding: 0 24px;
 }
 
-/* Top bar — glass */
-.top {
+.wrap-wide {
+  max-width: 960px;
+}
+
+/* Material AppBar */
+.top.m3-appbar {
   position: sticky;
   top: 0;
   z-index: 50;
-  border-bottom: 1px solid var(--bs-glass-border);
-  background: var(--bs-glass-fill);
-  backdrop-filter: blur(14px) saturate(1.2);
-  -webkit-backdrop-filter: blur(14px) saturate(1.2);
+  border-bottom: 1px solid var(--bs-border-hairline);
+  background: var(--bs-bg-elevated);
+  box-shadow: var(--bs-elev-1);
 }
 
 .top-inner {
@@ -57,7 +60,7 @@ a:hover {
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  padding: 0.65rem 0;
+  padding: 0.55rem 0;
 }
 
 .brand {
@@ -92,31 +95,34 @@ a:hover {
 
 .nav {
   display: flex;
-  gap: 1.25rem;
+  gap: 1.1rem;
   font-family: var(--bs-font-mono);
   font-size: 0.8125rem;
 }
 
 .nav a {
   color: var(--bs-fg-muted);
+  padding: 0.35rem 0.45rem;
+  border-radius: 8px;
+  position: relative;
 }
 
 .nav a:hover {
   color: var(--bs-accent);
+  background: var(--bs-state-hover);
 }
 
-/* Theme toggle (system → light → dark) */
 .theme-toggle {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.4rem;
   min-width: 44px;
-  min-height: 44px;
+  min-height: 40px;
   padding: 0.35rem 0.7rem;
   border-radius: var(--bs-radius);
-  border: 1px solid var(--bs-border-hairline);
-  background: var(--bs-surface-1);
+  border: none;
+  background: var(--bs-surface-2);
   color: var(--bs-fg-muted);
   font-family: var(--bs-font-mono);
   font-size: 0.72rem;
@@ -124,13 +130,13 @@ a:hover {
   letter-spacing: 0.02em;
   text-transform: lowercase;
   cursor: pointer;
-  box-shadow: var(--bs-shadow);
-  transition: color 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+  box-shadow: none;
+  transition: color 0.15s ease, background 0.15s ease;
 }
 
 .theme-toggle:hover {
   color: var(--bs-accent);
-  border-color: var(--bs-accent-muted);
+  background: var(--bs-surface-3);
 }
 
 .theme-toggle:focus-visible {
@@ -169,30 +175,85 @@ a:hover {
 
 /* Hero */
 .hero {
-  padding: 64px 0 40px;
+  padding: 56px 0 40px;
   text-align: center;
 }
 
 .hero-mark {
   width: 64px;
   height: 64px;
-  margin: 0 auto 20px;
+  margin: 0 auto 16px;
   display: block;
   border-radius: var(--bs-radius-lg);
+  box-shadow: var(--bs-elev-2);
 }
 
 .hero-wordmark {
   height: 28px;
   width: auto;
-  margin: 0 auto 24px;
+  margin: 0 auto 18px;
   display: block;
+}
+
+.hero-meta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.45rem;
+  margin: 0 0 1rem;
+}
+
+.status-chip,
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-family: var(--bs-font-mono);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  line-height: 1;
+  padding: 0.32rem 0.55rem;
+  border-radius: 999px;
+  border: 1px solid transparent;
+}
+
+.status-chip {
+  background: var(--bs-accent-soft);
+  border-color: var(--bs-border-hairline);
+  color: var(--bs-accent);
+  padding-left: 0.4rem;
+}
+
+.status-chip::before {
+  content: "";
+  width: 0.4rem;
+  height: 0.4rem;
+  border-radius: 50%;
+  background: var(--bs-accent);
+}
+
+.badge-flutter {
+  background: var(--bs-flutter-soft);
+  color: var(--bs-flutter);
+}
+
+.badge-dart {
+  background: var(--bs-flutter-soft);
+  color: var(--bs-dart);
+}
+
+.badge-m3 {
+  background: var(--bs-surface-2);
+  color: var(--bs-fg-muted);
 }
 
 .hero-pitch {
   margin: 0;
-  font-family: var(--bs-font-mono);
-  font-size: clamp(1.5rem, 4vw, 1.75rem);
-  font-weight: 600;
+  font-family: var(--bs-font-sans);
+  font-size: clamp(1.55rem, 4vw, 2rem);
+  font-weight: 500;
   letter-spacing: -0.02em;
   line-height: 1.2;
   color: var(--bs-fg);
@@ -200,7 +261,7 @@ a:hover {
 
 .hero-sub {
   margin: 12px auto 0;
-  max-width: 34rem;
+  max-width: 36rem;
   font-size: 16px;
   color: var(--bs-fg-muted);
 }
@@ -217,53 +278,47 @@ a:hover {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 2.5rem;
-  padding: 0.55rem 1.15rem;
+  min-height: 2.55rem;
+  padding: 0.55rem 1.2rem;
   border-radius: var(--bs-radius);
-  background: var(--bs-accent);
-  color: #fff;
-  font-family: var(--bs-font-mono);
+  font-family: var(--bs-font-sans);
   font-weight: 500;
-  font-size: 0.875rem;
+  font-size: 0.9rem;
+  letter-spacing: 0.01em;
+  border: none;
+  transition: background 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
 }
 
-.cta:hover {
+.cta-filled {
+  background: var(--bs-accent);
+  color: var(--bs-on-accent);
+  box-shadow: var(--bs-elev-1);
+}
+
+.cta-filled:hover {
   background: var(--bs-accent-hover);
-  color: #fff;
+  color: var(--bs-on-accent);
 }
 
-.cta:focus-visible,
-.ghost:focus-visible {
+.cta-tonal {
+  background: var(--bs-accent-soft);
+  color: var(--bs-accent);
+}
+
+.cta-tonal:hover {
+  background: var(--bs-surface-2);
+  color: var(--bs-accent-hover);
+}
+
+.cta:focus-visible {
   box-shadow: var(--bs-focus-ring);
   outline: none;
 }
 
-.ghost {
-  display: inline-flex;
-  align-items: center;
-  min-height: 2.5rem;
-  padding: 0.55rem 1rem;
-  border-radius: var(--bs-radius);
-  border: 1px solid var(--bs-border);
-  color: var(--bs-fg-muted);
-  font-family: var(--bs-font-mono);
-  font-size: 0.875rem;
-  background: var(--bs-bg-elevated);
-}
-
-.ghost:hover {
-  color: var(--bs-accent);
-  border-color: var(--bs-accent-muted);
-}
-
-/* Platforms */
-.platforms {
-  padding: 32px 0 48px;
-}
-
+/* Sections */
 .section-label {
   position: relative;
-  margin: 0 0 16px;
+  margin: 0 0 8px;
   padding-bottom: 10px;
   font-family: var(--bs-font-mono);
   font-size: 12px;
@@ -273,42 +328,95 @@ a:hover {
   color: var(--bs-fg-subtle);
   text-align: center;
 }
+
 .section-label::after {
   content: "";
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
   bottom: 0;
-  width: min(12rem, 40%);
+  width: min(10rem, 36%);
   height: 1px;
   background: linear-gradient(90deg, transparent, var(--bs-accent), transparent);
-  opacity: 0.55;
+  opacity: 0.5;
 }
 
-.chip-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  justify-content: center;
+.section-lead {
+  margin: 0 auto 1.25rem;
+  max-width: 32rem;
+  text-align: center;
+  font-size: 0.95rem;
+  color: var(--bs-fg-muted);
 }
 
-.chip {
-  display: inline-flex;
-  align-items: center;
-  padding: 6px 12px;
-  border-radius: 999px;
-  background: var(--bs-glass-fill);
-  color: var(--bs-accent);
-  font-family: var(--bs-font-mono);
-  font-size: 12px;
-  font-weight: 500;
-  border: 1px solid var(--bs-glass-border);
-  backdrop-filter: blur(10px) saturate(1.15);
-  -webkit-backdrop-filter: blur(10px) saturate(1.15);
+/* Platforms — M3 cards */
+.platforms {
+  padding: 28px 0 48px;
+}
+
+.platform-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.m3-card {
+  border-radius: var(--bs-radius-lg);
+  background: var(--bs-bg-elevated);
   box-shadow: var(--bs-elev-1);
+  border: 1px solid var(--bs-border-hairline);
 }
 
-/* Sample / CLI cards */
+.platform-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.35rem;
+  padding: 14px 16px;
+  background: var(--bs-surface-1);
+  transition: background 0.15s ease, box-shadow 0.15s ease;
+}
+
+.platform-card:hover {
+  background: var(--bs-surface-2);
+  box-shadow: var(--bs-elev-2);
+}
+
+.platform-pip {
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 50%;
+  background: var(--bs-accent);
+  margin-bottom: 0.25rem;
+}
+
+.platform-card[data-platform],
+.platform-pip[data-platform="web"] {
+  /* default */
+}
+
+.platform-pip[data-platform="android"] { background: var(--bs-accent); }
+.platform-pip[data-platform="ios"] { background: var(--bs-accent-muted); }
+.platform-pip[data-platform="web"] { background: var(--bs-dart); }
+.platform-pip[data-platform="windows"] { background: var(--bs-flutter); }
+.platform-pip[data-platform="macos"] { background: var(--bs-accent-muted); }
+.platform-pip[data-platform="linux"] { background: var(--bs-accent); }
+
+.platform-name {
+  font-family: var(--bs-font-sans);
+  font-weight: 500;
+  font-size: 0.95rem;
+  color: var(--bs-fg);
+}
+
+.platform-slug {
+  font-family: var(--bs-font-mono);
+  font-size: 0.7rem;
+  color: var(--bs-fg-subtle);
+  letter-spacing: 0.04em;
+}
+
+/* CLI / YAML */
 .sample {
   padding: 0 0 48px;
 }
@@ -323,7 +431,7 @@ a:hover {
   background: var(--bs-code-bg);
   border-radius: var(--bs-radius-lg);
   border: 1px solid var(--bs-border);
-  box-shadow: var(--bs-shadow);
+  box-shadow: var(--bs-elev-2);
   overflow: hidden;
 }
 
@@ -361,11 +469,64 @@ a:hover {
   color: #8a8278;
 }
 
+.code-card .ok {
+  color: #6BBF7A;
+}
+
+/* Features */
+.features {
+  padding: 8px 0 56px;
+}
+
+.feature-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.feature-card {
+  padding: 18px 18px 20px;
+  background: var(--bs-surface-1);
+  text-align: left;
+  transition: background 0.15s ease;
+}
+
+.feature-card:hover {
+  background: var(--bs-surface-2);
+}
+
+.feature-num {
+  display: block;
+  font-family: var(--bs-font-mono);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--bs-accent);
+  margin-bottom: 0.5rem;
+}
+
+.feature-title {
+  margin: 0 0 0.4rem;
+  font-family: var(--bs-font-mono);
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--bs-fg);
+}
+
+.feature-body {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--bs-fg-muted);
+  line-height: 1.45;
+}
+
 /* Footer */
 .footer {
   margin-top: auto;
-  padding: 32px 0 40px;
+  padding: 28px 0 36px;
   border-top: 1px solid var(--bs-border-hairline);
+  background: var(--bs-surface-1);
 }
 
 .footer-inner {
@@ -390,7 +551,7 @@ a:hover {
 .footer-brand img {
   width: 24px;
   height: 24px;
-  border-radius: 6px;
+  border-radius: 8px;
 }
 
 .footer-links {
@@ -408,64 +569,32 @@ a:hover {
   color: var(--bs-accent);
 }
 
+@media (max-width: 720px) {
+  .platform-grid,
+  .feature-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
 @media (max-width: 520px) {
   .nav {
     display: none;
   }
 
   .hero {
-    padding: 48px 0 32px;
+    padding: 40px 0 28px;
+  }
+
+  .platform-grid,
+  .feature-grid {
+    grid-template-columns: 1fr;
   }
 }
 
-
-/* status chip + glass fallbacks */
-.hero-meta {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 0.5rem;
-  margin: 0 0 1rem;
-}
-
-.status-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  font-family: var(--bs-font-mono);
-  font-size: 0.68rem;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  line-height: 1;
-  padding: 0.28rem 0.55rem 0.28rem 0.4rem;
-  border-radius: 999px;
-  background: var(--bs-accent-soft);
-  border: 1px solid var(--bs-border-hairline);
-  color: var(--bs-accent);
-}
-.status-chip::before {
-  content: "";
-  width: 0.45rem;
-  height: 0.45rem;
-  border-radius: 50%;
-  background: var(--bs-accent);
-  box-shadow: var(--bs-accent-glow);
-}
-
-
+/* Reduced transparency fallbacks (optional; AppBar is tonal already) */
 @media (prefers-reduced-transparency: reduce) {
-  .top,
-  .chip {
+  .top.m3-appbar {
     background: var(--bs-bg-elevated);
     backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-  }
-}
-
-@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-  .top,
-  .chip {
-    background: var(--bs-bg-elevated);
   }
 }

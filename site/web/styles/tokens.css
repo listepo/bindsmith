@@ -1,14 +1,14 @@
-/* bindsmith — copper / amber + ink slate (synced from docs/brand/tokens.css) */
+/* bindsmith — Material 3 tonal ladder + copper brand (+ Flutter azure secondary) */
 :root,
 [data-theme="light"] {
   color-scheme: light;
   --bs-bg: #F7F4EF;
-  --bs-bg-elevated: #FFFFFF;
-  --bs-surface-1: #EFEAE3;
-  --bs-surface-2: #E4DDD3;
-  --bs-surface-3: #D6CCC0;
-  --bs-border: #C9BDB0;
-  --bs-border-hairline: #DDD4C9;
+  --bs-bg-elevated: #FFFBFF;
+  --bs-surface-1: #F0EBE4;
+  --bs-surface-2: #E8E1D8;
+  --bs-surface-3: #DED5CA;
+  --bs-border: #CAC3B8;
+  --bs-border-hairline: #DDD6CC;
   --bs-fg: #1A1C1F;
   --bs-fg-muted: #5C564E;
   --bs-fg-subtle: #8A8278;
@@ -16,23 +16,29 @@
   --bs-accent-hover: #B06835;
   --bs-accent-muted: #E8A05C;
   --bs-accent-soft: #F5E6D4;
+  --bs-on-accent: #FFFFFF;
+  --bs-flutter: #0175C2;
+  --bs-dart: #13B9FD;
+  --bs-flutter-soft: #E3F2FD;
   --bs-success: #3D7A4A;
   --bs-warning: #C87941;
   --bs-danger: #B5403A;
-  --bs-info: #4A6B8A;
+  --bs-info: #0175C2;
   --bs-code-bg: #1A1C1F;
   --bs-code-fg: #F0C078;
-  --bs-shadow: 0 1px 2px rgba(26, 28, 31, 0.06), 0 4px 12px rgba(26, 28, 31, 0.04);
-  --bs-focus-ring: 0 0 0 3px rgba(200, 121, 65, 0.4);
-  --bs-glass-fill: rgba(255, 255, 255, 0.72);
-  --bs-glass-border: rgba(221, 212, 201, 0.9);
-  --bs-elev-1: 0 1px 2px rgba(26, 28, 31, 0.04), 0 1px 3px rgba(26, 28, 31, 0.06);
-  --bs-elev-2: 0 4px 12px rgba(26, 28, 31, 0.06), 0 1px 3px rgba(26, 28, 31, 0.04);
-  --bs-accent-glow: 0 0 0 3px var(--bs-accent-soft), 0 0 18px rgba(200, 121, 65, 0.25);
-  --bs-radius: 8px;
-  --bs-radius-lg: 12px;
+  --bs-shadow: 0 1px 2px rgba(26, 28, 31, 0.06), 0 2px 6px rgba(26, 28, 31, 0.04);
+  --bs-focus-ring: 0 0 0 3px rgba(200, 121, 65, 0.35);
+  --bs-glass-fill: rgba(255, 251, 255, 0.88);
+  --bs-glass-border: rgba(221, 214, 204, 0.95);
+  --bs-elev-1: 0 1px 2px rgba(26, 28, 31, 0.05), 0 1px 3px rgba(26, 28, 31, 0.08);
+  --bs-elev-2: 0 2px 6px rgba(26, 28, 31, 0.06), 0 4px 12px rgba(26, 28, 31, 0.05);
+  --bs-accent-glow: 0 0 0 3px var(--bs-accent-soft);
+  --bs-state-hover: rgba(26, 28, 31, 0.06);
+  --bs-state-press: rgba(26, 28, 31, 0.10);
+  --bs-radius: 12px;
+  --bs-radius-lg: 16px;
   --bs-font-mono: "IBM Plex Mono", "JetBrains Mono", ui-monospace, monospace;
-  --bs-font-sans: "IBM Plex Sans", system-ui, -apple-system, sans-serif;
+  --bs-font-sans: "Roboto", "IBM Plex Sans", system-ui, -apple-system, sans-serif;
 }
 
 [data-theme="dark"] {
@@ -51,22 +57,27 @@
   --bs-accent-hover: #F0C078;
   --bs-accent-muted: #C87941;
   --bs-accent-soft: #2A2218;
+  --bs-on-accent: #1A1C1F;
+  --bs-flutter: #13B9FD;
+  --bs-dart: #13B9FD;
+  --bs-flutter-soft: #0D2A3A;
   --bs-success: #6BBF7A;
   --bs-warning: #E8A05C;
   --bs-danger: #E07068;
-  --bs-info: #7A9BB8;
+  --bs-info: #13B9FD;
   --bs-code-bg: #0C0D0F;
   --bs-code-fg: #F0C078;
-  --bs-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 4px 16px rgba(0, 0, 0, 0.25);
-  --bs-focus-ring: 0 0 0 3px rgba(232, 160, 92, 0.45);
-  --bs-glass-fill: rgba(26, 28, 31, 0.72);
-  --bs-glass-border: rgba(44, 48, 56, 0.9);
-  --bs-elev-1: 0 1px 2px rgba(0, 0, 0, 0.35), 0 1px 3px rgba(0, 0, 0, 0.25);
-  --bs-elev-2: 0 4px 14px rgba(0, 0, 0, 0.4), 0 1px 3px rgba(0, 0, 0, 0.3);
-  --bs-accent-glow: 0 0 0 3px var(--bs-accent-soft), 0 0 20px rgba(232, 160, 92, 0.3);
+  --bs-shadow: 0 1px 2px rgba(0, 0, 0, 0.35), 0 2px 8px rgba(0, 0, 0, 0.28);
+  --bs-focus-ring: 0 0 0 3px rgba(232, 160, 92, 0.4);
+  --bs-glass-fill: rgba(26, 28, 31, 0.88);
+  --bs-glass-border: rgba(44, 48, 56, 0.95);
+  --bs-elev-1: 0 1px 2px rgba(0, 0, 0, 0.4), 0 1px 3px rgba(0, 0, 0, 0.3);
+  --bs-elev-2: 0 2px 8px rgba(0, 0, 0, 0.45), 0 4px 14px rgba(0, 0, 0, 0.35);
+  --bs-accent-glow: 0 0 0 3px var(--bs-accent-soft);
+  --bs-state-hover: rgba(237, 232, 225, 0.06);
+  --bs-state-press: rgba(237, 232, 225, 0.10);
 }
 
-/* System preference when data-theme is "system" or unset (before FOUC boot). */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]):not([data-theme="dark"]),
   [data-theme="system"] {
@@ -85,19 +96,25 @@
     --bs-accent-hover: #F0C078;
     --bs-accent-muted: #C87941;
     --bs-accent-soft: #2A2218;
+    --bs-on-accent: #1A1C1F;
+    --bs-flutter: #13B9FD;
+    --bs-dart: #13B9FD;
+    --bs-flutter-soft: #0D2A3A;
     --bs-success: #6BBF7A;
     --bs-warning: #E8A05C;
     --bs-danger: #E07068;
-    --bs-info: #7A9BB8;
+    --bs-info: #13B9FD;
     --bs-code-bg: #0C0D0F;
     --bs-code-fg: #F0C078;
-    --bs-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 4px 16px rgba(0, 0, 0, 0.25);
-    --bs-focus-ring: 0 0 0 3px rgba(232, 160, 92, 0.45);
-  --bs-glass-fill: rgba(26, 28, 31, 0.72);
-  --bs-glass-border: rgba(44, 48, 56, 0.9);
-  --bs-elev-1: 0 1px 2px rgba(0, 0, 0, 0.35), 0 1px 3px rgba(0, 0, 0, 0.25);
-  --bs-elev-2: 0 4px 14px rgba(0, 0, 0, 0.4), 0 1px 3px rgba(0, 0, 0, 0.3);
-  --bs-accent-glow: 0 0 0 3px var(--bs-accent-soft), 0 0 20px rgba(232, 160, 92, 0.3);
+    --bs-shadow: 0 1px 2px rgba(0, 0, 0, 0.35), 0 2px 8px rgba(0, 0, 0, 0.28);
+    --bs-focus-ring: 0 0 0 3px rgba(232, 160, 92, 0.4);
+    --bs-glass-fill: rgba(26, 28, 31, 0.88);
+    --bs-glass-border: rgba(44, 48, 56, 0.95);
+    --bs-elev-1: 0 1px 2px rgba(0, 0, 0, 0.4), 0 1px 3px rgba(0, 0, 0, 0.3);
+    --bs-elev-2: 0 2px 8px rgba(0, 0, 0, 0.45), 0 4px 14px rgba(0, 0, 0, 0.35);
+    --bs-accent-glow: 0 0 0 3px var(--bs-accent-soft);
+    --bs-state-hover: rgba(237, 232, 225, 0.06);
+    --bs-state-press: rgba(237, 232, 225, 0.10);
   }
 }
 
@@ -106,12 +123,12 @@
   [data-theme="system"] {
     color-scheme: light;
     --bs-bg: #F7F4EF;
-    --bs-bg-elevated: #FFFFFF;
-    --bs-surface-1: #EFEAE3;
-    --bs-surface-2: #E4DDD3;
-    --bs-surface-3: #D6CCC0;
-    --bs-border: #C9BDB0;
-    --bs-border-hairline: #DDD4C9;
+    --bs-bg-elevated: #FFFBFF;
+    --bs-surface-1: #F0EBE4;
+    --bs-surface-2: #E8E1D8;
+    --bs-surface-3: #DED5CA;
+    --bs-border: #CAC3B8;
+    --bs-border-hairline: #DDD6CC;
     --bs-fg: #1A1C1F;
     --bs-fg-muted: #5C564E;
     --bs-fg-subtle: #8A8278;
@@ -119,18 +136,24 @@
     --bs-accent-hover: #B06835;
     --bs-accent-muted: #E8A05C;
     --bs-accent-soft: #F5E6D4;
+    --bs-on-accent: #FFFFFF;
+    --bs-flutter: #0175C2;
+    --bs-dart: #13B9FD;
+    --bs-flutter-soft: #E3F2FD;
     --bs-success: #3D7A4A;
     --bs-warning: #C87941;
     --bs-danger: #B5403A;
-    --bs-info: #4A6B8A;
+    --bs-info: #0175C2;
     --bs-code-bg: #1A1C1F;
     --bs-code-fg: #F0C078;
-    --bs-shadow: 0 1px 2px rgba(26, 28, 31, 0.06), 0 4px 12px rgba(26, 28, 31, 0.04);
-    --bs-focus-ring: 0 0 0 3px rgba(200, 121, 65, 0.4);
-  --bs-glass-fill: rgba(255, 255, 255, 0.72);
-  --bs-glass-border: rgba(221, 212, 201, 0.9);
-  --bs-elev-1: 0 1px 2px rgba(26, 28, 31, 0.04), 0 1px 3px rgba(26, 28, 31, 0.06);
-  --bs-elev-2: 0 4px 12px rgba(26, 28, 31, 0.06), 0 1px 3px rgba(26, 28, 31, 0.04);
-  --bs-accent-glow: 0 0 0 3px var(--bs-accent-soft), 0 0 18px rgba(200, 121, 65, 0.25);
+    --bs-shadow: 0 1px 2px rgba(26, 28, 31, 0.06), 0 2px 6px rgba(26, 28, 31, 0.04);
+    --bs-focus-ring: 0 0 0 3px rgba(200, 121, 65, 0.35);
+    --bs-glass-fill: rgba(255, 251, 255, 0.88);
+    --bs-glass-border: rgba(221, 214, 204, 0.95);
+    --bs-elev-1: 0 1px 2px rgba(26, 28, 31, 0.05), 0 1px 3px rgba(26, 28, 31, 0.08);
+    --bs-elev-2: 0 2px 6px rgba(26, 28, 31, 0.06), 0 4px 12px rgba(26, 28, 31, 0.05);
+    --bs-accent-glow: 0 0 0 3px var(--bs-accent-soft);
+    --bs-state-hover: rgba(26, 28, 31, 0.06);
+    --bs-state-press: rgba(26, 28, 31, 0.10);
   }
 }
