@@ -1,8 +1,7 @@
 import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
 
-/// Material 3 landing — copper seed, FAB+braces mark, tonal surfaces.
-/// Sections: AppBar, hero, platforms, CLI, YAML, features, NavigationBar, footer.
+/// Material 3 landing v3 — B monogram (stadium+circle), denser M3 chrome.
 class Home extends StatelessComponent {
   const Home({super.key});
 
@@ -29,7 +28,7 @@ class Home extends StatelessComponent {
     (
       '03',
       'cli first',
-      'Nerd-friendly generate flow: `bindsmith generate` and ship. Mono logs, clear exits.',
+      'Nerd-friendly flow: generate, watch, resolve, dump — mono logs, clear exits.',
     ),
     (
       '04',
@@ -70,18 +69,21 @@ platforms:
   Component build(BuildContext context) {
     return div(classes: 'page', [
       _appBar(),
+      _snackTip(),
       _hero(),
+      _buttonsDetail(),
       _platforms(),
       _sample(),
       _features(),
+      _surfaceLadder(),
       _footer(),
       _navBar(),
     ]);
   }
 
   Component _appBar() {
-    return header(classes: 'top m3-appbar', [
-      div(classes: 'wrap top-inner', [
+    return header(classes: 'top m3-appbar m3-appbar-dense', [
+      div(classes: 'wrap wrap-wide top-inner', [
         a(classes: 'brand', href: './', [
           img(src: 'images/logo.svg', alt: '', width: 32, height: 32),
           span(classes: 'brand-name', [.text('bindsmith')]),
@@ -91,8 +93,19 @@ platforms:
             a(href: 'https://github.com/listepo/bindsmith', [.text('GitHub')]),
             a(href: '#platforms', [.text('Platforms')]),
             a(href: '#cli', [.text('CLI')]),
+            a(href: '#buttons', [.text('Buttons')]),
             a(href: '#features', [.text('Features')]),
           ]),
+          a(
+            classes: 'm3-icon-btn',
+            href: 'https://github.com/listepo/bindsmith',
+            attributes: {'aria-label': 'Star on GitHub', 'title': 'GitHub'},
+            [
+              RawText(
+                '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M12 2.5l2.6 5.3 5.9.9-4.3 4.2 1 5.8L12 16.5 6.8 18.7l1-5.8L3.5 8.7l5.9-.9L12 2.5z"/></svg>',
+              ),
+            ],
+          ),
           button(
             [
               RawText(_iconSun),
@@ -109,9 +122,32 @@ platforms:
               'title': 'Cycle theme: system → light → dark',
             },
           ),
+          span(
+            classes: 'm3-avatar',
+            attributes: {'aria-hidden': 'true', 'title': 'Listepo'},
+            [.text('B')],
+          ),
         ]),
       ]),
     ]);
+  }
+
+  Component _snackTip() {
+    return div(
+      classes: 'm3-snackbar',
+      id: 'tip',
+      attributes: {'role': 'status'},
+      [
+        div(classes: 'wrap wrap-wide m3-snackbar-inner', [
+          span(classes: 'm3-snackbar-msg', [
+            .text('Tip: cycle theme system → light → dark. Copper seed, full M3 roles.'),
+          ]),
+          a(classes: 'm3-text-btn m3-snackbar-action', href: '#buttons', [
+            .text('See buttons'),
+          ]),
+        ]),
+      ],
+    );
   }
 
   Component _hero() {
@@ -136,10 +172,10 @@ platforms:
         ]),
         p(classes: 'hero-sub', [
           .text(
-            'Generate Flutter bindings from a single manifest — Material 3 tonal surfaces, copper primary, nerd CLI density.',
+            'Generate Flutter bindings from a single manifest — Material 3 tonal surfaces, copper primary, FilterChips, Filled / Tonal / Outlined / Text buttons.',
           ),
         ]),
-        div(classes: 'cta-row', [
+        div(classes: 'cta-row', id: 'hero-ctas', [
           a(
             classes: 'cta cta-filled',
             href: 'https://github.com/listepo/bindsmith',
@@ -151,6 +187,28 @@ platforms:
             href: '#platforms',
             [.text('Platforms')],
           ),
+          a(
+            classes: 'cta cta-text',
+            href: 'https://github.com/listepo/bindsmith#readme',
+            [.text('Docs')],
+          ),
+        ]),
+      ]),
+    ]);
+  }
+
+  Component _buttonsDetail() {
+    return section(classes: 'buttons-detail', id: 'buttons', [
+      div(classes: 'wrap', [
+        p(classes: 'section-label', [.text('Buttons')]),
+        p(classes: 'section-lead', [
+          .text('FilledButton · FilledTonalButton · OutlinedButton · TextButton'),
+        ]),
+        div(classes: 'btn-showcase m3-card m3-card-outlined', [
+          a(classes: 'cta cta-filled', href: '#cli', [.text('Filled')]),
+          a(classes: 'cta cta-tonal', href: '#cli', [.text('Tonal')]),
+          a(classes: 'cta cta-outlined', href: '#cli', [.text('Outlined')]),
+          a(classes: 'cta cta-text', href: '#cli', [.text('Text')]),
         ]),
       ]),
     ]);
@@ -161,11 +219,26 @@ platforms:
       div(classes: 'wrap wrap-wide', [
         p(classes: 'section-label', [.text('Platforms')]),
         p(classes: 'section-lead', [
-          .text('Six targets. One manifest. Surface-container cards with M3 density.'),
+          .text('FilterChips select targets. Cards use outline + surface-container ladder.'),
+        ]),
+        div(classes: 'filter-chip-row', id: 'chips', attributes: {'role': 'group', 'aria-label': 'Platform filters'}, [
+          for (final (name, slug) in platforms)
+            button(
+              [
+                span(classes: 'filter-chip-check', attributes: {'aria-hidden': 'true'}, [.text('✓')]),
+                span([.text(name)]),
+              ],
+              type: ButtonType.button,
+              classes: 'm3-filter-chip${slug == 'android' || slug == 'ios' || slug == 'web' ? ' is-selected' : ''}',
+              attributes: {
+                'data-platform': slug,
+                'aria-pressed': (slug == 'android' || slug == 'ios' || slug == 'web') ? 'true' : 'false',
+              },
+            ),
         ]),
         div(classes: 'platform-grid', [
           for (final (name, slug) in platforms)
-            div(classes: 'platform-card m3-card', [
+            div(classes: 'platform-card m3-card${slug == 'web' ? ' m3-card-outlined' : ''}', [
               span(classes: 'platform-pip', attributes: {'data-platform': slug}, []),
               span(classes: 'platform-name', [.text(name)]),
               span(classes: 'platform-slug', [.text(slug)]),
@@ -192,12 +265,13 @@ platforms:
               RawText(
                 '<span class="prompt">\$</span> bindsmith generate\n'
                 '<span class="dim"># → platform bindings from one YAML</span>\n'
-                '<span class="ok">✓</span> android  ios  web  windows  macos  linux\n',
+                '<span class="ok">✓</span> android  ios  web  windows  macos  linux\n'
+                '<span class="prompt">\$</span> bindsmith watch · resolve · dump · explain\n',
               ),
             ]),
           ]),
         ]),
-        div(classes: 'code-card m3-card', id: 'yaml', [
+        div(classes: 'code-card m3-card m3-card-outlined', id: 'yaml', [
           div(classes: 'code-card-header', [
             span([.text('bindsmith.yaml')]),
             span(classes: 'tag', [.text('manifest')]),
@@ -224,25 +298,56 @@ platforms:
     ]);
   }
 
+  Component _surfaceLadder() {
+    return section(classes: 'surface-ladder', id: 'surfaces', [
+      div(classes: 'wrap wrap-wide', [
+        p(classes: 'section-label', [.text('Surfaces')]),
+        p(classes: 'section-lead', [
+          .text('Tonal surface-container ladder — lowest → highest.'),
+        ]),
+        div(classes: 'surface-ladder-row', [
+          for (final label in [
+            'lowest',
+            'low',
+            'container',
+            'high',
+            'highest',
+          ])
+            div(
+              classes: 'surface-swatch surface-$label',
+              [
+                span([.text(label)]),
+              ],
+            ),
+        ]),
+      ]),
+    ]);
+  }
+
   Component _navBar() {
     return nav(
       classes: 'm3-nav-bar',
+      id: 'nav-detail',
       attributes: {'aria-label': 'Mobile'},
       [
         div(classes: 'm3-nav-bar-inner', [
           a(classes: 'm3-nav-item is-active', href: './', attributes: {'aria-current': 'page'}, [
+            span(classes: 'm3-nav-indicator', attributes: {'aria-hidden': 'true'}, []),
             span(classes: 'm3-nav-icon', [.text('⌂')]),
             span([.text('Home')]),
           ]),
           a(classes: 'm3-nav-item', href: '#platforms', [
+            span(classes: 'm3-nav-indicator', attributes: {'aria-hidden': 'true'}, []),
             span(classes: 'm3-nav-icon', [.text('▦')]),
             span([.text('Targets')]),
           ]),
           a(classes: 'm3-nav-item', href: '#cli', [
+            span(classes: 'm3-nav-indicator', attributes: {'aria-hidden': 'true'}, []),
             span(classes: 'm3-nav-icon', [.text('>_')]),
             span([.text('CLI')]),
           ]),
           a(classes: 'm3-nav-item', href: '#features', [
+            span(classes: 'm3-nav-indicator', attributes: {'aria-hidden': 'true'}, []),
             span(classes: 'm3-nav-icon', [.text('✦')]),
             span([.text('More')]),
           ]),
