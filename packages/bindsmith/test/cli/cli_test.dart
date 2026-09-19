@@ -452,6 +452,8 @@ facade:
 platforms:
   macos:
     driver: swift
+    module: GreeterKit
+    sources: [swift/Greeter.swift]
     include:
       types: [Greeter]
 ''',

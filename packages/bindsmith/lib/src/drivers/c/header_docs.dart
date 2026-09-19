@@ -104,16 +104,16 @@ Map<String, String> headerDocsFromTree({
 }
 
 /// Fills [docs] only where a declaration already has none.
-List<Decl> mergeHeaderDocs(List<Decl> decls, Map<String, String> docs) => [
-  for (final d in decls)
-    switch (d) {
-      TypeDecl() || FunctionDecl() || VariableDecl() =>
-        d.docs == null && docs.containsKey(d.id)
-            ? d.copyWith(docs: docs[d.id])
-            : d,
-      _ => d,
-    },
-];
+List<Decl> mergeHeaderDocs(List<Decl> decls, Map<String, String> docs) {
+  Decl merge(Decl d) {
+    final text = docs[d.id];
+    if (d.docs != null || text == null) return d;
+    // copyWith(docs:) is declared on Decl, so no per-subtype case is needed.
+    return d.copyWith(docs: text);
+  }
+
+  return [for (final d in decls) merge(d)];
+}
 
 /// Strips `///`, `//`, `/** */` and `/* */` the way ffigen 22 does.
 String? removeRawCommentMarkups(String? string) {

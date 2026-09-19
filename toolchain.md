@@ -29,6 +29,7 @@
 | ffigen | ^22.0.0 | локально | https://pub.dev/packages/ffigen | C/ObjC driver (P1-2, P2-1) |
 | swiftgen | ^0.2.0 | локально | https://pub.dev/packages/swiftgen | Swift driver (P2-2) |
 | jnigen | ^1.0.0 | локально | https://pub.dev/packages/jnigen | JVM driver (P3-1) |
+| pigeon | ^29.0.0 | локально | https://pub.dev/packages/pigeon | Channels fallback (no driver yet; contract in `test/drivers/pigeon_contract_test.dart`); 29.0.2 published 2026-09-16, needs analyzer >=13 <15, args ^2.5, dart_style ^3 (all satisfied) |
 | winmd | ^7.1.0 | локально | https://pub.dev/packages/winmd | WinMD driver (P5-1); 7.1.1 blocked by ffigen 22 `cli_util ^0.4.2` |
 | dbus | ^0.7.15 | локально | https://pub.dev/packages/dbus | D-Bus driver (P5-4) |
 | analyzer | ^14.3.0 | локально | https://pub.dev/packages/analyzer | Read-back of generated Dart signatures |
@@ -62,9 +63,3 @@
 | Пакет | Пин | Где | Источник | Зачем здесь |
 | --- | --- | --- | --- | --- |
 | jni | ^1.0.3 | probe | https://pub.dev/packages/jni | Runtime for JVM generated bindings; pinned in `test/jvm_toolchain.dart` because this workspace cannot depend on jni directly |
-
-### Waiting on driver (not pinned yet)
-
-| Пакет | Planned pin | Источник | Зачем здесь |
-| --- | --- | --- | --- |
-| pigeon | ^28.0.0 | https://pub.dev/packages/pigeon | Channels fallback — no driver yet |

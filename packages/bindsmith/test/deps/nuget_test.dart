@@ -60,7 +60,7 @@ void main() {
       );
       expect(
         coordinate.packageUri(nugetFlatContainer).path,
-        '/microsoft.windows.sdk.win32metadata/1.0.0/'
+        '/v3-flatcontainer/microsoft.windows.sdk.win32metadata/1.0.0/'
         'microsoft.windows.sdk.win32metadata.1.0.0.nupkg',
       );
       expect(
@@ -140,6 +140,7 @@ void main() {
       final locked = await resolveNuget(
         packages: ['Microsoft.Windows.SDK.Win32Metadata@1.0.0'],
         cache: cache,
+        repository: repository.base,
         fetch: repository.fetch,
       );
       expect(

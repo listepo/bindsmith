@@ -36,7 +36,10 @@ void main() {
 
   test('the SwiftPM snippet lists the glue under sources', () {
     final snippets = emitAppleGlue(
-      _layout('macos: { driver: swift, include: { types: [Greeter] } }'),
+      _layout(
+        'macos: { driver: swift, module: GreeterKit, '
+        'sources: [swift/Greeter.swift], include: { types: [Greeter] } }',
+      ),
       const [],
       platform: Platform.macos,
     );
