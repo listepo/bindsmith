@@ -27,9 +27,12 @@ facade:
 platforms:
   android:
     driver: jvm
+    compile_sdk: 35
     include: { classes: [com.example.sdk.Client] }
   ios:
     driver: swift
+    module: ClientKit
+    sources: [swift/Client.swift]
     include: { types: [Client] }
   macos: { inherit: ios }
   windows:

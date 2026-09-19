@@ -34,8 +34,10 @@ $verify
 platforms:
   android:
     driver: jvm
+    compile_sdk: 35
   web:
     driver: dts
+    deps: { npm: ["demo@1.0.0"] }
 ''');
   write('lib/src/generated/android/jvm.g.dart', '// binding\n');
   write('lib/src/generated/web/dts.g.dart', '// binding\n');

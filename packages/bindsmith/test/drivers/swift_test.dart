@@ -266,6 +266,49 @@ void main() {
     );
   });
 
+  test('the bridge round trip carries docs into the Dart binding', () async {
+    onlyOnApple();
+    if (!canGenerate) return;
+    // P2-5 step 1: the P7-1 bridge skips swift2objc (objcCompatibleSources),
+    // so it tests swiftc → header → ffigen with no swift2objc involved. If
+    // the bridge's own `///` docs are missing from the Dart generated for
+    // `GreeterBridge`, the loss is downstream of swift2objc and an upstream
+    // fix there would not help.
+    final bridge = emitSwiftBridge(run.ir);
+    expect(bridge.classes, {'GreeterBridge'});
+    final tmp = io.Directory.systemTemp.createTempSync('bindsmith_p25_');
+    addTearDown(() => tmp.deleteSync(recursive: true));
+    final ir =
+        await SwiftDriver(
+          platform: Platform.macos,
+          sources: [_fixture],
+          objcCompatibleSources: [
+            'fixtures/lib/generated/greeter_swift/$_module.bridge.g.swift',
+          ],
+          objcCompatibleTypes: bridge.classes,
+          module: _module,
+          include: (n) => n != 'Box',
+        ).load(
+          workingDirectory: _root,
+          output: p.join(tmp.path, 'swift.g.dart'),
+          logger: Logger.detached('p25')..level = Level.ALL,
+        );
+    final bridged = ir.whereType<TypeDecl>().singleWhere(
+      (d) => d.name == 'GreeterBridge',
+    );
+    final greetAll = bridged.members.singleWhere(
+      (m) => m.name == 'greetAllWithNames',
+    );
+    expect(
+      greetAll.docs,
+      startsWith('Greets everyone in'),
+      reason:
+          'bridge docs must survive swiftc → header → ffigen; '
+          'see plan P2-5 step 1',
+    );
+    expect(greetAll.docs, contains('names'));
+  });
+
   test(
     'a dropped member comes back through a generated @objc bridge',
     () async {

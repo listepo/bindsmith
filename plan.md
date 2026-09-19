@@ -4,19 +4,8 @@ One bindsmith.yaml, six Flutter platforms. Generates Dart bindings for native AP
 
 | # | Статус | Приоритет | Сложность | Готовность | Агент |
 | --- | --- | --- | --- | --- | --- |
-| P0-4 | in progress | P2 | 1 | 90% | Cursor / composer-2.5 |
-| P2-5 | in progress | P2 | 3 | 0% | Cursor / grok 4.6 |
-| P8-3 | in progress | P3 | 3 | 80% | Cursor / grok 4.6 |
-
-### P0-4. Upstream pins
-
-Pin upstream versions in `pubspec.yaml` with caret ranges no wider than one major as each driver lands, and cite each remaining pin against the registry.
-
-**Landed and cited** (see `toolchain.md`, verified on pub.dev 2026-09-12): `ffigen: ^22.0.0`, `jnigen: ^1.0.0`, `swiftgen: ^0.2.0`, `objective_c: ^9.6.0` (fixtures), `jni: ^1.0.3` (JVM probe in `test/jvm_toolchain.dart`), `winmd: ^7.1.0` (7.1.1 blocked: needs `cli_util ^0.5.1`, ffigen 22 pins `^0.4.2`), `dbus: ^0.7.15`, `hooks: ^2.2.0`, `code_assets: ^2.0.0`, `native_toolchain_c: ^0.19.4` (fixtures dev_deps); tooling `args: ^2.7.0`, `yaml: ^3.1.0`, `dart_style: ^3.1.0`, `path: ^1.9.0`, `analyzer: ^14.3.0`, `crypto: ^3.0.7`.
-
-**Still waiting on driver:** `pigeon: ^28.0.0` (channels fallback — no driver yet). Optional tooling (`mason_logger`, `cli_completion`, `checked_yaml`, `code_builder`, `glob`, `pub_semver`) — add only when a task needs them.
-
-Done when every remaining pin is cited against the registry; `dart pub get` at root resolves.
+| P2-5 | in progress | P2 | 3 | 10% | Cursor / grok 4.6 |
+| P8-3 | in progress | P3 | 3 | 90% | Cursor / grok 4.6 |
 
 ### P2-5. Swift docs in the raw binding
 
@@ -29,7 +18,7 @@ Swift docs in the raw Objective-C binding: swift2objc should carry `docComment` 
 
 Only the raw binding is affected: the IR and the facade already take Swift docs from the symbol graph (`_withDocs` in `swift_driver.dart`). The fix belongs upstream. Both local alternatives drive a tool through its output (rule 1): editing swift2objc's output text, or splitting swiftgen's single `generate()` into its three steps so the wrapper can be patched between them.
 
-1. **Prove the rest of the chain first.** The P7-1 bridge skips swift2objc (`objcCompatibleSources`) and already carries `///` docs (`GreeterKit.bridge.g.swift`), so it tests `swiftc` → header → ffigen with no swift2objc involved. The committed `swift.g.dart` has no `GreeterBridge` at all, so a grep proves nothing; the check needs a run. Run the round trip in `test/drivers/swift_test.dart` and look at the Dart it generates for `GreeterBridge`. If the bridge's text is missing there too, find where it is lost (`swiftc -emit-objc-header-path`, or ffigen on that header) before going upstream. A swift2objc change only helps if everything after it works.
+1. **Prove the rest of the chain first.** The P7-1 bridge skips swift2objc (`objcCompatibleSources`) and already carries `///` docs (`GreeterKit.bridge.g.swift`), so it tests `swiftc` → header → ffigen with no swift2objc involved. The committed `swift.g.dart` has no `GreeterBridge` at all, so a grep proves nothing; the check needs a run. `test/drivers/swift_test.dart` now runs that round trip (`the bridge round trip carries docs into the Dart binding`): it feeds the bridge back through `SwiftDriver` as `objcCompatibleSources` and asserts the Dart generated for `GreeterBridge.greetAllWithNames` carries the bridge's text. Status 2026-09-19: the text arrives, converted to HTML (`<code>names</code>` instead of `` `names` ``) — the loss is *inside* the bridge path (`swiftc -emit-objc-header-path`, or ffigen on that header), not in swift2objc. Find where the backticks become HTML before going upstream: a swift2objc change only helps if everything after it works.
 2. **Open the issue** on dart-lang/native, labelled swift2objc, with that evidence. Propose: parse `docComment.lines[].text` in the symbol-graph parser, keep it on the AST declarations, and write it as `///` above each generated wrapper declaration. Offer the PR, and link the issue from this row.
 3. **When a swift2objc release carries it:** bump the pin (P0-4) and cite pub.dev in the commit message; regenerate the Swift goldens with `UPDATE_GOLDENS=1` and check the binding carries the Swift text; keep `_withDocs` (it only fills docs that are still empty, so it becomes a no-op rather than a conflict); remove the Swift caveat from `AGENTS.md` (Style → documentation bullet) and from `docs/platforms.md` (Documentation).
 

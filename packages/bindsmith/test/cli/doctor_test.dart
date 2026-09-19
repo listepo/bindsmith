@@ -109,7 +109,12 @@ void main() {
     });
 
     test('a toolchain the host cannot have is not asked for', () {
-      final swift = _config('  ios:\n    driver: swift\n');
+      final swift = _config(
+        '  ios:\n'
+        '    driver: swift\n'
+        '    module: GreeterKit\n'
+        '    sources: [swift/Greeter.swift]\n',
+      );
       expect(requiredTools(swift, Platform.macos), {
         Tool.dart,
         Tool.libclang,
