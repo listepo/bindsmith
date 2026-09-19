@@ -1,8 +1,9 @@
 name: release-manual
 
 # Manual release: choose the semver bump, the workflow bumps both pubspecs,
-# commits, tags `v<version>` and publishes the GitHub Release with native
-# executables. Run from main after CI is green.
+# commits, and pushes tag `v<version>`. The `release` workflow (on tag push)
+# then builds the native executables and publishes the GitHub Release.
+# Run from main after CI is green.
 
 on:
   workflow_dispatch:
@@ -14,7 +15,7 @@ on:
         type: choice
         options: [patch, minor, major]
       dry_run:
-        description: 'Bump + build only, do not push tag or publish'
+        description: 'Print the new version without committing or tagging'
         required: false
         default: false
         type: boolean
@@ -25,9 +26,6 @@ permissions:
 jobs:
   bump-tag:
     runs-on: ubuntu-latest
-    outputs:
-      version: ${{ steps.bump.outputs.version }}
-      tag: ${{ steps.bump.outputs.tag }}
     steps:
       - uses: actions/checkout@v7
         with:
@@ -42,13 +40,13 @@ jobs:
           set -euo pipefail
           current=$(grep '^version: ' packages/bindsmith/pubspec.yaml | awk '{print $2}')
           echo "current: $current"
-          new=$(dart run scripts/bump_version.dart --bump "${{ inputs.bump }}" --current "$current")
+          new=$(dart scripts/bump_version.dart --bump "${{ inputs.bump }}" --current "$current")
           echo "new: $new"
-          echo "version=$new" >> "$GITHUB_OUTPUT"
           echo "tag=v$new" >> "$GITHUB_OUTPUT"
+          if [ "${{ inputs.dry_run }}" = "true" ]; then exit 0; fi
           sed -i -E "s/^version: .*/version: $new/" packages/bindsmith/pubspec.yaml packages/bindsmith_runtime/pubspec.yaml
           git diff -- packages/bindsmith/pubspec.yaml packages/bindsmith_runtime/pubspec.yaml
-      - name: Commit, tag, push
+      - name: Commit, tag, push (triggers `release` on the tag)
         if: ${{ !inputs.dry_run }}
         run: |
           set -euo pipefail
@@ -59,56 +57,3 @@ jobs:
           git tag "${{ steps.bump.outputs.tag }}"
           git push origin HEAD:main
           git push origin "${{ steps.bump.outputs.tag }}"
-
-  build:
-    needs: bump-tag
-    if: ${{ !inputs.dry_run }}
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - os: macos-latest
-            asset: bindsmith-macos-arm64
-          - os: ubuntu-latest
-            asset: bindsmith-linux-x64
-          - os: windows-latest
-            asset: bindsmith-windows-x64.exe
-    runs-on: ${{ matrix.os }}
-    steps:
-      - uses: actions/checkout@v7
-        with:
-          ref: ${{ needs.bump-tag.outputs.tag }}
-      - uses: dart-lang/setup-dart@v1
-        with:
-          sdk: 3.13.1
-      - run: dart pub get
-      - name: Compile
-        run: dart compile exe packages/bindsmith/bin/bindsmith.dart -o ${{ matrix.asset }}
-      - uses: actions/upload-artifact@v7
-        with:
-          name: ${{ matrix.asset }}
-          path: ${{ matrix.asset }}
-          if-no-files-found: error
-
-  publish:
-    needs: [bump-tag, build]
-    if: ${{ !inputs.dry_run }}
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v7
-        with:
-          ref: ${{ needs.bump-tag.outputs.tag }}
-      - uses: actions/download-artifact@v8
-        with:
-          path: dist
-      - name: Flatten artefacts
-        run: |
-          mkdir -p assets
-          find dist -type f -exec mv {} assets/ \;
-          ls -l assets
-      - name: GitHub Release
-        uses: softprops/action-gh-release@v3
-        with:
-          tag_name: ${{ needs.bump-tag.outputs.tag }}
-          files: assets/*
-          generate_release_notes: true

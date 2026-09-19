@@ -4,7 +4,7 @@ One bindsmith.yaml, six Flutter platforms. Generates Dart bindings for native AP
 
 | # | Статус | Приоритет | Сложность | Готовность | Агент |
 | --- | --- | --- | --- | --- | --- |
-| P2-5 | in progress | P2 | 3 | 10% | Cursor / grok 4.6 |
+| P2-5 | in progress | P2 | 3 | 30% | Cursor / grok 4.6 |
 | P8-3 | in progress | P3 | 3 | 90% | Cursor / grok 4.6 |
 
 ### P2-5. Swift docs in the raw binding
