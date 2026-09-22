@@ -233,9 +233,14 @@ final class NugetResolver {
 Future<List<LockedArtifact>> resolveNuget({
   required Iterable<String> packages,
   required Directory cache,
+  Uri? repository,
   NugetFetch? fetch,
 }) async {
-  final resolver = NugetResolver(cache: cache, fetch: fetch ?? nugetFetch);
+  final resolver = NugetResolver(
+    cache: cache,
+    repository: repository,
+    fetch: fetch ?? nugetFetch,
+  );
   return [
     for (final artifact in await resolver.resolve(packages)) artifact.locked,
   ];

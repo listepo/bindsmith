@@ -1,0 +1,71 @@
+name: review
+
+# On-demand review: post `/review` as a comment on a pull request (non-draft).
+# Runs the fast checks (format + analyze + unit tests) against the PR head.
+
+on:
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  review:
+    if: >-
+      github.event.issue.pull_request != null &&
+      startsWith(github.event.comment.body, '/review')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Resolve PR head
+        id: pr
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const pr = await github.rest.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.issue.number,
+            });
+            if (pr.data.draft) {
+              core.setFailed('Draft PRs are not reviewed — mark ready for review first.');
+              return;
+            }
+            core.setOutput('sha', pr.data.head.sha);
+            core.setOutput('ref', pr.data.head.ref);
+            core.setOutput('repo', pr.data.head.repo.full_name);
+      - uses: actions/checkout@v7
+        with:
+          repository: ${{ steps.pr.outputs.repo }}
+          ref: ${{ steps.pr.outputs.sha }}
+      - uses: dart-lang/setup-dart@v1
+        with:
+          sdk: 3.13.1
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+      - run: dart pub get
+      - run: npm ci
+        working-directory: packages/bindsmith/tool/ts_sidecar
+      - name: Fast checks
+        run: |
+          dart format --output=none --set-exit-if-changed packages fixtures
+          dart analyze --fatal-infos
+      - run: dart test
+        working-directory: packages/bindsmith_runtime
+      - run: dart test
+        working-directory: packages/bindsmith
+      - run: node --test
+        working-directory: packages/bindsmith/tool/ts_sidecar
+      - name: Post result
+        if: always()
+        uses: actions/github-script@v8
+        with:
+          script: |
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: `review of ${{ steps.pr.outputs.sha }}: ${{ job.status }}.`,
+            });

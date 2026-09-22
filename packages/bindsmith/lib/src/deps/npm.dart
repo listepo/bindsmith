@@ -257,9 +257,14 @@ final class NpmResolver {
 Future<List<LockedArtifact>> resolveNpm({
   required Iterable<String> packages,
   required Directory cache,
+  Uri? registry,
   NpmFetch? fetch,
 }) async {
-  final resolver = NpmResolver(cache: cache, fetch: fetch ?? npmFetch);
+  final resolver = NpmResolver(
+    cache: cache,
+    registry: registry,
+    fetch: fetch ?? npmFetch,
+  );
   return [
     for (final artifact in await resolver.resolve(packages)) artifact.locked,
   ];

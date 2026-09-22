@@ -25,6 +25,7 @@ $android
 
 const _biometric = '''
     driver: jvm
+    compile_sdk: 35
     deps:
       maven: ["androidx.biometric:biometric:1.2.0-alpha05"]
       repositories:
@@ -106,7 +107,10 @@ void main() {
 
   test('without repositories Maven Central is used, as the resolver does', () {
     final gradle = emitAndroidGlue(
-      _layout('    driver: jvm\n    deps: { maven: ["a.b:c:1.0"] }'),
+      _layout(
+        '    driver: jvm\n    compile_sdk: 35\n'
+        '    deps: { maven: ["a.b:c:1.0"] }',
+      ),
       const [],
     )[Layout.androidGradle]!;
     expect(gradle, contains('repositories {\n    mavenCentral()\n}'));
@@ -115,7 +119,7 @@ void main() {
 
   test('without Maven dependencies there is nothing to add but the rules', () {
     final gradle = emitAndroidGlue(
-      _layout('    driver: jvm'),
+      _layout('    driver: jvm\n    compile_sdk: 35'),
       const [],
     )[Layout.androidGradle]!;
     expect(gradle, isNot(contains('repositories {')));
