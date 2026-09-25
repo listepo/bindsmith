@@ -54,7 +54,7 @@ Uint8List _tarball({
     archive.add(ArchiveFile.string('package/$path', contents));
   }
   final tar = TarEncoder().encode(archive);
-  return Uint8List.fromList(GZipEncoder().encode(tar)!);
+  return Uint8List.fromList(GZipEncoder().encode(tar));
 }
 
 void main() {

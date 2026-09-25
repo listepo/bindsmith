@@ -270,12 +270,10 @@ List<Decl> swiftToIr(
               case final member?)
             s.name: member
           else if (s.owner case final owner?)
-            if (splitSwiftDocs(
-                  docs,
-                  paramNames: {for (final p in s.params) p.name},
-                ).memberDocs
-                case final member?)
-              '$owner.${_objcName(s)}': member,
+            '$owner.${_objcName(s)}': ?splitSwiftDocs(
+              docs,
+              paramNames: {for (final p in s.params) p.name},
+            ).memberDocs,
   };
   final decls = [
     for (final d in objcToIr(

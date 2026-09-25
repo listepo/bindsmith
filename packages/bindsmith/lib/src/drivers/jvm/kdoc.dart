@@ -93,10 +93,7 @@ KDoc splitKDoc(
           kept.add('@property $body');
         }
       case 'constructor':
-        constructorDocs = [
-          if (constructorDocs != null) constructorDocs!,
-          body,
-        ].join('\n');
+        constructorDocs = [?constructorDocs, body].join('\n');
       case 'return' || 'returns':
         kept.add(body.isEmpty ? 'Returns.' : 'Returns $body');
       case 'throws' || 'exception':
