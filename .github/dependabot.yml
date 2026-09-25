@@ -2,6 +2,11 @@
 #
 # Not covered: mise.toml (Dart, Node, JDK, Flutter, Kotlin, CMake) is not an
 # ecosystem Dependabot supports, so toolchain bumps stay manual.
+#
+# .github/workflows/dependabot.yml runs the full CI on every pull request below
+# and merges a patch update once that run is green; minor and major updates are
+# labelled `needs-review` and wait for a human. Patch and minor updates are
+# grouped separately so a patch-only pull request can merge on its own.
 version: 2
 updates:
   - package-ecosystem: pub
@@ -13,6 +18,9 @@ updates:
       - /fixtures
     schedule:
       interval: weekly
+    cooldown:
+      default-days: 7
+    open-pull-requests-limit: 5
     commit-message:
       prefix: build
       include: scope
@@ -20,13 +28,18 @@ updates:
       # A major bump of an upstream generator (ffigen, jnigen, swiftgen, winmd)
       # is an adapter migration (AGENTS.md rules 1-2), so majors are never
       # grouped: each arrives as its own pull request.
-      pub-minor-patch:
-        update-types: [minor, patch]
+      pub-patch:
+        update-types: [patch]
+      pub-minor:
+        update-types: [minor]
 
   - package-ecosystem: npm
     directory: /packages/bindsmith/tool/ts_sidecar
     schedule:
       interval: weekly
+    cooldown:
+      default-days: 7
+    open-pull-requests-limit: 5
     commit-message:
       prefix: build
       include: scope
@@ -36,16 +49,23 @@ updates:
       - dependency-name: typescript
         update-types: ["version-update:semver-major"]
     groups:
-      npm-minor-patch:
-        update-types: [minor, patch]
+      npm-patch:
+        update-types: [patch]
+      npm-minor:
+        update-types: [minor]
 
   - package-ecosystem: github-actions
     directory: /
     schedule:
       interval: weekly
+    cooldown:
+      default-days: 7
+    open-pull-requests-limit: 5
     commit-message:
       prefix: ci
       include: scope
     groups:
+      actions-patch:
+        update-types: [patch]
       actions:
-        patterns: ["*"]
+        update-types: [minor, major]
