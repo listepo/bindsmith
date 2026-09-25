@@ -7,10 +7,22 @@ on:
     branches: [main]
     types: [opened, synchronize, reopened, ready_for_review]
   workflow_dispatch:
+  # Dependabot pull requests: dependabot.yml calls this workflow so they get the
+  # same jobs before its patch-only auto-merge.
+  workflow_call:
 
 concurrency:
-  group: ci-${{ github.ref }}
+  # github.workflow, not a literal: called from dependabot.yml it names the
+  # caller, so that run does not cancel (or get cancelled by) this workflow's
+  # own pull_request run on the same ref.
+  group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+# Build and test jobs need only to read the repository; a job that needs more
+# (revert-on-failure) declares its own. This also caps these jobs when
+# dependabot.yml calls this workflow with wider permissions.
+permissions:
+  contents: read
 
 jobs:
   dart:
