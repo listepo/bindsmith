@@ -20,7 +20,7 @@ jobs:
     steps:
       - name: Resolve PR head
         id: pr
-        uses: actions/github-script@v8
+        uses: actions/github-script@v9
         with:
           script: |
             const pr = await github.rest.pulls.get({
@@ -60,7 +60,7 @@ jobs:
         working-directory: packages/bindsmith/tool/ts_sidecar
       - name: Post result
         if: always()
-        uses: actions/github-script@v8
+        uses: actions/github-script@v9
         with:
           script: |
             await github.rest.issues.createComment({
