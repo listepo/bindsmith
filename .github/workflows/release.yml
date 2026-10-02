@@ -2,12 +2,18 @@ name: release
 
 # Native `dart compile exe` per OS. Cross-compile only targets Linux, so each
 # runner builds its own host. Does not `dart pub publish` — that stays a
-# creator step. Tag `v<version>` or run workflow_dispatch.
+# creator step. Never tags and never starts itself: bump.yml (the only tagger)
+# creates the tag and a draft release on the commit that landed on main, then
+# dispatches this with `--ref <tag> -f tag=<tag>`; this uploads the binaries
+# and publishes the draft.
 
 on:
-  push:
-    tags: ["v*"]
   workflow_dispatch:
+    inputs:
+      tag:
+        description: Release tag bump.yml created (vX.Y.Z); run with --ref <tag>
+        required: true
+        type: string
 
 permissions:
   contents: write
@@ -42,7 +48,6 @@ jobs:
   publish:
     needs: build
     runs-on: ubuntu-latest
-    if: github.event_name == 'push'
     steps:
       - uses: actions/checkout@v7
       - uses: actions/download-artifact@v8
@@ -53,8 +58,19 @@ jobs:
           mkdir -p assets
           find dist -type f -exec mv {} assets/ \;
           ls -l assets
-      - name: GitHub Release
-        uses: softprops/action-gh-release@v3
-        with:
-          files: assets/*
-          generate_release_notes: true
+      - name: Upload to bump's release and publish it
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ inputs.tag }}
+        run: |
+          set -euo pipefail
+          tag_sha="$(git ls-remote origin "refs/tags/${TAG}^{commit}" | awk '{print $1; exit}')"
+          [ -n "$tag_sha" ] || tag_sha="$(git ls-remote origin "refs/tags/${TAG}" | awk '{print $1; exit}')"
+          if [ "$tag_sha" != "$GITHUB_SHA" ]; then
+            echo "$TAG is ${tag_sha:-missing}, this run is $GITHUB_SHA: dispatch with --ref $TAG" >&2
+            exit 1
+          fi
+          gh release view "$TAG" --json tagName >/dev/null \
+            || { echo "no release $TAG: start releases with bump.yml" >&2; exit 1; }
+          gh release upload "$TAG" assets/* --clobber
+          gh release edit "$TAG" --draft=false
