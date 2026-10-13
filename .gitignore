@@ -11,3 +11,7 @@ packages/bindsmith/tool/ts_sidecar/dist/
 
 # Jaspr static site output (source under site/ is tracked)
 site/build/
+# Local files (pyrlyn template).
+/.serena
+.env
+.env.local
