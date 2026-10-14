@@ -1,7 +1,5 @@
 # bindsmith
 
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=listepo_bindsmith&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=listepo_bindsmith) [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=listepo_bindsmith&metric=coverage)](https://sonarcloud.io/component_measures?id=listepo_bindsmith&metric=coverage) [![Tests](https://img.shields.io/sonar/tests/listepo_bindsmith?server=https%3A%2F%2Fsonarcloud.io&compact_message)](https://sonarcloud.io/component_measures?id=listepo_bindsmith&metric=tests)
-
 One `bindsmith.yaml`, six Flutter platforms. `bindsmith` generates Dart bindings for native APIs on Android, iOS, macOS, Windows, Linux and Web by driving the official generators through their library APIs (ffigen, swiftgen, jnigen, winmd, dart-dbus) and adding a TypeScript `.d.ts` driver for Web, a unified IR with fixup passes, review markers for everything that could not be mapped, and one cross-platform facade over the lot.
 
 Work in progress: the drivers, the IR, the passes and the emitters are in place; the command line generates for the C and Objective-C drivers so far. `plan.md` tracks the rest.
@@ -107,3 +105,11 @@ mise run setup       # dart pub get + npm ci for the .d.ts sidecar
 mise run check       # format, dart analyze --fatal-infos, fixtures analyze
 mise run test        # dart test (both packages) + node --test (sidecar)
 ```
+
+## License
+
+You can use this project under **any** of the following licenses, at your choice:
+
+1. [GNU GPLv3](LICENSE): free for open source applications on any platform, including embedded systems.
+2. [Royalty-free License](LICENSE-ROYALTY-FREE.md): free for proprietary desktop, mobile, and web applications, as long as you disclose that your application uses this project. Embedded systems are not covered.
+3. [Commercial license](PRICING.md): for proprietary applications, including embedded systems, without the attribution requirement.
