@@ -260,9 +260,7 @@ final class _Reader extends FfigenReader {
     // `objc.ObjCObject`.
     final isProtocol = d.namePart.toSource().contains('ObjCProtocol');
     final interfaceId = symbol?.objcName ?? name;
-    final docParts = <String>[
-      if (_ownDocs(docs(d), interfaceId) case final base?) base,
-    ];
+    final docParts = <String>[?_ownDocs(docs(d), interfaceId)];
     for (final e in extensions[name] ?? const <ExtensionDeclaration>[]) {
       final cat = e.name?.lexeme;
       if (cat == null || cat.endsWith(r'$Methods')) continue;
