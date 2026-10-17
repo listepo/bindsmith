@@ -3,7 +3,9 @@
 version: 1
 
 codeql:
-  languages: [actions, java-kotlin, javascript-typescript, swift]
+  # Swift is left out: CodeQL's Swift analysis needs a macOS runner and pyrlyn/ci runs
+  # every language on one runner.
+  languages: [actions, java-kotlin, javascript-typescript]
 
 # Snyk stays off (pyrlyn/ci default).
 snyk:
