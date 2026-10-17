@@ -9,6 +9,10 @@ analyzer:
     # Emitter goldens import binding libraries that do not exist; the fixtures
     # package has its own analysis_options.yaml and analyzes generated code.
     - "**/*.g.dart"
+    # Flutter and Jaspr apps outside the pub workspace: their dependencies are
+    # never resolved here, so the root `dart analyze` cannot check them.
+    - "examples/**"
+    - "site/**"
 
 linter:
   rules:
