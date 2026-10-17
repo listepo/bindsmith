@@ -53,6 +53,6 @@ jobs:
           test -f styles/landing.css
           test -f images/logo.svg
           test -f favicon.svg
-          # Project Pages subpath
+          # served under the /bindsmith/ subpath
           grep -qE 'base[^>]+href="/bindsmith/"' index.html
           echo "site ok: $(find . -name '*.html' | wc -l) html file(s)"
