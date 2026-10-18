@@ -182,7 +182,11 @@ final class _Notes {
 
 SourceLoc? _loc(Map<String, Object?> d) => d['file'] == null
     ? null
-    : SourceLoc(d['file'] as String, d['line'] as int?);
+    : SourceLoc(
+        // The sidecar reports the path in the host's spelling.
+        (d['file'] as String).replaceAll(r'\', '/'),
+        d['line'] as int?,
+      );
 
 String? _docs(String? docs, List<String> notes) {
   if (docs == null && notes.isEmpty) return null;

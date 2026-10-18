@@ -94,8 +94,8 @@ void main() {
 #include "nested/leaf.h"
 ''';
       expect(quotedIncludes(source, '/tmp/include'), [
-        '/tmp/include/child.h',
-        '/tmp/include/nested/leaf.h',
+        p.normalize('/tmp/include/child.h'),
+        p.normalize('/tmp/include/nested/leaf.h'),
       ]);
     });
   });

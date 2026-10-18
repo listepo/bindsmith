@@ -441,9 +441,11 @@ platforms:
       }
     });
 
-    test('names the driver it cannot run yet instead of skipping it', () async {
-      final dir = _project(
-        bindsmith: '''
+    test(
+      'names the platform and driver that failed instead of skipping it',
+      () async {
+        final dir = _project(
+          bindsmith: '''
 name: demo
 output: lib/src/generated
 facade:
@@ -457,12 +459,13 @@ platforms:
     include:
       types: [Greeter]
 ''',
-      );
-      final run = await _run(dir, ['generate']);
-      expect(run.code, exitSoftware);
-      expect(run.err, contains('swift'));
-      expect(run.err, contains('macos'));
-    });
+        );
+        final run = await _run(dir, ['generate']);
+        expect(run.code, exitSoftware);
+        expect(run.err, contains('swift'));
+        expect(run.err, contains('macos'));
+      },
+    );
 
     test('rejects a platform the config does not configure', () async {
       final dir = _project(bindsmith: _config);
