@@ -8,7 +8,7 @@ environment:
 
 dependencies:
   bindsmith_runtime: ^0.1.0
-  dbus: ^0.7.15
+  dbus: ^0.8.0
   ffi: ^2.2.0
   objective_c: ^9.6.0
   # Proves the winmd driver's re-export path: a symbol package:win32 already
