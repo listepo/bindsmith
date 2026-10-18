@@ -16,6 +16,7 @@ export 'src/deps/npm.dart';
 export 'src/deps/nuget.dart';
 export 'src/deps/resolve.dart';
 export 'src/drivers/c/c_driver.dart';
+export 'src/drivers/c/ffigen_format.dart';
 export 'src/drivers/c/objc_driver.dart';
 export 'src/drivers/c/sdk_flags.dart';
 export 'src/drivers/dbus/dbus_driver.dart';

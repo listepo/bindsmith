@@ -34,6 +34,7 @@ import 'package:path/path.dart' as p;
 import '../../ir/ir.dart';
 import '../../passes/glib_macros.dart';
 import 'ffigen_adapter.dart';
+import 'ffigen_format.dart';
 import 'header_docs.dart';
 
 export 'ffigen_adapter.dart' show CSymbol;
@@ -97,12 +98,15 @@ final class CDriver {
         style: ffigen.NativeExternalBindings(assetId: assetId),
         preamble: '$bindsmithHeader$preamble',
         commentType: sourceComments,
+        // ffigen's own `dart format` call hangs in a native build (P8-4).
+        format: false,
       ),
       visitors: [cRecorder(include ?? (_) => true, symbols)],
     ).generate(
       logger: logger ?? stderrFfigenLogger(),
       libclangDylib: libclangDylib,
     );
+    formatDartFile(out);
     final decls = cToIr(
       out.readAsStringSync(),
       platform: platform,
