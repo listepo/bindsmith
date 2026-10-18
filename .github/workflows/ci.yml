@@ -167,6 +167,28 @@ jobs:
         if: matrix.build == 'web'
         run: flutter build web --debug
 
+  gate:
+    name: gate
+    needs: [dart, pana, examples]
+    # always(): a skipped gate would read as passing, so it still runs and
+    # reports failed or cancelled needs. Skipped needs (drafts) are fine.
+    if: >-
+      always()
+      && (github.event_name != 'pull_request' || !github.event.pull_request.draft)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fail if any needed job failed or was cancelled
+        env:
+          NEEDS: ${{ toJSON(needs) }}
+        run: |
+          echo "$NEEDS" | python3 -c '
+          import json, sys
+          bad = {k: v["result"] for k, v in json.load(sys.stdin).items() if v["result"] in ("failure", "cancelled")}
+          if bad:
+              print("gate failed:", bad)
+              sys.exit(1)
+          '
+
   revert-on-failure:
     name: revert-on-failure
     needs: [dart, pana, examples]
