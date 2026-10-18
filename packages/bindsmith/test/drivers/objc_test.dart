@@ -66,6 +66,8 @@ void main() {
   late List<Decl> ir;
   late String binding;
   late String glue;
+  // ffigen 22 does not spell a selector in the generated Dart, so the members
+  // of an interface only exist where ffigen's AST can be read: on macOS.
   final canGenerate = io.Platform.isMacOS;
 
   setUpAll(() async {
@@ -93,6 +95,8 @@ void main() {
   }
 
   test('IR snapshot', () {
+    onlyOnApple();
+    if (!canGenerate) return;
     final json = const JsonEncoder.withIndent('  ').convert(irToJson(ir));
     expectGolden('test/drivers/goldens/counter.ir.json', '$json\n');
   });
@@ -112,6 +116,8 @@ void main() {
   });
 
   test('an @interface becomes a class keyed by its Objective-C name', () {
+    onlyOnApple();
+    if (!canGenerate) return;
     final counter = type('BSMCounter');
     expect(counter.id, 'BSMCounter');
     expect(counter.kind, TypeKind.klass);
@@ -158,6 +164,8 @@ void main() {
   });
 
   test('a readonly property has no setter, a writable one does', () {
+    onlyOnApple();
+    if (!canGenerate) return;
     final counter = type('BSMCounter');
     expect(
       member(counter, 'value', MemberKind.property).returns,
@@ -184,6 +192,8 @@ void main() {
   });
 
   test('a block parameter is a callback and names its builder class', () {
+    onlyOnApple();
+    if (!canGenerate) return;
     final countTo = member(type('BSMCounter'), 'countTo', MemberKind.method);
     expect(countTo.async, Async.callback);
     expect(countTo.params.map((q) => q.name), ['target', 'completion']);
@@ -202,6 +212,8 @@ void main() {
   });
 
   test('an NSError out-parameter is dropped, and that is recorded', () {
+    onlyOnApple();
+    if (!canGenerate) return;
     final validate = member(type('BSMCounter'), 'validate', MemberKind.method);
     expect(validate.returns, const TypeRef('bool'));
     expect(validate.params.map((q) => q.name), ['target']);
@@ -209,6 +221,8 @@ void main() {
   });
 
   test('a @protocol is an interface that Dart can implement', () {
+    onlyOnApple();
+    if (!canGenerate) return;
     final delegate = type('BSMCounterDelegate');
     expect(delegate.kind, TypeKind.interface);
     expect(delegate.id, 'BSMCounterDelegate');
@@ -232,6 +246,8 @@ void main() {
   });
 
   test('a category merges into the interface it extends', () {
+    onlyOnApple();
+    if (!canGenerate) return;
     final counter = type('BSMCounter');
     expect(
       counter.docs,

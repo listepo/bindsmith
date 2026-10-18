@@ -183,6 +183,7 @@ void main() {
 
       final locked = await resolveNpm(
         packages: ['demo@1.0.0'],
+        registry: registry.base,
         cache: cache,
         fetch: registry.fetch,
       );
