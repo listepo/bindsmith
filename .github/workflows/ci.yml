@@ -18,7 +18,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-latest, ubuntu-latest, windows-latest]
+        os: ${{ fromJSON(vars.MACOS_CI_DISABLED == 'true' && '["ubuntu-latest", "windows-latest"]' || '["macos-latest", "ubuntu-latest", "windows-latest"]') }}
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v7
@@ -79,40 +79,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - os: macos-latest
-            example: avfoundation_audio
-            build: macos
-          - os: macos-latest
-            example: avfoundation_audio
-            build: ios
-          - os: macos-latest
-            example: swift_volume
-            build: macos
-          - os: macos-latest
-            example: swift_volume
-            build: ios
-          - os: macos-latest
-            example: sqlite_desktop
-            build: macos
-          - os: ubuntu-latest
-            example: sqlite_desktop
-            build: linux
-          - os: ubuntu-latest
-            example: androidx_biometric
-            build: apk
-          - os: ubuntu-latest
-            example: chartjs_web
-            build: web
-          - os: windows-latest
-            example: sqlite_desktop
-            build: windows
-          - os: ubuntu-latest
-            example: dbus_greeter
-            build: linux
-          - os: windows-latest
-            example: win32_tickcount
-            build: windows
+        include: ${{ fromJSON(vars.MACOS_CI_DISABLED == 'true' && '[{"os": "ubuntu-latest", "example": "sqlite_desktop", "build": "linux"}, {"os": "ubuntu-latest", "example": "androidx_biometric", "build": "apk"}, {"os": "ubuntu-latest", "example": "chartjs_web", "build": "web"}, {"os": "windows-latest", "example": "sqlite_desktop", "build": "windows"}, {"os": "ubuntu-latest", "example": "dbus_greeter", "build": "linux"}, {"os": "windows-latest", "example": "win32_tickcount", "build": "windows"}]' || '[{"os": "macos-latest", "example": "avfoundation_audio", "build": "macos"}, {"os": "macos-latest", "example": "avfoundation_audio", "build": "ios"}, {"os": "macos-latest", "example": "swift_volume", "build": "macos"}, {"os": "macos-latest", "example": "swift_volume", "build": "ios"}, {"os": "macos-latest", "example": "sqlite_desktop", "build": "macos"}, {"os": "ubuntu-latest", "example": "sqlite_desktop", "build": "linux"}, {"os": "ubuntu-latest", "example": "androidx_biometric", "build": "apk"}, {"os": "ubuntu-latest", "example": "chartjs_web", "build": "web"}, {"os": "windows-latest", "example": "sqlite_desktop", "build": "windows"}, {"os": "ubuntu-latest", "example": "dbus_greeter", "build": "linux"}, {"os": "windows-latest", "example": "win32_tickcount", "build": "windows"}]') }}
     runs-on: ${{ matrix.os }}
     defaults:
       run:
