@@ -6,6 +6,7 @@ One bindsmith.yaml, six Flutter platforms. Generates Dart bindings for native AP
 | --- | --- | --- | --- | --- | --- |
 | P2-5 | in progress | P2 | 3 | 30% | Cursor / grok 4.6 |
 | P8-3 | in progress | P3 | 3 | 90% | Cursor / grok 4.6 |
+| P8-4 | in progress | P1 | 2 | 50% | Cursor / grok 4.6 |
 
 ### P2-5. Swift docs in the raw binding
 
@@ -200,6 +201,19 @@ The Dart facade is synthesized from the per-platform IR by name matching within 
 | **C5** | Research-grade. Semantic gaps with no upstream to lean on (structural vs nominal typing, unifying six platform shapes into one facade, generating native wrappers); several iterations and fixtures needed before the design settles. |
 
 A finished task moves to `done.md` in the change that finishes it.
+
+### P8-4. Native CLI hangs in `generate` (ffigen `dart format` lookup)
+
+Bug: a natively built CLI (`dart build cli`, `bundle/bin/bindsmith generate`) on an Objective-C project (AppKit headers) runs at ~99% CPU for more than 9 minutes and never finishes, while `dart run bin/bindsmith.dart generate` finishes in 13 s. Found while measuring the release size for PR #28.
+
+Cause, checked in the pub cache: after parsing, ffigen 22 formats its output with `Process.run(dartExecutable, ['format', …])`. `dartExecutable` (`ffigen/lib/src/code_generator/utils.dart`, `_findDart`) is `Platform.resolvedExecutable` only when it is named `dart`; otherwise it walks up the parents looking for a `dart` file with `while (path.isNotEmpty) path = p.dirname(path)`. In a native build the executable is `bindsmith`, no parent has a `dart`, and `dirname('/')` is `'/'`, so the loop never ends (`sample` shows one Dart worker spinning, the Dart file written, the glue never written). The C driver is affected the same way.
+
+1. Drivers pass `format: false` to ffigen and format in-process with `package:dart_style` (`drivers/c/ffigen_format.dart`).
+2. swiftgen cannot turn ffigen's formatting off, so the Swift driver fails fast with the reason when `dart` is not findable (a bounded copy of ffigen's search).
+3. Regression test for the bounded search; `scripts/native_generate_smoke.py` builds the CLI natively and runs `generate` on a header with a timeout.
+4. Upstream: dart-lang/native, ffigen `_findDart` should stop at the filesystem root. Link the issue here once opened.
+
+Done when the native `generate` on the AppKit project finishes in seconds and the smoke script passes.
 
 ### Execution order (risk-first)
 
