@@ -58,7 +58,12 @@ Future<Kotlin?> findKotlin() async {
     final stdlib = p.join(root, 'lib', 'kotlin-stdlib.jar');
     final coroutines = p.join(root, 'lib', 'kotlinx-coroutines-core-jvm.jar');
     if (!File(stdlib).existsSync() || !File(coroutines).existsSync()) continue;
-    for (final name in ['kotlinc', 'kotlinc.bat']) {
+    // On Windows `kotlinc` is a shell script CreateProcess cannot start.
+    for (final name in [
+      if (io.Platform.isWindows) 'kotlinc.bat',
+      'kotlinc',
+      'kotlinc.bat',
+    ]) {
       final exe = p.join(root, 'bin', name);
       if (File(exe).existsSync()) {
         return (exe: exe, stdlib: stdlib, coroutines: coroutines);
