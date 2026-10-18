@@ -1061,7 +1061,25 @@ final class _Project {
     return ir;
   }
 
+  /// A driver that shells out and cannot (`swiftc` missing, a tool exiting
+  /// with an error) says which platform and driver it was, because the
+  /// process's own message names neither.
   Future<List<Decl>> _driver(
+    Platform platform,
+    PlatformConfig spec,
+    String outputRoot,
+  ) async {
+    try {
+      return await _runDriver(platform, spec, outputRoot);
+    } on ProcessException catch (e) {
+      throw _Failure(
+        exitSoftware,
+        '${platform.name} (${spec.driver.name}): ${e.message}',
+      );
+    }
+  }
+
+  Future<List<Decl>> _runDriver(
     Platform platform,
     PlatformConfig spec,
     String outputRoot,
