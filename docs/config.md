@@ -74,6 +74,9 @@ One entry per Flutter platform to generate for.
 | `driver` | string | Which generator reads the native API. One of `c`, `objc`, `swift`, `jvm`, `winmd`, `dts`, `dbus`. |
 | `inherit` | string | Take this platform's whole configuration from another one. One of `android`, `ios`, `macos`, `windows`, `linux`, `web`. |
 | `headers` | list of string | Entry-point headers, for the c and objc drivers. |
+| `compiler_options` | list of string | Extra clang arguments (-I, -D, -isysroot) for the c and objc drivers. |
+| `sysroot` | string | SDK root passed to clang as -isysroot, for the c and objc drivers. On macOS the default is `xcrun --show-sdk-path`. |
+| `framework_paths` | list of string | Framework search directories passed as -F, for the c and objc drivers. The SDK's System/Library/Frameworks is added when a sysroot is known. |
 | `xml` | list of string | D-Bus introspection XML files, for the dbus driver. |
 | `deps` | [deps](#deps) | — |
 | `include` | [include](#include) | — |

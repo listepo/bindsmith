@@ -28,7 +28,7 @@ const _themeBoot = r'''
 void main() {
   Jaspr.initializeApp(options: defaultServerOptions);
 
-  // base: project Pages URL is https://listepo.github.io/bindsmith/
+  // base: the site is served under the /bindsmith/ subpath (https://pyrlyn.dev/bindsmith/)
   runApp(Document(
     title: 'bindsmith — One YAML. Six platforms.',
     lang: 'en',

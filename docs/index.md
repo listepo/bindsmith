@@ -7,6 +7,8 @@ what none of them cover.
 
 - **[Getting started](getting-started.md)** — install, `init`, `generate`, and
   what lands in your package.
+- **[Walkthrough](walkthrough.md)** — a C library from header to verified
+  binding, with every command's real output.
 - **[Configuration reference](config.md)** — every key, generated from the JSON
   Schema the loader validates against.
 - **[Platforms](platforms.md)** — one page per driver: what it needs on the
