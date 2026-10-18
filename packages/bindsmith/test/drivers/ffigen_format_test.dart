@@ -14,13 +14,14 @@ void main() {
     });
 
     test('finds a dart in a parent directory', () {
-      expect(
-        findDartLikeFfigen(
-          '/sdk/out/bundle/bin/bindsmith',
-          exists: (p) => p == '/sdk/dart',
-        ),
-        '/sdk/dart',
+      // Windows spells the candidate with `\`; compare on `/`.
+      String slash(String path) => path.replaceAll('\\', '/');
+      final found = findDartLikeFfigen(
+        '/sdk/out/bundle/bin/bindsmith',
+        exists: (path) => slash(path) == '/sdk/dart',
       );
+      expect(found, isNotNull);
+      expect(slash(found!), '/sdk/dart');
     });
 
     test('stops at the filesystem root instead of looping forever', () {
