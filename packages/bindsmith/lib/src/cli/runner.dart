@@ -44,6 +44,7 @@ import '../deps/resolve.dart';
 import '../drivers/c/c_driver.dart';
 import '../drivers/c/objc_driver.dart';
 import '../drivers/c/pkg_config.dart';
+import '../drivers/c/sdk_flags.dart';
 import '../drivers/dbus/dbus_driver.dart';
 import '../drivers/dts/dts_driver.dart';
 import '../drivers/jvm/jvm_driver.dart';
@@ -1049,6 +1050,8 @@ final class _Project {
         // Member-level `include:` patterns, which a driver's pull list cannot
         // apply: it is given a name and there is no IR yet.
         if (_patterns(spec).isNotEmpty) includePass(_patterns(spec)),
+        if (_patterns(spec).isNotEmpty) referencedTypesPass(),
+        if (spec.driver == Driver.objc) facadeSpellablePass(),
         nullabilityPass(),
         if (spec.driver == Driver.c) cFacadePass(),
         if (spec.driver == Driver.dts) dtsFacadePass(),
@@ -1058,7 +1061,25 @@ final class _Project {
     return ir;
   }
 
+  /// A driver that shells out and cannot (`swiftc` missing, a tool exiting
+  /// with an error) says which platform and driver it was, because the
+  /// process's own message names neither.
   Future<List<Decl>> _driver(
+    Platform platform,
+    PlatformConfig spec,
+    String outputRoot,
+  ) async {
+    try {
+      return await _runDriver(platform, spec, outputRoot);
+    } on ProcessException catch (e) {
+      throw _Failure(
+        exitSoftware,
+        '${platform.name} (${spec.driver.name}): ${e.message}',
+      );
+    }
+  }
+
+  Future<List<Decl>> _runDriver(
     Platform platform,
     PlatformConfig spec,
     String outputRoot,
@@ -1081,7 +1102,13 @@ final class _Project {
         headers: spec.headers,
         include: include,
         assetId: layout.assetId(platform),
-        compilerOptions: pkgConfigCflags(spec.deps.pkgConfig),
+        compilerOptions: clangFlags(
+          sysroot: spec.sysroot,
+          frameworkPaths: spec.frameworkPaths,
+          compilerOptions: spec.compilerOptions,
+          extra: pkgConfigCflags(spec.deps.pkgConfig),
+          autoSysroot: platform == Platform.macos,
+        ),
       ).load(workingDirectory: root, output: output, logger: logger),
       Driver.objc =>
         ObjcDriver(
@@ -1089,6 +1116,11 @@ final class _Project {
           headers: spec.headers,
           include: include,
           assetId: assetId,
+          compilerOptions: clangFlags(
+            sysroot: spec.sysroot,
+            frameworkPaths: spec.frameworkPaths,
+            compilerOptions: spec.compilerOptions,
+          ),
         ).load(
           workingDirectory: root,
           output: output,

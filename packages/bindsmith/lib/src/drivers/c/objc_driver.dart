@@ -35,6 +35,7 @@ import 'package:path/path.dart' as p;
 import '../../ir/ir.dart';
 import 'c_driver.dart';
 import 'ffigen_adapter.dart';
+import 'ffigen_format.dart';
 
 /// Generates a `package:objective_c` binding for Objective-C headers and
 /// returns its IR.
@@ -103,12 +104,15 @@ final class ObjcDriver {
         style: ffigen.NativeExternalBindings(assetId: assetId),
         preamble: '$bindsmithHeader$preamble',
         commentType: sourceComments,
+        // ffigen's own `dart format` call hangs in a native build (P8-4).
+        format: false,
       ),
       visitors: [cRecorder(include ?? (_) => true, symbols), _recorder(objc)],
     ).generate(
       logger: logger ?? stderrFfigenLogger(),
       libclangDylib: libclangDylib,
     );
+    formatDartFile(out);
     // ffigen writes the glue's `#import` as a path from the generated file to
     // the header it parsed, which for an absolute entry point is a walk up to
     // the filesystem root and back down — the machine it ran on, baked into a

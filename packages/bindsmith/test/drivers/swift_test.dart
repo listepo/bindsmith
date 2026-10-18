@@ -131,6 +131,8 @@ void main() {
   });
 
   test('a Swift class is bound through its @objc wrapper', () {
+    onlyOnApple();
+    if (!canGenerate) return;
     final greeter = type('GreeterWrapper');
     expect(greeter.kind, TypeKind.klass);
     expect(greeter.id, 'GreeterWrapper');
@@ -162,6 +164,8 @@ void main() {
   });
 
   test('a Swift value type is bound the same way', () {
+    onlyOnApple();
+    if (!canGenerate) return;
     final volume = type('VolumeWrapper');
     expect(
       member(volume, 'louder', MemberKind.method).returns.name,

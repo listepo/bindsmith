@@ -69,7 +69,7 @@ void main() {
         'reason', () {
       final found = findMarkers('sdk_io.g.dart', _golden('sdk_io.g.dart'));
       expect(found, hasLength(2));
-      expect(found.first.line, 11);
+      expect(found.first.line, 12);
       expect(
         found.first.what,
         'declared as jsObject on web but as klass on android',
@@ -164,7 +164,7 @@ enum Mode {
     test('markers block it, and say how to acknowledge one', () async {
       final run = await _run(_project(verify: ''));
       expect(run.code, exitChanged);
-      expect(run.err, contains('lib/sdk_io.g.dart:11: declared as jsObject'));
+      expect(run.err, contains('lib/sdk_io.g.dart:12: declared as jsObject'));
       expect(run.err, contains('4 marker(s) still need a human'));
       expect(run.err, contains('ack: true'));
     });

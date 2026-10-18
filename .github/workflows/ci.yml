@@ -13,17 +13,33 @@ concurrency:
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
+  # Which runner the macOS jobs use: pyrlyn/ci's macos-runner action reads the MACOS_RUNNER
+  # variable (unset or `hosted` = the hosted label, `xcode-27-local` = the dedicated Mac;
+  # fork PRs keep the hosted label).
+  macos-runner:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      value: ${{ steps.r.outputs.value }}
+    steps:
+      - id: r
+        uses: pyrlyn/ci/.github/actions/macos-runner@4b5b5470544893cd515b88c751e92728341c6daa # main
+        with:
+          runner: ${{ vars.MACOS_RUNNER }}
+          value: '["macos-latest"]'
+
   dart:
     if: github.event.pull_request.draft != true
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-latest, ubuntu-latest, windows-latest]
-    runs-on: ${{ matrix.os }}
+        os: ${{ fromJSON(vars.MACOS_CI_DISABLED == 'true' && '["ubuntu-latest", "windows-latest"]' || '["macos-latest", "ubuntu-latest", "windows-latest"]') }}
+    needs: macos-runner
+    runs-on: ${{ startsWith(matrix.os, 'macos') && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) && fromJSON(needs.macos-runner.outputs.value)[0] || matrix.os }}
     steps:
       - uses: actions/checkout@v7
       # macOS and Linux install the toolchain from mise.toml, like a dev machine.
-      - uses: jdx/mise-action@v4
+      - uses: jdx/mise-action@v5
         if: runner.os != 'Windows'
         with:
           install: true
@@ -79,41 +95,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - os: macos-latest
-            example: avfoundation_audio
-            build: macos
-          - os: macos-latest
-            example: avfoundation_audio
-            build: ios
-          - os: macos-latest
-            example: swift_volume
-            build: macos
-          - os: macos-latest
-            example: swift_volume
-            build: ios
-          - os: macos-latest
-            example: sqlite_desktop
-            build: macos
-          - os: ubuntu-latest
-            example: sqlite_desktop
-            build: linux
-          - os: ubuntu-latest
-            example: androidx_biometric
-            build: apk
-          - os: ubuntu-latest
-            example: chartjs_web
-            build: web
-          - os: windows-latest
-            example: sqlite_desktop
-            build: windows
-          - os: ubuntu-latest
-            example: dbus_greeter
-            build: linux
-          - os: windows-latest
-            example: win32_tickcount
-            build: windows
-    runs-on: ${{ matrix.os }}
+        include: >-
+          ${{ fromJSON(vars.MACOS_CI_DISABLED == 'true' && '[{"os": "ubuntu-latest", "example": "sqlite_desktop", "build": "linux"}, {"os": "ubuntu-latest", "example": "androidx_biometric", "build": "apk"}, {"os": "ubuntu-latest", "example": "chartjs_web", "build": "web"}, {"os": "windows-latest", "example": "sqlite_desktop", "build": "windows"}, {"os": "ubuntu-latest", "example": "dbus_greeter", "build": "linux"}, {"os": "windows-latest", "example": "win32_tickcount", "build": "windows"}]' || '[{"os": "macos-latest", "example": "avfoundation_audio", "build": "macos"}, {"os": "macos-latest", "example": "avfoundation_audio", "build": "ios"}, {"os": "macos-latest", "example": "swift_volume", "build": "macos"}, {"os": "macos-latest", "example": "swift_volume", "build": "ios"}, {"os": "macos-latest", "example": "sqlite_desktop", "build": "macos"}, {"os": "ubuntu-latest", "example": "sqlite_desktop", "build": "linux"}, {"os": "ubuntu-latest", "example": "androidx_biometric", "build": "apk"}, {"os": "ubuntu-latest", "example": "chartjs_web", "build": "web"}, {"os": "windows-latest", "example": "sqlite_desktop", "build": "windows"}, {"os": "ubuntu-latest", "example": "dbus_greeter", "build": "linux"}, {"os": "windows-latest", "example": "win32_tickcount", "build": "windows"}]') }}
+    needs: macos-runner
+    runs-on: ${{ startsWith(matrix.os, 'macos') && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) && fromJSON(needs.macos-runner.outputs.value)[0] || matrix.os }}
     defaults:
       run:
         working-directory: examples/${{ matrix.example }}/example
@@ -166,6 +151,28 @@ jobs:
       - name: flutter build web
         if: matrix.build == 'web'
         run: flutter build web --debug
+
+  gate:
+    name: gate
+    needs: [dart, pana, examples]
+    # always(): a skipped gate would read as passing, so it still runs and
+    # reports failed or cancelled needs. Skipped needs (drafts) are fine.
+    if: >-
+      always()
+      && (github.event_name != 'pull_request' || !github.event.pull_request.draft)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fail if any needed job failed or was cancelled
+        env:
+          NEEDS: ${{ toJSON(needs) }}
+        run: |
+          echo "$NEEDS" | python3 -c '
+          import json, sys
+          bad = {k: v["result"] for k, v in json.load(sys.stdin).items() if v["result"] in ("failure", "cancelled")}
+          if bad:
+              print("gate failed:", bad)
+              sys.exit(1)
+          '
 
   revert-on-failure:
     name: revert-on-failure
@@ -228,3 +235,15 @@ jobs:
             git commit -m "ci: auto-revert $short — main CI failed"
           fi
           git push origin HEAD:main
+
+  gate:
+    needs: [dart, pana, examples]
+    # always(): report failed or cancelled needs instead of reading a skipped gate as passing.
+    if: >-
+      always()
+      && (github.event_name != 'pull_request' || !github.event.pull_request.draft)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: pyrlyn/ci/.github/actions/gate@4e652d891cc6e6f0be316eda1a1f9630d76a8b7e # main
+        with:
+          needs: ${{ toJSON(needs) }}
