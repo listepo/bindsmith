@@ -17,6 +17,7 @@ export 'src/deps/nuget.dart';
 export 'src/deps/resolve.dart';
 export 'src/drivers/c/c_driver.dart';
 export 'src/drivers/c/objc_driver.dart';
+export 'src/drivers/c/sdk_flags.dart';
 export 'src/drivers/dbus/dbus_driver.dart';
 export 'src/drivers/dts/dts_driver.dart';
 export 'src/drivers/jvm/jvm_driver.dart';
