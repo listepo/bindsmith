@@ -33,7 +33,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-latest, ubuntu-latest, windows-latest]
+        os: ${{ fromJSON(vars.MACOS_CI_DISABLED == 'true' && '["ubuntu-latest", "windows-latest"]' || '["macos-latest", "ubuntu-latest", "windows-latest"]') }}
     needs: macos-runner
     runs-on: ${{ startsWith(matrix.os, 'macos') && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) && fromJSON(needs.macos-runner.outputs.value)[0] || matrix.os }}
     steps:
@@ -95,40 +95,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - os: macos-latest
-            example: avfoundation_audio
-            build: macos
-          - os: macos-latest
-            example: avfoundation_audio
-            build: ios
-          - os: macos-latest
-            example: swift_volume
-            build: macos
-          - os: macos-latest
-            example: swift_volume
-            build: ios
-          - os: macos-latest
-            example: sqlite_desktop
-            build: macos
-          - os: ubuntu-latest
-            example: sqlite_desktop
-            build: linux
-          - os: ubuntu-latest
-            example: androidx_biometric
-            build: apk
-          - os: ubuntu-latest
-            example: chartjs_web
-            build: web
-          - os: windows-latest
-            example: sqlite_desktop
-            build: windows
-          - os: ubuntu-latest
-            example: dbus_greeter
-            build: linux
-          - os: windows-latest
-            example: win32_tickcount
-            build: windows
+        include: >-
+          ${{ fromJSON(vars.MACOS_CI_DISABLED == 'true' && '[{"os": "ubuntu-latest", "example": "sqlite_desktop", "build": "linux"}, {"os": "ubuntu-latest", "example": "androidx_biometric", "build": "apk"}, {"os": "ubuntu-latest", "example": "chartjs_web", "build": "web"}, {"os": "windows-latest", "example": "sqlite_desktop", "build": "windows"}, {"os": "ubuntu-latest", "example": "dbus_greeter", "build": "linux"}, {"os": "windows-latest", "example": "win32_tickcount", "build": "windows"}]' || '[{"os": "macos-latest", "example": "avfoundation_audio", "build": "macos"}, {"os": "macos-latest", "example": "avfoundation_audio", "build": "ios"}, {"os": "macos-latest", "example": "swift_volume", "build": "macos"}, {"os": "macos-latest", "example": "swift_volume", "build": "ios"}, {"os": "macos-latest", "example": "sqlite_desktop", "build": "macos"}, {"os": "ubuntu-latest", "example": "sqlite_desktop", "build": "linux"}, {"os": "ubuntu-latest", "example": "androidx_biometric", "build": "apk"}, {"os": "ubuntu-latest", "example": "chartjs_web", "build": "web"}, {"os": "windows-latest", "example": "sqlite_desktop", "build": "windows"}, {"os": "ubuntu-latest", "example": "dbus_greeter", "build": "linux"}, {"os": "windows-latest", "example": "win32_tickcount", "build": "windows"}]') }}
     needs: macos-runner
     runs-on: ${{ startsWith(matrix.os, 'macos') && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) && fromJSON(needs.macos-runner.outputs.value)[0] || matrix.os }}
     defaults:
