@@ -19,7 +19,8 @@ jobs:
       fail-fast: false
       matrix:
         os: [macos-latest, ubuntu-latest, windows-latest]
-    runs-on: ${{ matrix.os }}
+    # TEMP: self-hosted xcode-27-local until hosted xcode-27 exists (fork PRs keep the hosted label)
+    runs-on: ${{ startsWith(matrix.os, 'macos') && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) && 'xcode-27-local' || matrix.os }}
     steps:
       - uses: actions/checkout@v7
       # macOS and Linux install the toolchain from mise.toml, like a dev machine.
@@ -113,7 +114,8 @@ jobs:
           - os: windows-latest
             example: win32_tickcount
             build: windows
-    runs-on: ${{ matrix.os }}
+    # TEMP: self-hosted xcode-27-local until hosted xcode-27 exists (fork PRs keep the hosted label)
+    runs-on: ${{ startsWith(matrix.os, 'macos') && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) && 'xcode-27-local' || matrix.os }}
     defaults:
       run:
         working-directory: examples/${{ matrix.example }}/example
