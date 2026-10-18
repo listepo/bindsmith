@@ -111,12 +111,24 @@ final class PlatformConfig {
     this.module,
     this.sources = const [],
     this.build,
+    this.compilerOptions = const [],
+    this.sysroot,
+    this.frameworkPaths = const [],
   });
 
   final Driver driver;
 
   /// Entry-point headers, for the C and Objective-C drivers.
   final List<String> headers;
+
+  /// Extra clang arguments for the C and Objective-C drivers.
+  final List<String> compilerOptions;
+
+  /// SDK root passed as `-isysroot`; `null` means auto-detect on macOS.
+  final String? sysroot;
+
+  /// Framework search directories, each passed as `-F<dir>`.
+  final List<String> frameworkPaths;
   final DepsConfig deps;
   final Map<IncludeKind, List<String>> include;
 
@@ -209,7 +221,13 @@ typedef _Accepts = ({
 
 const _accepts = <Driver, _Accepts>{
   Driver.c: (
-    keys: {'headers', 'build'},
+    keys: {
+      'headers',
+      'build',
+      'compiler_options',
+      'sysroot',
+      'framework_paths',
+    },
     include: {
       IncludeKind.functions,
       IncludeKind.structs,
@@ -220,7 +238,13 @@ const _accepts = <Driver, _Accepts>{
     deps: {'pkg_config'},
   ),
   Driver.objc: (
-    keys: {'headers', 'build'},
+    keys: {
+      'headers',
+      'build',
+      'compiler_options',
+      'sysroot',
+      'framework_paths',
+    },
     include: {
       IncludeKind.types,
       IncludeKind.protocols,
@@ -477,6 +501,9 @@ PlatformConfig? _platform(
   return PlatformConfig(
     driver: driver,
     headers: spec._strings('headers'),
+    compilerOptions: spec._strings('compiler_options'),
+    sysroot: spec._string('sysroot'),
+    frameworkPaths: spec._strings('framework_paths'),
     deps: _deps(spec._map('deps'), driver, accepts.deps, problems),
     include: include,
     compileSdk: compileSdk,

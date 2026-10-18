@@ -545,3 +545,202 @@ String _identifier(String literal) {
   ].join();
   return RegExp(r'^[0-9]').hasMatch(joined) ? '\$$joined' : joined;
 }
+
+/// Keeps the types a kept declaration mentions but the pull list did not name.
+///
+/// A pull list names the types to bind, but a signature can still mention
+/// another one (`NSMeasurement` in `-stringFromMeasurement:`, `NSView` in
+/// `-[NSWindow contentView]`, an `NS_ENUM`). The driver's binding declares
+/// each of them, so the facade can wrap them; without this pass the include
+/// pass drops them and the facade spells a type that does not exist.
+///
+/// - an enumeration is restored whole;
+/// - a class, interface or protocol is restored as an opaque shell with no
+///   members, so a type the user did not pull never gains members;
+/// - a typedef is not restored: references to it are rewritten to its target
+///   (`NSRect` to `CGRect`).
+Pass referencedTypesPass() => (decls) {
+  final typedefs = {
+    for (final d in decls)
+      if (d is TypeDecl &&
+          d.kind == TypeKind.typedef &&
+          d.supertypes.length == 1)
+        d.name: d.supertypes.single,
+  };
+  TypeRef resolve(TypeRef t) {
+    var r = t;
+    for (var i = 0; i < 8 && typedefs.containsKey(r.name); i++) {
+      final target = typedefs[r.name]!;
+      r = TypeRef(
+        target.name,
+        args: target.args,
+        nullability: r.nullability,
+        native: target.native ?? r.native,
+      );
+    }
+    return r.args.isEmpty
+        ? r
+        : TypeRef(
+            r.name,
+            args: [for (final a in r.args) resolve(a)],
+            nullability: r.nullability,
+            native: r.native,
+          );
+  }
+
+  Member remap(Member m) => m.copyWith(
+    params: [
+      for (final p in m.params)
+        Param(
+          p.name,
+          resolve(p.type),
+          optional: p.optional,
+          named: p.named,
+          docs: p.docs,
+        ),
+    ],
+    returns: resolve(m.returns),
+  );
+
+  final kept = <Decl>[
+    for (final decl in decls)
+      if (decl.isDropped)
+        decl
+      else
+        switch (decl) {
+          TypeDecl() => decl.copyWith(
+            members: [for (final m in decl.members) remap(m)],
+          ),
+          FunctionDecl() => decl.copyWith(
+            params: [
+              for (final p in decl.params)
+                Param(
+                  p.name,
+                  resolve(p.type),
+                  optional: p.optional,
+                  named: p.named,
+                  docs: p.docs,
+                ),
+            ],
+            returns: resolve(decl.returns),
+          ),
+          VariableDecl() => decl.copyWith(type: resolve(decl.type)),
+        },
+  ];
+  final used = <String>{};
+  void use(TypeRef t) {
+    used.add(t.name);
+    for (final a in t.args) {
+      use(a);
+    }
+  }
+
+  for (final decl in kept) {
+    if (decl.isDropped) continue;
+    switch (decl) {
+      case TypeDecl():
+        for (final m in decl.members) {
+          if (m.markers.any((k) => k.kind == MarkerKind.dropped)) continue;
+          for (final p in m.params) {
+            use(p.type);
+          }
+          use(m.returns);
+        }
+      case FunctionDecl():
+        for (final p in decl.params) {
+          use(p.type);
+        }
+        use(decl.returns);
+      case VariableDecl():
+        use(decl.type);
+    }
+  }
+  var next = 0;
+  final restored = <Decl>[];
+  for (final decl in decls) {
+    final i = next++;
+    if (decl is! TypeDecl || !decl.isDropped || !used.contains(decl.name)) {
+      restored.add(kept[i]);
+      continue;
+    }
+    final shell = switch (decl.kind) {
+      TypeKind.enumeration => false,
+      TypeKind.klass || TypeKind.interface || TypeKind.protocol => true,
+      _ => null,
+    };
+    if (shell == null) {
+      restored.add(kept[i]);
+      continue;
+    }
+    restored.add(
+      decl.copyWith(
+        members: shell ? const [] : decl.members,
+        markers: [
+          for (final m in decl.markers)
+            if (m.kind != MarkerKind.dropped) m,
+          if (shell)
+            Marker.verify(
+              'referenced by a bound signature but not in the include list: '
+              'wrapped as an opaque handle without members; add ${decl.id} '
+              'to include to bind it',
+            ),
+        ],
+      ),
+    );
+  }
+  return restored;
+};
+
+/// Drops members whose signature the facade cannot spell.
+///
+/// Two cases, both found on real SDK headers: a type private to the binding
+/// library (`Pointer<_NSModalSession>`), and a block or callback whose
+/// function type mentions a type the facade wraps (`ObjCBlock<Void
+/// Function(NSWindow)>`): the facade `NSWindow` is not the binding's, so the
+/// block cannot be passed through. Each member gets a `dropped` marker with
+/// the reason, so `verify` and `dump` still show it.
+Pass facadeSpellablePass() => (decls) {
+  final names = {
+    for (final d in decls)
+      if (d is TypeDecl && !d.isDropped) d.name,
+  };
+  final word = RegExp(r'[A-Za-z_]\w*');
+  String? problem(TypeRef t) {
+    if (t.name.startsWith('_')) {
+      return '${t.name} is private to the binding library';
+    }
+    if (!RegExp(r'^[\w.]+$').hasMatch(t.name)) {
+      // A function type spelled as text.
+      for (final w in word.allMatches(t.name)) {
+        if (names.contains(w.group(0))) {
+          return 'a callback type mentions ${w.group(0)}, which the facade '
+              'wraps as a different type';
+        }
+      }
+    }
+    for (final a in t.args) {
+      final r = problem(a);
+      if (r != null) return r;
+    }
+    return null;
+  }
+
+  Member check(Member m) {
+    if (m.markers.any((k) => k.kind == MarkerKind.dropped)) return m;
+    for (final t in [for (final p in m.params) p.type, m.returns]) {
+      final r = problem(t);
+      if (r != null) {
+        return m.copyWith(markers: [...m.markers, Marker.dropped(r)]);
+      }
+    }
+    return m;
+  }
+
+  return [
+    for (final d in decls)
+      if (d is TypeDecl && !d.isDropped)
+        d.copyWith(members: [for (final m in d.members) check(m)])
+      else
+        d,
+  ];
+};

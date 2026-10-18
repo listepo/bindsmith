@@ -288,4 +288,31 @@ platforms: { linux: { driver: c, headers: [a.h] } }
     expect(problems.first, contains('line 2, column 9'));
     expect(problems.last, contains('"out/my_sdk.dart" is outside lib/'));
   });
+
+  test(
+    'an Objective-C glue build is ARC and links the headers\' frameworks',
+    () {
+      final hook = emitBuildHook(
+        _layout(
+          _one(
+            'macos: { driver: objc, '
+            'headers: [/SDK/AppKit.framework/Headers/NSWindow.h], '
+            'build: { sources: [lib/src/generated/macos/objc.g.m] } }',
+          ),
+        ),
+      )!;
+      expect(hook, containsCode("flags: ['-fobjc-arc']"));
+      expect(hook, containsCode("frameworks: ['AppKit', 'Foundation']"));
+    },
+  );
+
+  test('a plain C build gets neither ARC nor frameworks', () {
+    final hook = emitBuildHook(
+      _layout(
+        _one('linux: { driver: c, headers: [a.h], build: { sources: [a.c] } }'),
+      ),
+    )!;
+    expect(hook, isNot(contains('fobjc-arc')));
+    expect(hook, isNot(contains('frameworks')));
+  });
 }

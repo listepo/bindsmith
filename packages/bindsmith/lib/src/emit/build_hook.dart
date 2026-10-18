@@ -90,13 +90,32 @@ String _c(Layout layout, Platform platform, BuildConfig build) {
           'least one (${platform.name})',
     );
   }
+  // Objective-C glue is written for ARC (ffigen's `.m` says so with `#error`),
+  // and it needs every framework its headers came from at link time.
+  final objc = build.sources.any((s) => s.endsWith('.m') || s.endsWith('.mm'));
+  final frameworks = objc ? _frameworks(layout, platform) : const <String>[];
   return '''
       await CBuilder.library(
         name: '${layout.config.name}',
         assetName: '${_assetName(layout, platform)}',
-        sources: [${build.sources.map(_literal).join(', ')}],
+        sources: [${build.sources.map(_literal).join(', ')}],${objc ? "\n        flags: ['-fobjc-arc']," : ''}${frameworks.isEmpty ? '' : "\n        frameworks: [${frameworks.map(_literal).join(', ')}],"}
       ).run(input: input, output: output);
 ''';
+}
+
+/// `Foundation` plus every `X.framework` a header path of [platform] goes
+/// through (`…/AppKit.framework/Headers/NSWindow.h` links AppKit).
+List<String> _frameworks(Layout layout, Platform platform) {
+  final names = {'Foundation'};
+  for (final header
+      in layout.config.platforms[platform]?.headers ?? const <String>[]) {
+    for (final m in RegExp(
+      r'([A-Za-z0-9_]+)\.framework[/\\]',
+    ).allMatches(header)) {
+      names.add(m.group(1)!);
+    }
+  }
+  return names.toList()..sort();
 }
 
 String _cmake(Layout layout, Platform platform, BuildConfig build) {

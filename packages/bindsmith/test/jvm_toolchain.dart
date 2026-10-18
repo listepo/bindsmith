@@ -58,7 +58,12 @@ Future<Kotlin?> findKotlin() async {
     final stdlib = p.join(root, 'lib', 'kotlin-stdlib.jar');
     final coroutines = p.join(root, 'lib', 'kotlinx-coroutines-core-jvm.jar');
     if (!File(stdlib).existsSync() || !File(coroutines).existsSync()) continue;
-    for (final name in ['kotlinc', 'kotlinc.bat']) {
+    // On Windows `kotlinc` is a shell script CreateProcess cannot start.
+    for (final name in [
+      if (io.Platform.isWindows) 'kotlinc.bat',
+      'kotlinc',
+      'kotlinc.bat',
+    ]) {
       final exe = p.join(root, 'bin', name);
       if (File(exe).existsSync()) {
         return (exe: exe, stdlib: stdlib, coroutines: coroutines);
@@ -146,11 +151,23 @@ dependencies:
           'ir': ir,
         }),
       );
-    await _check(io.Platform.resolvedExecutable, [
-      '--packages=$_packages',
-      p.join(root, 'tool', 'generate.dart'),
-      job.path,
-    ], _root);
+    // The suites run in parallel processes and share one summarizer jar that
+    // the first jnigen run builds; a second run that starts while it is half
+    // written fails with "Invalid or corrupt jarfile". A file lock serializes.
+    final lockFile = File(p.join(_root, '.dart_tool', 'bindsmith_jnigen.lock'))
+      ..parent.createSync(recursive: true);
+    final lock = lockFile.openSync(mode: FileMode.write)
+      ..lockSync(FileLock.blockingExclusive);
+    try {
+      await _check(io.Platform.resolvedExecutable, [
+        '--packages=$_packages',
+        p.join(root, 'tool', 'generate.dart'),
+        job.path,
+      ], _root);
+    } finally {
+      lock.unlockSync();
+      lock.closeSync();
+    }
     return (
       irFromJson(jsonDecode(File(ir).readAsStringSync()) as List<Object?>),
       File(binding).readAsStringSync(),
@@ -168,9 +185,12 @@ dependencies:
     const libraries = ['libdartjni.dylib', 'libdartjni.so', 'dartjni.dll'];
     if (!File(p.join(out, 'jni.jar')).existsSync() ||
         !libraries.any((l) => File(p.join(out, l)).existsSync())) {
+      // Not `dart run jni:setup`: that re-resolves the project, and the
+      // standalone `dart` of a mise install cannot (jni needs the Flutter
+      // SDK) once `flutter pub get` has written the package config.
       await _check(io.Platform.resolvedExecutable, [
-        'run',
-        'jni:setup',
+        '--packages=${p.join(root, '.dart_tool', 'package_config.json')}',
+        p.join(p.fromUri(config['jni']!.root), 'bin', 'setup.dart'),
         '--build-path',
         out,
       ], root);

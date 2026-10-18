@@ -712,7 +712,7 @@ Future<Uint8List> mavenFetch(Uri url) async {
     var hasJava = false;
     for (final entity in tree.listSync(recursive: true)) {
       if (entity is! File) continue;
-      final rel = p.relative(entity.path, from: root);
+      final rel = _posix(p.relative(entity.path, from: root));
       switch (p.extension(entity.path)) {
         case '.java':
           hasJava = true;
@@ -721,8 +721,12 @@ Future<Uint8List> mavenFetch(Uri url) async {
       }
     }
     if (hasJava) {
-      javaDirs.add(p.relative(tree.path, from: root));
+      javaDirs.add(_posix(p.relative(tree.path, from: root)));
     }
   }
   return (javaDirs: [...javaDirs]..sort(), kotlinFiles: kotlinFiles..sort());
 }
+
+/// [path] with `/` separators: the returned paths are data, compared and
+/// written into config, and `p.join` accepts them on Windows too.
+String _posix(String path) => p.posix.joinAll(p.split(path));
