@@ -151,11 +151,23 @@ dependencies:
           'ir': ir,
         }),
       );
-    await _check(io.Platform.resolvedExecutable, [
-      '--packages=$_packages',
-      p.join(root, 'tool', 'generate.dart'),
-      job.path,
-    ], _root);
+    // The suites run in parallel processes and share one summarizer jar that
+    // the first jnigen run builds; a second run that starts while it is half
+    // written fails with "Invalid or corrupt jarfile". A file lock serializes.
+    final lockFile = File(p.join(_root, '.dart_tool', 'bindsmith_jnigen.lock'))
+      ..parent.createSync(recursive: true);
+    final lock = lockFile.openSync(mode: FileMode.write)
+      ..lockSync(FileLock.blockingExclusive);
+    try {
+      await _check(io.Platform.resolvedExecutable, [
+        '--packages=$_packages',
+        p.join(root, 'tool', 'generate.dart'),
+        job.path,
+      ], _root);
+    } finally {
+      lock.unlockSync();
+      lock.closeSync();
+    }
     return (
       irFromJson(jsonDecode(File(ir).readAsStringSync()) as List<Object?>),
       File(binding).readAsStringSync(),
