@@ -168,9 +168,12 @@ dependencies:
     const libraries = ['libdartjni.dylib', 'libdartjni.so', 'dartjni.dll'];
     if (!File(p.join(out, 'jni.jar')).existsSync() ||
         !libraries.any((l) => File(p.join(out, l)).existsSync())) {
+      // Not `dart run jni:setup`: that re-resolves the project, and the
+      // standalone `dart` of a mise install cannot (jni needs the Flutter
+      // SDK) once `flutter pub get` has written the package config.
       await _check(io.Platform.resolvedExecutable, [
-        'run',
-        'jni:setup',
+        '--packages=${p.join(root, '.dart_tool', 'package_config.json')}',
+        p.join(p.fromUri(config['jni']!.root), 'bin', 'setup.dart'),
         '--build-path',
         out,
       ], root);
