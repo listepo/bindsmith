@@ -39,7 +39,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       # macOS and Linux install the toolchain from mise.toml, like a dev machine.
-      - uses: jdx/mise-action@v4
+      - uses: jdx/mise-action@v5
         if: runner.os != 'Windows'
         with:
           install: true

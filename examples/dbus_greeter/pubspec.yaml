@@ -9,7 +9,7 @@ environment:
 dependencies:
   bindsmith_runtime:
     path: ../../packages/bindsmith_runtime
-  dbus: ^0.7.15
+  dbus: ^0.8.0
 
 dev_dependencies:
   bindsmith:
