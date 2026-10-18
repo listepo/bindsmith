@@ -37,7 +37,7 @@ if command -v ruby >/dev/null 2>&1; then
 fi
 
 zeros="$(awk 'BEGIN { while (n++ < 64) printf "0" }')"
-out="$(sh scripts/formula.sh 0.1.0 "$zeros")"
+out="$(bash scripts/formula.sh 0.1.0 "$zeros")"
 case "$out" in
   *"class Bindsmith < Formula"*) ;;
   *) echo "release_artefacts: formula.sh did not emit a Formula" >&2; exit 1 ;;

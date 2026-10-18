@@ -66,6 +66,37 @@ the callee invokes from another thread needs the `listener` constructor, not
 ffigen throws instead, and the marker says so. An `@optional` protocol method
 throws when you did not implement it.
 
+### Parsing Apple SDK headers
+
+Both drivers accept three keys that reach clang, so a system header such as
+`CoreGraphics/CGGeometry.h` parses:
+
+```yaml
+macos:
+  driver: c
+  headers: [/path/to/MacOSX.sdk/System/Library/Frameworks/CoreGraphics.framework/Headers/CGGeometry.h]
+  sysroot: /path/to/MacOSX.sdk          # optional, -isysroot
+  framework_paths: [/path/to/Frameworks] # optional, one -F each
+  compiler_options: ["-DFOO=1"]          # optional, passed through
+  include: { functions: [CGRectContainsPoint] }
+```
+
+On macOS the `c` driver asks `xcrun --show-sdk-path` when `sysroot` is not set
+and adds that SDK's `System/Library/Frameworks` as a framework path; an
+`-isysroot` in `compiler_options` wins over detection. Elsewhere nothing is
+added. Without an SDK clang cannot find `<CoreGraphics/CGBase.h>` and ffigen
+refuses to bind.
+
+`include:` is a pull list. A signature can still mention a type you did not
+pull: an enum is bound with it, a class is wrapped as an opaque handle without
+members (marked `@BindsmithVerify`), a typedef is replaced by its target, and a
+member the facade cannot spell (a type private to the binding library, or a
+block whose function type names a wrapped class) is dropped with a reason that
+`bindsmith verify` lists. When the Objective-C glue is built through
+`build:`, the generated hook compiles it with `-fobjc-arc` and links every
+framework its headers come from. Umbrella headers such as `Foundation.h` are
+not supported yet.
+
 ## Apple, Swift-first libraries — the `swift` driver
 
 Dart reaches Swift through Objective-C, so this is three translations deep:

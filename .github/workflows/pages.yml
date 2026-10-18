@@ -1,6 +1,6 @@
 name: site
 
-# Build on PRs that touch the site; only main publishes.
+# Build check for the site. It is no longer published to GitHub Pages.
 on:
   push:
     branches: [main]
@@ -19,7 +19,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: pages
+  group: site
   cancel-in-progress: false
 
 jobs:
@@ -53,25 +53,6 @@ jobs:
           test -f styles/landing.css
           test -f images/logo.svg
           test -f favicon.svg
-          # Project Pages subpath
+          # served under the /bindsmith/ subpath
           grep -qE 'base[^>]+href="/bindsmith/"' index.html
           echo "site ok: $(find . -name '*.html' | wc -l) html file(s)"
-
-      - uses: actions/upload-pages-artifact@v5
-        if: github.event_name != 'pull_request'
-        with:
-          path: site/build/jaspr
-
-  deploy:
-    needs: build
-    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
-    runs-on: ubuntu-latest
-    permissions:
-      pages: write
-      id-token: write
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - id: deployment
-        uses: actions/deploy-pages@v5

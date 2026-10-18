@@ -36,6 +36,7 @@ import 'package:swiftgen/swiftgen.dart' as swiftgen;
 
 import '../../ir/ir.dart';
 import '../c/ffigen_adapter.dart';
+import '../c/ffigen_format.dart';
 import '../c/objc_driver.dart';
 import 'symbolgraph.dart';
 
@@ -124,6 +125,9 @@ final class SwiftDriver {
       if (r.level >= Level.SEVERE) unparsed.add(r.message);
     });
 
+    // swiftgen runs ffigen's `dart format` and cannot turn it off; in a native
+    // build that call hangs (P8-4), so fail with the reason instead.
+    ensureFfigenCanFormat();
     final symbols = <String, CSymbol>{};
     final objc = <String, ObjcSymbol>{};
     // swiftgen deletes a directory it creates itself, and the symbol graph

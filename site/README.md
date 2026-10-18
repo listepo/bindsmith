@@ -32,7 +32,7 @@ jaspr serve    # local preview
 jaspr build    # writes build/jaspr/
 ```
 
-Project Pages base URL: `https://listepo.github.io/bindsmith/`  
+Base URL: `https://pyrlyn.dev/bindsmith/` (GitHub Pages is no longer used)  
 `Document(base: 'bindsmith')` sets `<base href="/bindsmith/">` for asset resolution.
 
 ## For design / logo refinements

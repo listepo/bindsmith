@@ -115,6 +115,27 @@ final _platform = {
       'description': 'Entry-point headers, for the c and objc drivers.',
       'items': _string,
     },
+    'compiler_options': {
+      'type': 'array',
+      'description':
+          'Extra clang arguments (-I, -D, -isysroot) for the c and objc '
+          'drivers.',
+      'items': _string,
+    },
+    'sysroot': {
+      'type': 'string',
+      'description':
+          'SDK root passed to clang as -isysroot, for the c and objc '
+          'drivers. On macOS the default is `xcrun --show-sdk-path`.',
+    },
+    'framework_paths': {
+      'type': 'array',
+      'description':
+          'Framework search directories passed as -F, for the c and objc '
+          "drivers. The SDK's System/Library/Frameworks is added when a "
+          'sysroot is known.',
+      'items': _string,
+    },
     'xml': {
       'type': 'array',
       'description': 'D-Bus introspection XML files, for the dbus driver.',
