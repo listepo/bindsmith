@@ -1,7 +1,8 @@
-# Gated scan pipeline from listepo/infra: CodeQL, Semgrep and Snyk in parallel behind
-# `pipeline / gate`. Rust CI is off (`rust: false`): bindsmith has no Rust; its
-# Dart CI stays in ci.yml.
-# Inputs, secrets and permissions: listepo/infra docs/reusable-workflows.md.
+# Gated pipeline: pyrlyn/ci's config-driven ci.yml (configured in .github/infra.yml) runs
+# CodeQL, Semgrep and actionlint behind `pipeline / gate`. Language CI stays in ci.yml.
+# Draft pull requests skip every job, the gate included, until marked ready. Secrets are passed
+# explicitly.
+# Shared workflows: https://github.com/pyrlyn/ci/blob/main/docs/reusable-workflows.md
 name: pipeline
 
 on:
@@ -23,14 +24,14 @@ permissions:
 
 jobs:
   pipeline:
-    uses: listepo/infra/.github/workflows/pipeline.yml@189816ac5a375e18e0235044970efcbc40e3cabd
+    uses: pyrlyn/ci/.github/workflows/ci.yml@31612259553f8163e97d9fc7dbd2bf83b4f03ca2 # main
+    # The union every nested job asks for, validated up front even for disabled checks.
     permissions:
       contents: read
       security-events: write
-      actions: read
-    with:
-      rust: false
-      # Not scanned: dart (unsupported), swift (no build-mode none).
-      codeql-languages: '["actions", "c-cpp", "java-kotlin", "javascript-typescript"]'
+      pull-requests: read
+      actions: write
+      issues: write # pyrlyn/ci main-failure job
     secrets:
       SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
