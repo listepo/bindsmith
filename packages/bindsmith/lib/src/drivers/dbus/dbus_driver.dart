@@ -54,7 +54,16 @@ final class DbusDriver {
       final absolute = p.canonicalize(p.join(workingDirectory, xmlFile));
       final xml = File(absolute).readAsStringSync();
       final node = parseDBusIntrospectXml(xml);
-      final rel = p.relative(absolute, from: workingDirectory);
+      // Relative to the project and spelled with `/`, whatever the host: it
+      // lands in the IR and in committed output. `canonicalize` lower-cases
+      // on Windows, so the name is taken from the config, not from it.
+      final rel = p.posix.joinAll(
+        p.split(
+          p.isAbsolute(xmlFile)
+              ? p.relative(xmlFile, from: workingDirectory)
+              : p.normalize(xmlFile),
+        ),
+      );
       final className = classNames?[xmlFile] ?? classNames?[rel];
       final generator = DBusCodeGenerator(node, className: className);
       decls.addAll(

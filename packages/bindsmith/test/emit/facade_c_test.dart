@@ -337,11 +337,15 @@ void main() {
         0,
         reason: 'the C compiler rejected the fixture:\n${built.stderr}',
       );
-      final run = await io.Process.run(io.Platform.executable, [
-        'run',
-        _runner,
-        dylib,
-      ], workingDirectory: _root);
+      final run = await io.Process.run(
+        io.Platform.executable,
+        ['run', _runner, dylib],
+        workingDirectory: _root,
+        // `DynamicLibrary.open` loads into a private namespace on Linux, where
+        // the process lookup `@Native` falls back to cannot see it; preloading
+        // puts the symbols in the global one. macOS needs nothing.
+        environment: {if (io.Platform.isLinux) 'LD_PRELOAD': dylib},
+      );
       expect(run.exitCode, 0, reason: '${run.stdout}\n${run.stderr}');
       expect(
         run.stdout,
