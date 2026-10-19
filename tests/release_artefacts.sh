@@ -42,3 +42,13 @@ case "$out" in
   *"class Bindsmith < Formula"*) ;;
   *) echo "release_artefacts: formula.sh did not emit a Formula" >&2; exit 1 ;;
 esac
+
+if command -v python3 >/dev/null 2>&1; then
+  py=python3
+elif command -v python >/dev/null 2>&1; then
+  py=python
+else
+  echo "release_artefacts: python is required for the publish dry-run" >&2
+  exit 1
+fi
+"$py" tests/publish_dry_run.py
