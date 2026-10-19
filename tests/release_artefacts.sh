@@ -43,11 +43,15 @@ case "$out" in
   *) echo "release_artefacts: formula.sh did not emit a Formula" >&2; exit 1 ;;
 esac
 
-if command -v python3 >/dev/null 2>&1; then
-  py=python3
-elif command -v python >/dev/null 2>&1; then
-  py=python
-else
+py=
+for candidate in python3 python; do
+  if command -v "$candidate" >/dev/null 2>&1 &&
+    "$candidate" -c 'import sys' >/dev/null 2>&1; then
+    py=$candidate
+    break
+  fi
+done
+if [ -z "$py" ]; then
   echo "release_artefacts: python is required for the publish dry-run" >&2
   exit 1
 fi
