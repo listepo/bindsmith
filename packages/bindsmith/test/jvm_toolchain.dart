@@ -151,23 +151,14 @@ dependencies:
           'ir': ir,
         }),
       );
-    // The suites run in parallel processes and share one summarizer jar that
-    // the first jnigen run builds; a second run that starts while it is half
-    // written fails with "Invalid or corrupt jarfile". A file lock serializes.
-    final lockFile = File(p.join(_root, '.dart_tool', 'bindsmith_jnigen.lock'))
-      ..parent.createSync(recursive: true);
-    final lock = lockFile.openSync(mode: FileMode.write)
-      ..lockSync(FileLock.blockingExclusive);
-    try {
-      await _check(io.Platform.resolvedExecutable, [
+    // The two JVM suites share one summarizer jar. See [withJniToolchainLock].
+    await withJniToolchainLock(
+      () => _check(io.Platform.resolvedExecutable, [
         '--packages=$_packages',
         p.join(root, 'tool', 'generate.dart'),
         job.path,
-      ], _root);
-    } finally {
-      lock.unlockSync();
-      lock.closeSync();
-    }
+      ], _root),
+    );
     return (
       irFromJson(jsonDecode(File(ir).readAsStringSync()) as List<Object?>),
       File(binding).readAsStringSync(),
@@ -178,24 +169,27 @@ dependencies:
   /// `.dart_tool/bindsmith/<jni-version>/`, once: both take minutes, and a
   /// later run reuses them. Returns that directory, which is `Jni.spawn`'s
   /// `dylibDir`.
-  Future<String> buildJni() async {
-    final config = await findPackageConfig(Directory(root));
-    final jni = p.basename(p.fromUri(config!['jni']!.root));
-    final out = p.join(_root, '.dart_tool', 'bindsmith', jni);
-    const libraries = ['libdartjni.dylib', 'libdartjni.so', 'dartjni.dll'];
-    if (!File(p.join(out, 'jni.jar')).existsSync() ||
-        !libraries.any((l) => File(p.join(out, l)).existsSync())) {
-      // Not `dart run jni:setup`: that re-resolves the project, and the
-      // standalone `dart` of a mise install cannot (jni needs the Flutter
-      // SDK) once `flutter pub get` has written the package config.
-      await _check(io.Platform.resolvedExecutable, [
-        '--packages=${p.join(root, '.dart_tool', 'package_config.json')}',
-        p.join(p.fromUri(config['jni']!.root), 'bin', 'setup.dart'),
-        '--build-path',
-        out,
-      ], root);
-    }
-    return out;
+  Future<String> buildJni() {
+    // Same lock as [generate]: two callers must not write `libdartjni` at once.
+    return withJniToolchainLock(() async {
+      final config = await findPackageConfig(Directory(root));
+      final jni = p.basename(p.fromUri(config!['jni']!.root));
+      final out = p.join(_root, '.dart_tool', 'bindsmith', jni);
+      const libraries = ['libdartjni.dylib', 'libdartjni.so', 'dartjni.dll'];
+      if (!File(p.join(out, 'jni.jar')).existsSync() ||
+          !libraries.any((l) => File(p.join(out, l)).existsSync())) {
+        // Not `dart run jni:setup`: that re-resolves the project, and the
+        // standalone `dart` of a mise install cannot (jni needs the Flutter
+        // SDK) once `flutter pub get` has written the package config.
+        await _check(io.Platform.resolvedExecutable, [
+          '--packages=${p.join(root, '.dart_tool', 'package_config.json')}',
+          p.join(p.fromUri(config['jni']!.root), 'bin', 'setup.dart'),
+          '--build-path',
+          out,
+        ], root);
+      }
+      return out;
+    });
   }
 
   /// Runs [runner], a program that imports [binding] as
@@ -219,6 +213,145 @@ dependencies:
   }
 
   void delete() => Directory(root).deleteSync(recursive: true);
+}
+
+/// How long a lock may be held before another caller takes it over.
+const _jniLockStaleAfter = Duration(minutes: 20);
+
+/// An empty lock younger than this is the gap between create and write.
+const _jniLockSettle = Duration(seconds: 2);
+
+/// Runs [body] while holding the lock that serializes the shared jnigen
+/// summarizer jar and the shared `libdartjni` build.
+///
+/// `dart test` runs test files as isolates of one process, and a [FileLock]
+/// is per process, so `lockSync` does not stop one suite from reading the
+/// jar another is still writing (`NoClassDefFoundError` inside
+/// `HelpFormatter`, or "Invalid or corrupt jarfile"). Creating [lock] with
+/// `exclusive: true` is atomic across isolates. [lock] defaults to
+/// `<repo>/.dart_tool/bindsmith_jnigen.lock`.
+///
+/// A lock whose pid is dead, or whose timestamp is older than twenty
+/// minutes, is renamed aside and taken. An empty file younger than two
+/// seconds is the create-then-write window and is left alone. This process
+/// counts as alive, so another isolate waits instead of stealing.
+Future<T> withJniToolchainLock<T>(
+  Future<T> Function() body, {
+  File? lock,
+}) async {
+  final file =
+      lock ?? File(p.join(_root, '.dart_tool', 'bindsmith_jnigen.lock'));
+  final token = await _acquireJniToolchainLock(file);
+  try {
+    return await body();
+  } finally {
+    _releaseJniToolchainLock(file, token);
+  }
+}
+
+Future<String> _acquireJniToolchainLock(File file) async {
+  file.parent.createSync(recursive: true);
+  final token =
+      '$pid-${DateTime.now().microsecondsSinceEpoch}-'
+      '${identityHashCode(Object())}';
+  while (true) {
+    try {
+      file.createSync(exclusive: true);
+    } on PathExistsException {
+      if (_stealStaleJniLock(file)) continue;
+      await Future<void>.delayed(const Duration(milliseconds: 50));
+      continue;
+    }
+    try {
+      file.writeAsStringSync(
+        '$pid ${DateTime.now().toUtc().toIso8601String()} $token\n',
+      );
+      return token;
+    } on FileSystemException {
+      // Stolen between create and write.
+      continue;
+    }
+  }
+}
+
+/// Renames a stale lock out of the way. Only one caller can rename it.
+bool _stealStaleJniLock(File file) {
+  if (!_jniLockIsStale(file)) return false;
+  final claim = File(
+    '${file.path}.$pid.${DateTime.now().microsecondsSinceEpoch}',
+  );
+  try {
+    file.renameSync(claim.path);
+  } on FileSystemException {
+    return false;
+  }
+  try {
+    claim.deleteSync();
+  } on FileSystemException {
+    // The name is claimed; the leftover is not the live lock.
+  }
+  return true;
+}
+
+bool _jniLockIsStale(File file) {
+  final String text;
+  final DateTime modified;
+  try {
+    text = file.readAsStringSync();
+    modified = file.lastModifiedSync().toUtc();
+  } on FileSystemException {
+    return false;
+  }
+  final now = DateTime.now().toUtc();
+  final parts = text.trim().split(' ');
+  if (parts.length < 3) {
+    return now.difference(modified) >= _jniLockSettle;
+  }
+  final owner = int.tryParse(parts[0]);
+  final stamped = DateTime.tryParse(parts[1])?.toUtc();
+  if (owner == null || stamped == null) {
+    return now.difference(modified) >= _jniLockSettle;
+  }
+  if (now.difference(stamped) >= _jniLockStaleAfter) return true;
+  return !_processAlive(owner);
+}
+
+/// Whether [owner] is still running. A check that cannot run counts as alive,
+/// so a missing `kill` or `tasklist` never takes a lock that might be held.
+bool _processAlive(int owner) {
+  if (owner == pid) return true;
+  if (owner <= 0) return false;
+  try {
+    if (io.Platform.isWindows) {
+      final result = Process.runSync('tasklist', [
+        '/FI',
+        'PID eq $owner',
+        '/FO',
+        'CSV',
+        '/NH',
+      ]);
+      if (result.exitCode != 0) return true;
+      final out = '${result.stdout}';
+      if (out.toUpperCase().contains('NO TASKS')) return false;
+      return out.contains('"$owner"');
+    }
+    final result = Process.runSync('kill', ['-0', '$owner']);
+    if (result.exitCode == 0) return true;
+    final err = '${result.stderr}'.toLowerCase();
+    return err.contains('not permitted');
+  } on ProcessException {
+    return true;
+  }
+}
+
+void _releaseJniToolchainLock(File file, String token) {
+  try {
+    final text = file.readAsStringSync();
+    if (!text.endsWith(' $token\n') && !text.endsWith(' $token')) return;
+    file.deleteSync();
+  } on FileSystemException {
+    // Already released, or taken over after the stale window.
+  }
 }
 
 Future<void> _check(String exe, List<String> args, String directory) async {
