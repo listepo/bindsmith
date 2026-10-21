@@ -243,9 +243,13 @@ reaches Dart through a wrapper swift2objc writes without comments, so its
 documentation is taken from the Swift symbol graph instead, with
 `- Parameter …` on `Param.docs` and `- Returns:` / `- Throws:` in member
 prose: the facade and `bindsmith dump` carry it, while the Objective-C
-binding underneath has only what ffigen found. Kotlin KDoc is read from `.kt`
-sources configured on `JvmDriver.kotlinSources` (jnigen's summarizer does not
-carry it). ffigen still drops the comments on macros and opaque structs.
+binding underneath has only what ffigen found. A `///` comment that does
+reach that header — the generated bridge is already `@objc`, so it skips
+swift2objc — is rendered by `swiftc -emit-objc-header` as Doxygen, and
+inline code arrives as `<code>…</code>`. ffigen copies the header comment
+as written. Kotlin KDoc is read from `.kt` sources configured on
+`JvmDriver.kotlinSources` (jnigen's summarizer does not carry it). ffigen
+still drops the comments on macros and opaque structs.
 
 ## Sharing one entry between platforms
 
