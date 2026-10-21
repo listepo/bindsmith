@@ -82,4 +82,8 @@ how you get it back.
 GitHub Releases attach a native `dart compile exe` binary per OS. Homebrew
 installs that macOS binary through the formula `scripts/formula.sh` writes.
 `dart pub publish` is a separate creator step, not part of the tag workflow.
+Both packages are already clean under `dart pub publish --dry-run`: the JVM
+and facade goldens that import `jni`, `objective_c`, or `bindsmith_runtime`
+stay in git and are listed in `packages/bindsmith/.pubignore`, because those
+packages cannot be declared here.
 

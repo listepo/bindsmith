@@ -1,0 +1,24 @@
+# When this file exists, pub does not consult a .gitignore in this
+# directory (the package has none; the repo root one still governs git).
+# These patterns keep the same local junk out of the archive.
+.dart_tool/
+build/
+*.iml
+.idea/
+.vscode/
+node_modules/
+.DS_Store
+tool/ts_sidecar/dist/
+
+# Test goldens that import packages this package cannot declare.
+# sdk.g.dart only re-exports the two beside it, so it goes too.
+# `jni` needs Flutter, so a pure-Dart workspace cannot depend on it.
+# `objective_c` is only reached transitively through swiftgen.
+# `bindsmith_runtime` is a sibling package; a path dependency cannot
+# be published. The files stay in git for the tests. `dart analyze`
+# already excludes `**/*.g.dart`.
+test/drivers/goldens/greeter_jvm.g.dart
+test/drivers/goldens/ktgreeter_jvm.g.dart
+test/emit/goldens/sdk.g.dart
+test/emit/goldens/sdk_io.g.dart
+test/emit/goldens/sdk_web.g.dart

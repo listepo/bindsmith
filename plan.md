@@ -4,6 +4,8 @@ One bindsmith.yaml, six Flutter platforms. Generates Dart bindings for native AP
 
 | # | Статус | Приоритет | Сложность | Готовность | Агент |
 | --- | --- | --- | --- | --- | --- |
+| P2-5 | in progress | P2 | 3 | 30% | Cursor / grok 4.6 |
+| P8-3 | in progress | P3 | 3 | 95% | Cursor / grok 4.6 |
 | P2-5 | in progress | P2 | 3 | 50% | Cursor / grok 4.6 |
 | P8-3 | in progress | P3 | 3 | 90% | Cursor / grok 4.6 |
 
@@ -30,7 +32,7 @@ Release engineering: `dart pub publish` for `bindsmith` and `bindsmith_runtime`;
 
 Depends on P8-1. Do not `pub publish` until asked. Done when packages are published and the release artefacts above exist.
 
-Plan (Cursor / grok 4.6): artefacts only, no `pub publish`. 1. CHANGELOG.md on both packages + version policy in docs/upgrading.md. 2. Issue templates that ask for `bindsmith doctor --json`. 3. GitHub Release workflow: native `dart compile exe` per OS. 4. Homebrew formula generator (tap push stays creator). 5. pana ≥ 140 in CI. Leave the row open until the creator asks to publish.
+Plan (Cursor / grok 4.6): artefacts only, no `pub publish`. 1. CHANGELOG.md on both packages + version policy in docs/upgrading.md. 2. Issue templates that ask for `bindsmith doctor --json`. 3. GitHub Release workflow: native `dart compile exe` per OS. 4. Homebrew formula generator (tap push stays creator). 5. pana ≥ 140 in CI (160/160 for both packages, pana 0.23.19, 2026-10-19). `dart pub publish --dry-run` warned on the JVM and facade test goldens that import `package:jni`, `package:objective_c`, and `package:bindsmith_runtime`. None of those can be declared here (`jni` needs Flutter; the runtime cannot be a path dependency of a published package). They are listed in `packages/bindsmith/.pubignore`, and `tests/publish_dry_run.py` fails if either package dry-run is not clean. Leave the row open until the creator asks to publish. Do not tag and do not upload a GitHub Release from this row.
 
 ## Reference
 
