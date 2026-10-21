@@ -1,0 +1,421 @@
+{
+  "version": 1,
+  "entries": [
+    {
+      "file": ".github/dependabot.yml",
+      "rule": "dependabot-cooldown",
+      "fingerprint": "41f38bfbabd79f73",
+      "context": "f3092327619dbd4f",
+      "occurrence": 0,
+      "message": "\"cooldown\" is not set in this update, so Dependabot applies its implicit cooldown of 3 days. set \"cooldown.default-days\" to at least 7 to avoid updating to a version right after its release"
+    },
+    {
+      "file": ".github/dependabot.yml",
+      "rule": "dependabot-cooldown",
+      "fingerprint": "e3fa666c98b80bb8",
+      "context": "6b34d9c46c22a194",
+      "occurrence": 0,
+      "message": "\"cooldown\" is not set in this update, so Dependabot applies its implicit cooldown of 3 days. set \"cooldown.default-days\" to at least 7 to avoid updating to a version right after its release"
+    },
+    {
+      "file": ".github/dependabot.yml",
+      "rule": "dependabot-cooldown",
+      "fingerprint": "088d189fac28b579",
+      "context": "bc96ebf5ff8c15af",
+      "occurrence": 0,
+      "message": "\"cooldown\" is not set in this update, so Dependabot applies its implicit cooldown of 3 days. set \"cooldown.default-days\" to at least 7 to avoid updating to a version right after its release"
+    },
+    {
+      "file": ".github/workflows/ci.yml",
+      "rule": "missing-permissions",
+      "fingerprint": "b7f79bf0594d1990",
+      "context": "18f26bc657d49b2e",
+      "occurrence": 0,
+      "message": "neither the workflow nor this job sets \"permissions:\" so the GITHUB_TOKEN gets the default permissions of the repository. set \"permissions:\" at workflow-level or job-level (use \"permissions: {}\" for no permissions) because the \"missing-permissions\" rule is enabled"
+    },
+    {
+      "file": ".github/workflows/ci.yml",
+      "rule": "missing-timeout",
+      "fingerprint": "5e4f3f1492f562fd",
+      "context": "62844888b39fc022",
+      "occurrence": 0,
+      "message": "\"timeout-minutes\" is not set at this job. Set it to avoid wasting runner minutes when the job hangs"
+    },
+    {
+      "file": ".github/workflows/ci.yml",
+      "rule": "missing-permissions",
+      "fingerprint": "e4709a689d0dffa0",
+      "context": "94f736fe62a53de7",
+      "occurrence": 0,
+      "message": "neither the workflow nor this job sets \"permissions:\" so the GITHUB_TOKEN gets the default permissions of the repository. set \"permissions:\" at workflow-level or job-level (use \"permissions: {}\" for no permissions) because the \"missing-permissions\" rule is enabled"
+    },
+    {
+      "file": ".github/workflows/ci.yml",
+      "rule": "unpinned-uses",
+      "fingerprint": "17ffb49bc0c692eb",
+      "context": "549ce56c33ebb9b6",
+      "occurrence": 0,
+      "message": "action \"actions/checkout@v7\" must be pinned to a full-length commit SHA like \"{owner}/{repo}@{sha}\" because the \"unpinned-uses\" rule is enabled"
+    },
+    {
+      "file": ".github/workflows/ci.yml",
+      "rule": "artipacked",
+      "fingerprint": "975f3c62e0ac5182",
+      "context": "7d4ee363b9105589",
+      "occurrence": 0,
+      "message": "actions/checkout leaves the GITHUB_TOKEN in the git config of the workspace, where a later step such as an artifact upload can publish it. set \"persist-credentials: false\" under \"with:\" unless a later step needs to push"
+    },
+    {
+      "file": ".github/workflows/ci.yml",
+      "rule": "unpinned-uses",
+      "fingerprint": "fd92498b36032197",
+      "context": "d67441dd9bd3b51f",
+      "occurrence": 0,
+      "message": "action \"jdx/mise-action@v5\" must be pinned to a full-length commit SHA like \"{owner}/{repo}@{sha}\" because the \"unpinned-uses\" rule is enabled"
+    },
+    {
+      "file": ".github/workflows/ci.yml",
+      "rule": "unpinned-uses",
+      "fingerprint": "8fb78a63b1e611ea",
+      "context": "9ebdd61559b53e3c",
+      "occurrence": 0,
+      "message": "action \"dart-lang/setup-dart@v1\" must be pinned to a full-length commit SHA like \"{owner}/{repo}@{sha}\" because the \"unpinned-uses\" rule is enabled"
+    },
+    {
+      "file": ".github/workflows/ci.yml",
+      "rule": "unpinned-uses",
+      "fingerprint": "407e0d0dc26b8538",
+      "context": "5dca54526c8a81d1",
+      "occurrence": 0,
+      "message": "action \"actions/setup-node@v7\" must be pinned to a full-length commit SHA like \"{owner}/{repo}@{sha}\" because the \"unpinned-uses\" rule is enabled"
+    },
+    {
+      "file": ".github/workflows/ci.yml",
+      "rule": "missing-timeout",
+      "fingerprint": "24c90cb2be40a604",
+      "context": "19c9d19a541deb83",
+      "occurrence": 0,
+      "message": "\"timeout-minutes\" is not set at this job. Set it to avoid wasting runner minutes when the job hangs"
+    },
+    {
+      "file": ".github/workflows/ci.yml",
+      "rule": "missing-permissions",
+      "fingerprint": "5df03578cde68a3b",
+      "context": "6e4b85569ded1e3b",
+      "occurrence": 0,
+      "message": "neither the workflow nor this job sets \"permissions:\" so the GITHUB_TOKEN gets the default permissions of the repository. set \"permissions:\" at workflow-level or job-level (use \"permissions: {}\" for no permissions) because the \"missing-permissions\" rule is enabled"
+    },
+    {
+      "file": ".github/workflows/ci.yml",
+      "rule": "unpinned-uses",
+      "fingerprint": "8cc0917d54936cd9",
+      "context": "6592bfb736d2ed51",
+      "occurrence": 0,
+      "message": "action \"actions/checkout@v7\" must be pinned to a full-length commit SHA like \"{owner}/{repo}@{sha}\" because the \"unpinned-uses\" rule is enabled"
+    },
+    {
+      "file": ".github/workflows/ci.yml",
+      "rule": "artipacked",
+      "fingerprint": "4b788394b7804aa8",
+      "context": "d299a53996177eaf",
+      "occurrence": 0,
+      "message": "actions/checkout leaves the GITHUB_TOKEN in the git config of the workspace, where a later step such as an artifact upload can publish it. set \"persist-credentials: false\" under \"with:\" unless a later step needs to push"
+    },
+    {
+      "file": ".github/workflows/ci.yml",
+      "rule": "unpinned-uses",
+      "fingerprint": "4203dd770a0d0d4e",
+      "context": "5cd8ccc7a09e75d2",
+      "occurrence": 0,
+      "message": "action \"dart-lang/setup-dart@v1\" must be pinned to a full-length commit SHA like \"{owner}/{repo}@{sha}\" because the \"unpinned-uses\" rule is enabled"
+    },
+    {
+      "file": ".github/workflows/ci.yml",
+      "rule": "missing-timeout",
+      "fingerprint": "70dbd7ca9718ebbf",
+      "context": "728af20c7150be8e",
+      "occurrence": 0,
+      "message": "\"timeout-minutes\" is not set at this job. Set it to avoid wasting runner minutes when the job hangs"
+    },
+    {
+      "file": ".github/workflows/ci.yml",
+      "rule": "missing-permissions",
+      "fingerprint": "48d27d7c938c2a79",
+      "context": "04ace5dc057d575b",
+      "occurrence": 0,
+      "message": "neither the workflow nor this job sets \"permissions:\" so the GITHUB_TOKEN gets the default permissions of the repository. set \"permissions:\" at workflow-level or job-level (use \"permissions: {}\" for no permissions) because the \"missing-permissions\" rule is enabled"
+    },
+    {
+      "file": ".github/workflows/ci.yml",
+      "rule": "unpinned-uses",
+      "fingerprint": "dc3692aef69a38ec",
+      "context": "891b0136ef2e0c7d",
+      "occurrence": 0,
+      "message": "action \"actions/checkout@v7\" must be pinned to a full-length commit SHA like \"{owner}/{repo}@{sha}\" because the \"unpinned-uses\" rule is enabled"
+    },
+    {
+      "file": ".github/workflows/ci.yml",
+      "rule": "artipacked",
+      "fingerprint": "a75c24a1df42b1ec",
+      "context": "f3580687d3fd90b4",
+      "occurrence": 0,
+      "message": "actions/checkout leaves the GITHUB_TOKEN in the git config of the workspace, where a later step such as an artifact upload can publish it. set \"persist-credentials: false\" under \"with:\" unless a later step needs to push"
+    },
+    {
+      "file": ".github/workflows/ci.yml",
+      "rule": "unpinned-uses",
+      "fingerprint": "ab6dd0fbdfe11e4a",
+      "context": "5b3426b078350e7c",
+      "occurrence": 0,
+      "message": "action \"subosito/flutter-action@v2\" must be pinned to a full-length commit SHA like \"{owner}/{repo}@{sha}\" because the \"unpinned-uses\" rule is enabled"
+    },
+    {
+      "file": ".github/workflows/ci.yml",
+      "rule": "unpinned-uses",
+      "fingerprint": "b7580d3e340dfed6",
+      "context": "5ff1471bf05b55c2",
+      "occurrence": 0,
+      "message": "action \"actions/setup-java@v6\" must be pinned to a full-length commit SHA like \"{owner}/{repo}@{sha}\" because the \"unpinned-uses\" rule is enabled"
+    },
+    {
+      "file": ".github/workflows/ci.yml",
+      "rule": "unpinned-uses",
+      "fingerprint": "cb5d568043c1aaae",
+      "context": "69613525c17bc852",
+      "occurrence": 0,
+      "message": "action \"android-actions/setup-android@v4\" must be pinned to a full-length commit SHA like \"{owner}/{repo}@{sha}\" because the \"unpinned-uses\" rule is enabled"
+    },
+    {
+      "file": ".github/workflows/ci.yml",
+      "rule": "missing-timeout",
+      "fingerprint": "3251edda7fcea613",
+      "context": "8a8120cc08f341df",
+      "occurrence": 0,
+      "message": "\"timeout-minutes\" is not set at this job. Set it to avoid wasting runner minutes when the job hangs"
+    },
+    {
+      "file": ".github/workflows/ci.yml",
+      "rule": "missing-permissions",
+      "fingerprint": "0cd69fedd18c2d17",
+      "context": "f06778a58241e915",
+      "occurrence": 0,
+      "message": "neither the workflow nor this job sets \"permissions:\" so the GITHUB_TOKEN gets the default permissions of the repository. set \"permissions:\" at workflow-level or job-level (use \"permissions: {}\" for no permissions) because the \"missing-permissions\" rule is enabled"
+    },
+    {
+      "file": ".github/workflows/ci.yml",
+      "rule": "missing-timeout",
+      "fingerprint": "d048528f7208bebf",
+      "context": "8ae8f62d03ddfd62",
+      "occurrence": 0,
+      "message": "\"timeout-minutes\" is not set at this job. Set it to avoid wasting runner minutes when the job hangs"
+    },
+    {
+      "file": ".github/workflows/ci.yml",
+      "rule": "unpinned-uses",
+      "fingerprint": "ad30df4e18ec1916",
+      "context": "6787df07fb1a8d24",
+      "occurrence": 0,
+      "message": "action \"actions/checkout@v7\" must be pinned to a full-length commit SHA like \"{owner}/{repo}@{sha}\" because the \"unpinned-uses\" rule is enabled"
+    },
+    {
+      "file": ".github/workflows/ci.yml",
+      "rule": "duplicate-key",
+      "fingerprint": "ad9cf1c217a0e92e",
+      "context": "06ab06e7a1ec5b58",
+      "occurrence": 0,
+      "message": "key \"gate\" is duplicated in \"jobs\" section. previously defined at line 155, column 3. note that this key is case insensitive"
+    },
+    {
+      "file": ".github/workflows/pages.yml",
+      "rule": "missing-timeout",
+      "fingerprint": "9c11787ba90227ec",
+      "context": "c67d416bd2037202",
+      "occurrence": 0,
+      "message": "\"timeout-minutes\" is not set at this job. Set it to avoid wasting runner minutes when the job hangs"
+    },
+    {
+      "file": ".github/workflows/pages.yml",
+      "rule": "unpinned-uses",
+      "fingerprint": "a89f15b8be9264aa",
+      "context": "38e76ee27b3956bc",
+      "occurrence": 0,
+      "message": "action \"actions/checkout@v7\" must be pinned to a full-length commit SHA like \"{owner}/{repo}@{sha}\" because the \"unpinned-uses\" rule is enabled"
+    },
+    {
+      "file": ".github/workflows/pages.yml",
+      "rule": "artipacked",
+      "fingerprint": "7ac3fde5729ef66f",
+      "context": "e0a9ec307edf36a2",
+      "occurrence": 0,
+      "message": "actions/checkout leaves the GITHUB_TOKEN in the git config of the workspace, where a later step such as an artifact upload can publish it. set \"persist-credentials: false\" under \"with:\" unless a later step needs to push"
+    },
+    {
+      "file": ".github/workflows/pages.yml",
+      "rule": "unpinned-uses",
+      "fingerprint": "6d4067f37dc969a5",
+      "context": "fc8aa4946bf5edcc",
+      "occurrence": 0,
+      "message": "action \"dart-lang/setup-dart@v1\" must be pinned to a full-length commit SHA like \"{owner}/{repo}@{sha}\" because the \"unpinned-uses\" rule is enabled"
+    },
+    {
+      "file": ".github/workflows/release.yml",
+      "rule": "excessive-permissions",
+      "fingerprint": "2a8bbd1d4798fec2",
+      "context": "1b48e720ba42bc5e",
+      "occurrence": 0,
+      "message": "\"contents: write\" is granted to every job of the workflow, which lets any of them push commits and tags and create or delete releases. set \"permissions: {}\" at the workflow level and grant \"contents: write\" only to the job which needs it"
+    },
+    {
+      "file": ".github/workflows/release.yml",
+      "rule": "missing-timeout",
+      "fingerprint": "9c11787ba90227ec",
+      "context": "c67d416bd2037202",
+      "occurrence": 0,
+      "message": "\"timeout-minutes\" is not set at this job. Set it to avoid wasting runner minutes when the job hangs"
+    },
+    {
+      "file": ".github/workflows/release.yml",
+      "rule": "unpinned-uses",
+      "fingerprint": "a89f15b8be9264aa",
+      "context": "38e76ee27b3956bc",
+      "occurrence": 0,
+      "message": "action \"actions/checkout@v7\" must be pinned to a full-length commit SHA like \"{owner}/{repo}@{sha}\" because the \"unpinned-uses\" rule is enabled"
+    },
+    {
+      "file": ".github/workflows/release.yml",
+      "rule": "artipacked",
+      "fingerprint": "7ac3fde5729ef66f",
+      "context": "e0a9ec307edf36a2",
+      "occurrence": 0,
+      "message": "actions/checkout leaves the GITHUB_TOKEN in the git config of the workspace, where a later step such as an artifact upload can publish it. set \"persist-credentials: false\" under \"with:\" unless a later step needs to push"
+    },
+    {
+      "file": ".github/workflows/release.yml",
+      "rule": "unpinned-uses",
+      "fingerprint": "6d4067f37dc969a5",
+      "context": "fc8aa4946bf5edcc",
+      "occurrence": 0,
+      "message": "action \"dart-lang/setup-dart@v1\" must be pinned to a full-length commit SHA like \"{owner}/{repo}@{sha}\" because the \"unpinned-uses\" rule is enabled"
+    },
+    {
+      "file": ".github/workflows/release.yml",
+      "rule": "unpinned-uses",
+      "fingerprint": "49fca8e4f909d9bb",
+      "context": "9bbe832c64c6c7ce",
+      "occurrence": 0,
+      "message": "action \"actions/upload-artifact@v7\" must be pinned to a full-length commit SHA like \"{owner}/{repo}@{sha}\" because the \"unpinned-uses\" rule is enabled"
+    },
+    {
+      "file": ".github/workflows/release.yml",
+      "rule": "missing-timeout",
+      "fingerprint": "3096ba7884d9d7fa",
+      "context": "77b112513fd382c9",
+      "occurrence": 0,
+      "message": "\"timeout-minutes\" is not set at this job. Set it to avoid wasting runner minutes when the job hangs"
+    },
+    {
+      "file": ".github/workflows/release.yml",
+      "rule": "unpinned-uses",
+      "fingerprint": "ee52cb8a52bf60c3",
+      "context": "48639655ca69eb85",
+      "occurrence": 0,
+      "message": "action \"actions/checkout@v7\" must be pinned to a full-length commit SHA like \"{owner}/{repo}@{sha}\" because the \"unpinned-uses\" rule is enabled"
+    },
+    {
+      "file": ".github/workflows/release.yml",
+      "rule": "artipacked",
+      "fingerprint": "ac390e30061aa89a",
+      "context": "11fd66be8c1d075a",
+      "occurrence": 0,
+      "message": "actions/checkout leaves the GITHUB_TOKEN in the git config of the workspace, where a later step such as an artifact upload can publish it. set \"persist-credentials: false\" under \"with:\" unless a later step needs to push"
+    },
+    {
+      "file": ".github/workflows/release.yml",
+      "rule": "unpinned-uses",
+      "fingerprint": "d1f7a6135b6ab47c",
+      "context": "a68871fec034adb0",
+      "occurrence": 0,
+      "message": "action \"actions/download-artifact@v8\" must be pinned to a full-length commit SHA like \"{owner}/{repo}@{sha}\" because the \"unpinned-uses\" rule is enabled"
+    },
+    {
+      "file": ".github/workflows/review.yml",
+      "rule": "concurrency-limits",
+      "fingerprint": "48c2d6b5885070b9",
+      "context": "081b2e27040f94d3",
+      "occurrence": 0,
+      "message": "workflow has no \"concurrency:\", so every run of it executes at the same time even when a newer run supersedes the older ones. add a top-level \"concurrency:\" with a \"group:\" and \"cancel-in-progress: true\""
+    },
+    {
+      "file": ".github/workflows/review.yml",
+      "rule": "dangerous-triggers",
+      "fingerprint": "a93f6bb245795441",
+      "context": "679173a66b3203d5",
+      "occurrence": 0,
+      "message": "trigger \"issue_comment\" is dangerous: it runs in the context of the default branch with a write token and secrets and can be started by anyone who can comment. check the permission of the commenter and never run code of the pull request"
+    },
+    {
+      "file": ".github/workflows/review.yml",
+      "rule": "excessive-permissions",
+      "fingerprint": "e15c03d77553a594",
+      "context": "b853991f6f9c84a0",
+      "occurrence": 0,
+      "message": "\"pull-requests: write\" lets the job create and modify pull requests, comments and reviews, and the workflow runs on \"issue_comment\" which people without write access can trigger. check that the job needs it and cannot run untrusted code"
+    },
+    {
+      "file": ".github/workflows/review.yml",
+      "rule": "missing-timeout",
+      "fingerprint": "3781be190c0b341b",
+      "context": "c0eaee11f2bf50e2",
+      "occurrence": 0,
+      "message": "\"timeout-minutes\" is not set at this job. Set it to avoid wasting runner minutes when the job hangs"
+    },
+    {
+      "file": ".github/workflows/review.yml",
+      "rule": "unpinned-uses",
+      "fingerprint": "f04132f97916bde3",
+      "context": "f1bfd2ae3378c572",
+      "occurrence": 0,
+      "message": "action \"actions/github-script@v9\" must be pinned to a full-length commit SHA like \"{owner}/{repo}@{sha}\" because the \"unpinned-uses\" rule is enabled"
+    },
+    {
+      "file": ".github/workflows/review.yml",
+      "rule": "unpinned-uses",
+      "fingerprint": "163d99748bcb5abd",
+      "context": "7c916bee096be8e2",
+      "occurrence": 0,
+      "message": "action \"actions/checkout@v7\" must be pinned to a full-length commit SHA like \"{owner}/{repo}@{sha}\" because the \"unpinned-uses\" rule is enabled"
+    },
+    {
+      "file": ".github/workflows/review.yml",
+      "rule": "artipacked",
+      "fingerprint": "e316ee81adfa42bb",
+      "context": "5f1e8516df8fde4a",
+      "occurrence": 0,
+      "message": "actions/checkout leaves the GITHUB_TOKEN in the git config of the workspace, where a later step such as an artifact upload can publish it. set \"persist-credentials: false\" under \"with:\" unless a later step needs to push"
+    },
+    {
+      "file": ".github/workflows/review.yml",
+      "rule": "unpinned-uses",
+      "fingerprint": "09ecc6115e053341",
+      "context": "f8bd8ae1d8b704fa",
+      "occurrence": 0,
+      "message": "action \"dart-lang/setup-dart@v1\" must be pinned to a full-length commit SHA like \"{owner}/{repo}@{sha}\" because the \"unpinned-uses\" rule is enabled"
+    },
+    {
+      "file": ".github/workflows/review.yml",
+      "rule": "unpinned-uses",
+      "fingerprint": "bb7c8ad74838bbfd",
+      "context": "e9b5824973f17deb",
+      "occurrence": 0,
+      "message": "action \"actions/setup-node@v7\" must be pinned to a full-length commit SHA like \"{owner}/{repo}@{sha}\" because the \"unpinned-uses\" rule is enabled"
+    },
+    {
+      "file": ".github/workflows/review.yml",
+      "rule": "unpinned-uses",
+      "fingerprint": "f04132f97916bde3",
+      "context": "f1bfd2ae3378c572",
+      "occurrence": 1,
+      "message": "action \"actions/github-script@v9\" must be pinned to a full-length commit SHA like \"{owner}/{repo}@{sha}\" because the \"unpinned-uses\" rule is enabled"
+    }
+  ]
+}
