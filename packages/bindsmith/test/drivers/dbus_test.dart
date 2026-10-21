@@ -16,7 +16,11 @@ import 'package:test/test.dart';
 import '../golden.dart';
 
 const _fixture = 'fixtures/dbus/com.example.Greeter.xml';
+// Golden paths are relative to this package, where `dart test` runs.
 const _generated = '../../fixtures/lib/generated/dbus/greeter.g.dart';
+// `DbusDriver.load` joins [output] onto the repository root, so this one
+// must not repeat the `../..` that `_generated` uses to leave the package.
+const _output = 'fixtures/lib/generated/dbus/greeter.g.dart';
 
 // packages/bindsmith → repository root.
 final _root = p.dirname(p.dirname(Directory.current.path));
@@ -27,10 +31,10 @@ void main() {
 
   setUpAll(() async {
     final driver = DbusDriver(xmlFiles: [_fixture]);
-    ir = await driver.load(workingDirectory: _root, output: _generated);
+    ir = await driver.load(workingDirectory: _root, output: _output);
     binding = DartFormatter(
       languageVersion: DartFormatter.latestLanguageVersion,
-    ).format(File(p.join(_root, _generated)).readAsStringSync());
+    ).format(File(p.join(_root, _output)).readAsStringSync());
   });
 
   TypeDecl type(String name) =>
