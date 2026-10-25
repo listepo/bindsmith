@@ -60,4 +60,4 @@ dart run bindsmith verify
 
 - Repository: <https://github.com/pyrlyn/bindsmith>
 - Documentation: <https://github.com/pyrlyn/bindsmith/tree/main/docs>
-- License: your choice of GNU GPLv3, a royalty-free license, or a commercial license (see <https://github.com/pyrlyn/bindsmith#license>)
+- License: your choice of GNU GPLv3 or a commercial license (see <https://github.com/pyrlyn/bindsmith#license>)
