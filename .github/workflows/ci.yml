@@ -17,6 +17,9 @@ jobs:
   # variable (unset or `hosted` = the hosted label, `xcode-27-local` = the dedicated Mac;
   # fork PRs keep the hosted label).
   macos-runner:
+    permissions:
+      contents: read
+      actions: write
     runs-on: ubuntu-latest
     timeout-minutes: 5
     outputs:
@@ -27,11 +30,17 @@ jobs:
         with:
           runner: ${{ vars.MACOS_RUNNER }}
           value: '["macos-latest"]'
+      - name: Cancel the run on failure
+        if: failure()
+        uses: pyrlyn/ci/.github/actions/cancel-run@9675ff42a0e3785beabccb68b0e4fa65910de453 # main
 
   dart:
+    permissions:
+      contents: read
+      actions: write
     if: github.event.pull_request.draft != true
     strategy:
-      fail-fast: false
+      fail-fast: true
       matrix:
         os: ${{ fromJSON(vars.MACOS_CI_DISABLED == 'true' && '["ubuntu-latest", "windows-latest"]' || '["macos-latest", "ubuntu-latest", "windows-latest"]') }}
     needs: macos-runner
@@ -73,8 +82,14 @@ jobs:
         run: dart analyze --fatal-infos fixtures
       - name: Release artefacts
         run: sh tests/release_artefacts.sh
+      - name: Cancel the run on failure
+        if: failure()
+        uses: pyrlyn/ci/.github/actions/cancel-run@9675ff42a0e3785beabccb68b0e4fa65910de453 # main
 
   pana:
+    permissions:
+      contents: read
+      actions: write
     if: github.event.pull_request.draft != true
     runs-on: ubuntu-latest
     steps:
@@ -88,12 +103,18 @@ jobs:
         run: dart pub global run pana --no-warning --exit-code-threshold 140 packages/bindsmith
       - name: pana bindsmith_runtime
         run: dart pub global run pana --no-warning --exit-code-threshold 140 packages/bindsmith_runtime
+      - name: Cancel the run on failure
+        if: failure()
+        uses: pyrlyn/ci/.github/actions/cancel-run@9675ff42a0e3785beabccb68b0e4fa65910de453 # main
 
   examples:
+    permissions:
+      contents: read
+      actions: write
     if: github.event.pull_request.draft != true
     name: example ${{ matrix.example }} ${{ matrix.build }}
     strategy:
-      fail-fast: false
+      fail-fast: true
       matrix:
         include: >-
           ${{ fromJSON(vars.MACOS_CI_DISABLED == 'true' && '[{"os": "ubuntu-latest", "example": "sqlite_desktop", "build": "linux"}, {"os": "ubuntu-latest", "example": "androidx_biometric", "build": "apk"}, {"os": "ubuntu-latest", "example": "chartjs_web", "build": "web"}, {"os": "windows-latest", "example": "sqlite_desktop", "build": "windows"}, {"os": "ubuntu-latest", "example": "dbus_greeter", "build": "linux"}, {"os": "windows-latest", "example": "win32_tickcount", "build": "windows"}]' || '[{"os": "macos-latest", "example": "avfoundation_audio", "build": "macos"}, {"os": "macos-latest", "example": "avfoundation_audio", "build": "ios"}, {"os": "macos-latest", "example": "swift_volume", "build": "macos"}, {"os": "macos-latest", "example": "swift_volume", "build": "ios"}, {"os": "macos-latest", "example": "sqlite_desktop", "build": "macos"}, {"os": "ubuntu-latest", "example": "sqlite_desktop", "build": "linux"}, {"os": "ubuntu-latest", "example": "androidx_biometric", "build": "apk"}, {"os": "ubuntu-latest", "example": "chartjs_web", "build": "web"}, {"os": "windows-latest", "example": "sqlite_desktop", "build": "windows"}, {"os": "ubuntu-latest", "example": "dbus_greeter", "build": "linux"}, {"os": "windows-latest", "example": "win32_tickcount", "build": "windows"}]') }}
@@ -151,6 +172,9 @@ jobs:
       - name: flutter build web
         if: matrix.build == 'web'
         run: flutter build web --debug
+      - name: Cancel the run on failure
+        if: failure()
+        uses: pyrlyn/ci/.github/actions/cancel-run@9675ff42a0e3785beabccb68b0e4fa65910de453 # main
 
   revert-on-failure:
     name: revert-on-failure
@@ -162,6 +186,7 @@ jobs:
       && contains(join(needs.*.result, ','), 'failure')
     runs-on: ubuntu-latest
     permissions:
+      actions: write
       contents: write
     steps:
       - uses: actions/checkout@v7
@@ -213,8 +238,14 @@ jobs:
             git commit -m "ci: auto-revert $short — main CI failed"
           fi
           git push origin HEAD:main
+      - name: Cancel the run on failure
+        if: failure()
+        uses: pyrlyn/ci/.github/actions/cancel-run@9675ff42a0e3785beabccb68b0e4fa65910de453 # main
 
   gate:
+    permissions:
+      contents: read
+      actions: write
     needs: [dart, pana, examples]
     # always(): report failed or cancelled needs instead of reading a skipped gate as passing.
     if: >-
@@ -225,3 +256,6 @@ jobs:
       - uses: pyrlyn/ci/.github/actions/gate@4e652d891cc6e6f0be316eda1a1f9630d76a8b7e # main
         with:
           needs: ${{ toJSON(needs) }}
+      - name: Cancel the run on failure
+        if: failure()
+        uses: pyrlyn/ci/.github/actions/cancel-run@9675ff42a0e3785beabccb68b0e4fa65910de453 # main
